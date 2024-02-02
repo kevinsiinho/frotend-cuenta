@@ -17,9 +17,7 @@ import { TarjetaPage } from './tarjeta.page';
     TarjetaPageRoutingModule,
   ],
   declarations: [TarjetaPage],
-  providers: [
-    File
-  ],
+
 })
 
 export class TarjetaPageModule {}
