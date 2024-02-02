@@ -1,0 +1,99 @@
+ion-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+ion-router-outlet {
+  flex: 1;
+  overflow-y: auto;
+}
+
+ion-title{
+  color: #ff8a08;
+}
+
+ion-card,ion-card-content{
+  width: 100%;
+}
+
+.btns{
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.itemInput {
+  flex: 1; /* Hace que el input ocupe todo el espacio disponible */
+  margin-right: 10px; /* Ajusta según sea necesario */
+  font-size: 22px;
+  width: 100%;
+}
+
+.btnoption{
+  font-size: 23px;
+}
+
+.btnoption ion-icon{
+  font-size: 23px;
+}
+
+ion-card-title{
+  width: 100%;
+}
+
+.estado{
+  width: 20%;
+  float: right;
+  font-size: 20px;
+  margin-top: -10px;
+}
+
+.btns2{
+  font-size: 20px;
+  float: right;
+  margin-left: auto;
+  margin-top: -10px;
+}
+
+.btns2 ion-icon{
+  color: #ff8a08;
+}
+
+ion-segment-button{
+  font-size: 25px;
+  color: white;
+}
+
+/*-----------------------------------------------------------------------*/
+ion-alert.custom-alert {
+  --backdrop-opacity: 0.7;
+}
+
+.custom-alert .alert-button-group {
+  padding: 8px;
+}
+
+button.alert-button.alert-button-confirm {
+  background-color: var(--ion-color-success);
+  color: var(--ion-color-success-contrast);
+}
+
+.md button.alert-button.alert-button-confirm {
+  border-radius: 4px;
+}
+
+.ios .custom-alert button.alert-button {
+  border: 0.55px solid rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.2);
+}
+
+.ios button.alert-button.alert-button-cancel {
+  border-right: 0;
+  border-bottom-left-radius: 13px;
+  border-top-left-radius: 13px;
+}
+
+.ios button.alert-button.alert-button-confirm {
+  border-bottom-right-radius: 13px;
+  border-top-right-radius: 13px;
+}

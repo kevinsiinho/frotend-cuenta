@@ -1,0 +1,193 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>{{this.item.itemname}}
+
+    <ion-item [button]="true" [detail]="false" class="btns2" id="popover-button2">
+      <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+    </ion-item>
+
+    <ion-button class="btns2" *ngIf="this.item.favorito===false" (click)="Favorito()" fill="clear">
+      <ion-icon name="heart-dislike-outline"></ion-icon>
+    </ion-button>
+
+    <ion-button class="btns2" *ngIf="this.item.favorito===true" (click)="Favorito()" fill="clear">
+      <ion-icon name="heart-sharp"></ion-icon>
+    </ion-button>
+    </ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-segment >
+      <ion-segment-button (click)="Festado('activar')" value="true">
+        <ion-label><ion-icon name="eye-outline"></ion-icon></ion-label>
+      </ion-segment-button>
+      <ion-segment-button (click)="Festado('desactivar')"value="false">
+        <ion-label><ion-icon name="eye-off-outline"></ion-icon></ion-label>
+      </ion-segment-button>
+    </ion-segment>
+    <ion-progress-bar *ngIf="this.isLoading===true" color="warning" type="indeterminate"></ion-progress-bar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <ion-refresher slot="fixed" [pullFactor]="0.5" [pullMin]="100" [pullMax]="200" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-list lines="none" >
+    <ion-item #capturableArea [id]="'item-' + x" *ngFor="let res of this.item.tarjetas; let x=index;" [disabled]="this.item.estado">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>{{res.nombre}} <ion-button class="estado" id="present-alert4" (click)="EliminarItem(x)" fill="clear" color={{res.color}}><ion-icon class="estado-icono" name="close-outline"></ion-icon></ion-button></ion-card-title>
+          <ion-card-subtitle>$ <span>{{formatNumberMil(res.subtotal) }}</span></ion-card-subtitle>
+          <ion-button expand="full" color={{res.color}}  (click)="show(x)"><ion-icon name="eye-outline"></ion-icon></ion-button>
+        </ion-card-header>
+      </ion-card>
+      <ion-card-content *ngIf="cardStates[x]===true">
+        <ion-item>
+          <ion-grid>
+            <ion-row>
+              <ion-col>Valor</ion-col>
+              <ion-col>Fecha</ion-col>
+              <ion-col>Eliminar</ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+        <ion-list>
+        <ion-item>
+          <ion-grid>
+            <ion-row *ngFor="let item2 of res.depositos; let z=index">
+              <ion-col>{{formatNumberMil(item2.valor)}}</ion-col>
+              <ion-col>{{item2.fecha}}</ion-col>
+              <ion-col><ion-button class="estado" (click)="EliminarDeposito(x,z)" fill="clear" color={{res.color}}>X</ion-button></ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+
+      </ion-list>
+
+        <div class="btns">
+          <ion-input class="itemInput" type="number" [(ngModel)]="this.deposito.valor" label="Ingresa el valor" label-placement="floating"></ion-input>
+          <ion-button class="btnoption" (click)="depositar(x,'sumar')" color="success"><ion-icon name="add-outline"></ion-icon></ion-button>
+          <ion-button class="btnoption" (click)="depositar(x,'restar')" color="warning"><ion-icon name="remove-outline"></ion-icon></ion-button>
+        </div>
+        <ion-button color={{res.color}} (click)="CapturaPantalla(x)" expand="full"><ion-icon name="camera-outline"></ion-icon></ion-button>
+      </ion-card-content>
+    </ion-item>
+    <ion-item>Total: $ <span>{{this.totalTemp}}</span> </ion-item>
+  </ion-list>
+
+
+<ion-alert  [isOpen]="openModal2" class="custom-alert" header="Estas seguro?" [buttons]="alertButtons3"></ion-alert>
+
+  <ion-content class="ion-padding">
+    <ion-modal  [isOpen]="openModal" (willDismiss)="onWillDismiss($event)">
+      <ng-template>
+        <ion-header>
+          <ion-toolbar>
+            <ion-buttons slot="start">
+              <ion-button (click)="cancel()">Cancelar</ion-button>
+            </ion-buttons>
+            <ion-title>Crear Tarjeta</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="confirm()" [strong]="true">Confirmar</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+          <ion-item>
+            <ion-input
+              label="Nombre"
+              labelPlacement="stacked"
+              type="text"
+              placeholder="Escribe aquí"
+              [(ngModel)]="this.tarjeta.nombre"
+            ></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-select aria-label="Color" [(ngModel)]="this.tarjeta.color" interface="action-sheet" placeholder="Selecciona el color">
+              <ion-select-option value="primary">Primary</ion-select-option>
+              <ion-select-option value="secondary">Secondary</ion-select-option>
+              <ion-select-option value="tertiary">Tertiary</ion-select-option>
+              <ion-select-option value="success">Success</ion-select-option>
+              <ion-select-option value="warning">Warning</ion-select-option>
+              <ion-select-option value="danger">Danger</ion-select-option>
+              <ion-select-option value="light">Light</ion-select-option>
+              <ion-select-option value="medium">Medium</ion-select-option>
+              <ion-select-option value="dark">Dark</ion-select-option>
+            </ion-select>
+          </ion-item>
+  <ion-item>
+          <ion-grid class="colores">
+            <ion-row>
+              <ion-col>
+                <ion-icon name="brush-outline" color="primary"></ion-icon>
+                Primary
+              </ion-col>
+              <ion-col>
+                <ion-icon name="brush-outline" color="secondary"></ion-icon>
+                Secondary
+              </ion-col>
+              <ion-col>
+                <ion-icon name="brush-outline" color="tertiary"></ion-icon>
+                Tertiary
+              </ion-col>
+              <ion-col>
+                <ion-icon name="brush-outline" color="success"></ion-icon>
+                Success
+              </ion-col>
+              <ion-col>
+                <ion-icon name="brush-outline" color="warning"></ion-icon>
+                Warning
+              </ion-col>
+              <ion-col>
+                <ion-icon name="brush-outline" color="danger"></ion-icon>
+                Danger
+              </ion-col>
+              <ion-col>
+                <ion-icon name="brush-outline" color="light"></ion-icon>
+                Light
+              </ion-col>
+              <ion-col>
+                <ion-icon name="brush-outline" color="medium"></ion-icon>
+                Medium
+              </ion-col>
+              <ion-col>
+                <ion-icon name="brush-outline" color="dark"></ion-icon>
+                Dark
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+  </ion-item>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+  </ion-content>
+
+  <ion-popover trigger="popover-button2" [dismissOnSelect]="true">
+    <ng-template>
+      <ion-content>
+        <ion-list>
+          <ion-item [button]="true" id="nested-trigger">Ordenar Por</ion-item>
+          <ion-item [button]="true" [detail]="false" (click)="openModal = !openModal">Nuevo</ion-item>
+          <ion-item [button]="true" [detail]="false" (click)="presentAlert2()">Editar</ion-item>
+          <ion-item [button]="true" [detail]="false" (click)="openModal2 = !openModal2">Eliminar</ion-item>
+
+          <ion-popover trigger="nested-trigger" [dismissOnSelect]="true" side="end">
+            <ng-template>
+              <ion-content>
+                <ion-list>
+                  <ion-item>Ordenar por </ion-item>
+                  <ion-item [button]="true" class="nameSpan" (click)="Ordenar('nombre')" [detail]="false">Nombre</ion-item>
+                  <ion-item [button]="true" class="nameSpan" (click)="Ordenar('favorito')" [detail]="false">Favorito</ion-item>
+                </ion-list>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-popover>
+
+</ion-content>

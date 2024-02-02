@@ -1,0 +1,86 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Formulario
+    </ion-title>
+    <ion-progress-bar *ngIf="this.isLoading===true" color="warning" type="indeterminate"></ion-progress-bar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+ <ion-list>
+    <ion-item>
+      <ion-input label="Nombre del Item" [(ngModel)]="this.item.itemname" label-placement="floating" fill="outline" placeholder="Escribe aquí"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-list>
+        <ion-item>
+          <ion-select aria-label="Color" [(ngModel)]="this.item.color" interface="action-sheet" placeholder="Selecciona el color">
+            <ion-select-option value="primary">Primary</ion-select-option>
+            <ion-select-option value="secondary">Secondary</ion-select-option>
+            <ion-select-option value="tertiary">Tertiary</ion-select-option>
+            <ion-select-option value="success">Success</ion-select-option>
+            <ion-select-option value="warning">Warning</ion-select-option>
+            <ion-select-option value="danger">Danger</ion-select-option>
+            <ion-select-option value="light">Light</ion-select-option>
+            <ion-select-option value="medium">Medium</ion-select-option>
+            <ion-select-option value="dark">Dark</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
+    </ion-item>
+   <!-- <ion-item>
+      <ion-input
+        label="Observación"
+        labelPlacement="stacked"
+        [clearInput]="true"
+        placeholder="Escribe aquí"
+      >
+      </ion-input>
+    </ion-item>
+    -->
+    <ion-button color="medium" (click)="Guardar()" expand="full">Guardar</ion-button>
+ </ion-list>
+
+ <ion-grid class="colores">
+  <ion-row>
+    <ion-col>
+      <ion-icon name="brush-outline" color="primary"></ion-icon>
+      Primary
+    </ion-col>
+    <ion-col>
+      <ion-icon name="brush-outline" color="secondary"></ion-icon>
+      Secondary
+    </ion-col>
+    <ion-col>
+      <ion-icon name="brush-outline" color="tertiary"></ion-icon>
+      Tertiary
+    </ion-col>
+    <ion-col>
+      <ion-icon name="brush-outline" color="success"></ion-icon>
+      Success
+    </ion-col>
+    <ion-col>
+      <ion-icon name="brush-outline" color="warning"></ion-icon>
+      Warning
+    </ion-col>
+    <ion-col>
+      <ion-icon name="brush-outline" color="danger"></ion-icon>
+      Danger
+    </ion-col>
+    <ion-col>
+      <ion-icon name="brush-outline" color="light"></ion-icon>
+      Light
+    </ion-col>
+    <ion-col>
+      <ion-icon name="brush-outline" color="medium"></ion-icon>
+      Medium
+    </ion-col>
+    <ion-col>
+      <ion-icon name="brush-outline" color="dark"></ion-icon>
+      Dark
+    </ion-col>
+  </ion-row>
+</ion-grid>
+
+</ion-content>

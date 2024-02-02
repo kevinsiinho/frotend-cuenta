@@ -1,0 +1,25 @@
+<ion-content class="login" [fullscreen]="true">
+  <div class="arriba"></div>
+  <div class="segundario">
+    <div class="title">SoftK</div>
+
+    <div class="msn">
+      Hola, estas aquí
+      nuevamente!
+    </div>
+
+    <ion-list class="form">
+      <div class="title2">Iniciar Sesión</div>
+      <ion-item class="inputs">
+        <ion-input label="Correo electrónico" labelPlacement="floating" [(ngModel)]="this.login.email" placeholder="example@gmail.com"></ion-input>
+      </ion-item>
+      <ion-item class="inputs">
+        <ion-input label="contraseña" type="password" [(ngModel)]="this.login.password" labelPlacement="floating" placeholder="Escribe aquí la contraseña"></ion-input>
+      </ion-item>
+      <ion-button color="medium" (click)="ingresar()" expand="block">Ingresar</ion-button>
+    </ion-list>
+    <ion-checkbox [(ngModel)]="this.recordaremail" (ionChange)="RecordarEmail()" labelPlacement="end">Recordar datos</ion-checkbox>
+    <a class="recuperarPassword" [routerLink]="['/change-password']" >¿Recuperar contraseña?</a>
+  </div>
+  <div class="abajo"></div>
+</ion-content>
