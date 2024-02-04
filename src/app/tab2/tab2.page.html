@@ -25,6 +25,16 @@
       </ion-card>
     </ion-item>
   </ion-list>
+  <ion-list lines="none" *ngIf="this.items2.length>0">
+    <label class="label-msn" for="">Compartidos</label>
+    <ion-item *ngFor="let item of this.items2">
+      <ion-card color={{item.color}} >
+        <ion-card-header>
+          <ion-card-title> <ion-button class="btn" expand="full" color={{item.color}} [routerLink]="['/tabs/tab2/tarjeta/',item.id]">{{item.itemname}} <ion-icon class="icons" name="chevron-forward-outline"></ion-icon></ion-button> </ion-card-title>
+        </ion-card-header>
+      </ion-card>
+    </ion-item>
+  </ion-list>
 
   <ion-popover trigger="popover-button"  [dismissOnSelect]="true">
     <ng-template>

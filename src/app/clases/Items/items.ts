@@ -1,3 +1,4 @@
+import { Compartir } from "../compartir/compartir";
 import { Tarjetas } from "./tarjetas";
 
 export class Items {
@@ -8,6 +9,7 @@ export class Items {
     estado!: boolean;
     favorito!: boolean;
     tarjetas:Tarjetas[]=[];
+    compartir:Compartir[]=[]
     userId!: string
 
     setValues(item:any){
@@ -18,6 +20,7 @@ export class Items {
       this.estado=item.estado;
       this.favorito=item.favorito;
       this.tarjetas=item.tarjetas;
+      this.compartir=item.compartir;
       this.userId= item.userId;
     }
 }

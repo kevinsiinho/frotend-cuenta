@@ -53,9 +53,9 @@ export class UserService {
     };
 
   const response: HttpResponse = await CapacitorHttp.get(options);
-       return response
+   return response
   }
-/*
+
   async Create(user:User){
     const options = {
       url: this.url+'/signup',
@@ -65,7 +65,7 @@ export class UserService {
     const response: HttpResponse = await CapacitorHttp.post(options);
     return response.status
   };
-*/
+
   async InfoUser(id:string){
     const { value } = await Preferences.get({ key: 'token' });
     const options = {
@@ -88,6 +88,20 @@ export class UserService {
       }
       return true
     };
+
+    async buscar(event:any){
+      const query = event.target.value;
+      const { value } = await Preferences.get({ key: 'token' });
+      const options = {
+        url: this.url+'/users/search?query='+query,
+        headers: { "Content-Type": "application/json",
+        "Authorization": 'Bearer ' + value
+        }
+      };
+
+    const response: HttpResponse = await CapacitorHttp.get(options);
+    return response.data
+    }
 
 
 

@@ -18,6 +18,10 @@ const routes: Routes = [
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
+  },
+  {
+    path: 'registrarse',
+    loadChildren: () => import('./modules/registrarse/registrarse.module').then( m => m.RegistrarsePageModule)
   }
 ];
 @NgModule({

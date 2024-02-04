@@ -37,11 +37,11 @@ export class ItemsService {
     return response.status
   };
 
-  async allitems(){
+  async allitems(id:string){
     const { value } = await Preferences.get({ key: 'token' });
     this.items=[]
     const options = {
-      url: this.url+'/items',
+      url: this.url+'/items?filter=%7B%0A%20%20%0A%20%20%22where%22%3A%20%7B%0A%20%20%20%20%22userId%22%3A%22'+id+'%22%0A%20%20%7D%0A%7D',
       headers: { "Content-Type": "application/json",
       "Authorization": 'Bearer ' + value
       },
@@ -57,6 +57,25 @@ export class ItemsService {
         return this.items;
   }
 
+  async compartidos(id:string){
+    const { value } = await Preferences.get({ key: 'token' });
+    this.items=[]
+    const options = {
+      url: this.url+'/items?filter=%7B%0A%20%20%0A%20%20%20%20%22where%22%3A%20%7B%0A%20%20%20%20%20%20%22compartir.iduser%22%3A%20%22'+id+'%22%0A%20%20%20%20%7D%0A%20%20%7D',
+      headers: { "Content-Type": "application/json",
+      "Authorization": 'Bearer ' + value
+      },
+    };
+
+  const response: HttpResponse = await CapacitorHttp.get(options);
+        response.data.forEach((item:any)=> {
+          this.item=new Items();
+          this.item.setValues(item)
+          this.items.push(this.item)
+        });
+        this.items$.next(this.items)
+        return this.items;
+  }
 
 
   async GetItem(id:String){

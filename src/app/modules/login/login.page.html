@@ -19,7 +19,8 @@
       <ion-button color="medium" (click)="ingresar()" expand="block">Ingresar</ion-button>
     </ion-list>
     <ion-checkbox [(ngModel)]="this.recordaremail" (ionChange)="RecordarEmail()" labelPlacement="end">Recordar datos</ion-checkbox>
-    <a class="recuperarPassword" [routerLink]="['/change-password']" >¿Recuperar contraseña?</a>
+    <a class="recuperarPassword" [routerLink]="['/registrarse']" >Registrarme</a>
+  <!-- <a class="recuperarPassword" [routerLink]="['/change-password']" >¿Recuperar contraseña?</a>-->
   </div>
   <div class="abajo"></div>
 </ion-content>

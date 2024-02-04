@@ -10,6 +10,7 @@ import { ItemsService } from 'src/app/servicios/items/items.service';
 import { UserService } from 'src/app/servicios/user/user.service';
 import html2canvas from 'html2canvas';
 import { Preferences } from '@capacitor/preferences';
+import { Compartir } from 'src/app/clases/compartir/compartir';
 
 
 @Component({
@@ -30,15 +31,23 @@ export class TarjetaPage implements OnInit {
   public tarjetas:Tarjetas[]=[];
   public deposito= new Depositos()
   public depositos:Depositos[]=[];
-  public alertInputs2:any[]=[]
+  public alertInputs2:any[]=[];
+  public resultados:any[]=[];
+  public compartir=new Compartir()
+  public compartirUno=new Compartir()
   public isLoading = true;
   public loading:any;
   public itemsSubscription= new Subscription()
   public totalTemp:string=""
   public colorFav!:string;
+  public creador!:boolean
   openModal = false;
   openModal2 = false;
+  isModalOpen = false;
 
+  setOpen(isOpen: boolean) {
+    this.isModalOpen = isOpen;
+  }
 
   @ViewChild('capturableArea') capturableArea!: ElementRef;
 
@@ -104,6 +113,7 @@ async ngOnInit() {
     this.id=this.router.snapshot.paramMap.get('id')!
     this.itemService.GetItem(this.id).then(async (res)=>{
       this.item=res;
+      this.CompartidoUNO()
       const { value } = await Preferences.get({ key: 'TarjetaOrden' });
       if(value){
         this.Ordenar(value)
@@ -119,8 +129,28 @@ async ngOnInit() {
     })
     this.loading.dismiss();
     this.isLoading = false;
+
   }
 
+  }
+
+  async CompartidoUNO(){
+    const { value } = await Preferences.get({ key: 'token' });
+    if(value)
+    this.userService.Quien(value).then((res)=>{
+       if(res.data===this.item.userId){
+          this.creador=true
+       }else{
+        this.item.compartir.forEach(element => {
+          if(res.data===element.iduser){
+            this.compartirUno=element
+            this.compartirUno.estado = this.compartirUno.estado ? true : false;
+            console.log(this.compartirUno)
+          }
+        });
+       }
+
+    })
   }
 
 formatNumberMil(value: number): string {
@@ -222,6 +252,18 @@ async EliminarItem(x:number){
     this.Update();
   }
 
+  EliminarCompartido(id:string, z:number){
+
+    this.item.compartir.forEach((element) => {
+      if(id===element.iduser){
+         this.item.compartir.splice(z,1)
+        return;
+      }
+    });
+
+    this.Update();
+  }
+
   depositar(x:number,tipo:string){
     const fecha= new Date();
     const dia = fecha.getDate();
@@ -292,7 +334,6 @@ async EliminarItem(x:number){
     }
   }
 
-
 async Ordenar(ordenar:string){
 
   await Preferences.set({
@@ -313,7 +354,6 @@ async Ordenar(ordenar:string){
 
 /*tomar capture*/
 @ViewChild(IonContent, { static: false }) ionContent!: IonContent;
-
 CapturaPantalla(x: number) {
   const itemElementId = 'item-' + x;
   const capturableArea = document.getElementById(itemElementId);
@@ -337,7 +377,66 @@ CapturaPantalla(x: number) {
 
     // Eliminar el enlace después de la descarga
     document.body.removeChild(downloadLink);
+
+    this.presentAlert("Imagen descargada")
   });
+}
+
+/*Buscar */
+
+
+buscar(buscando:any){
+  this.resultados=[]
+  this.userService.buscar(buscando).then((data)=>{
+    this.resultados=data
+  })
+}
+
+permisos(event:any,id:string) {
+  const valorSeleccionado = event.detail.value;
+  this.item.compartir.forEach(element => {
+    if(element.iduser===id){
+      element.estado=valorSeleccionado
+      return
+    }
+  });
+  this.Update()
+}
+
+
+async add(id:string, email:string){
+
+  this.compartir.iduser=id
+  this.compartir.email=email
+  this.compartir.estado=false
+
+  const { value } = await Preferences.get({ key: 'token' });
+  if(value){
+    this.userService.Quien(value).then((res)=>{
+      if(this.compartir.iduser===res.data){
+        this.presentAlert("No puedes añadirte")
+      }else{
+        if(this.item.compartir.length === 0){
+          this.item.compartir.push(this.compartir)
+          this.presentAlert("Añadido")
+          this.Update()
+          this.compartir=new Compartir()
+        }else{
+          console.log("entró")
+          this.item.compartir.forEach(element => {
+            if(element.iduser===this.compartir.iduser){
+              this.presentAlert("Ya lo haz agregado")
+            }else{
+              this.item.compartir.push(this.compartir)
+              this.presentAlert("Añadido")
+              this.Update()
+              this.compartir=new Compartir()
+            }
+          });
+        }
+      }
+    })
+  }
 }
 
 }

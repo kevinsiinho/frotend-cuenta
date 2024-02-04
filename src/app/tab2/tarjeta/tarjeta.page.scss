@@ -17,6 +17,10 @@ ion-card,ion-card-content{
   width: 100%;
 }
 
+ion-card-content[style='true'] {
+  display: block;
+}
+
 .btns{
   display: flex;
   align-items: center;
@@ -63,6 +67,23 @@ ion-card-title{
 ion-segment-button{
   font-size: 25px;
   color: white;
+}
+
+.list-compartidos{
+  margin-top: 10px;
+}
+
+.btn-eliminar-compartido{
+  margin-left: 10px;
+  font-size: 15px;
+}
+
+.permisos{
+  margin-left: 12px;
+}
+
+.personas{
+  font-size: 20px;
 }
 
 /*-----------------------------------------------------------------------*/

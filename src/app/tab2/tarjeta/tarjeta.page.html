@@ -1,22 +1,21 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>{{this.item.itemname}}
-
-    <ion-item [button]="true" [detail]="false" class="btns2" id="popover-button2">
+    <ion-button fill="clear" class="btns2" id="popover-button2">
       <ion-icon name="ellipsis-vertical-outline"></ion-icon>
-    </ion-item>
+    </ion-button>
 
-    <ion-button class="btns2" *ngIf="this.item.favorito===false" (click)="Favorito()" fill="clear">
+    <ion-button class="btns2" *ngIf="this.item.favorito===false && this.creador===true" (click)="Favorito()" fill="clear">
       <ion-icon name="heart-dislike-outline"></ion-icon>
     </ion-button>
 
-    <ion-button class="btns2" *ngIf="this.item.favorito===true" (click)="Favorito()" fill="clear">
+    <ion-button class="btns2" *ngIf="this.item.favorito===true && this.creador===true" (click)="Favorito()" fill="clear">
       <ion-icon name="heart-sharp"></ion-icon>
     </ion-button>
     </ion-title>
   </ion-toolbar>
 
-  <ion-toolbar>
+  <ion-toolbar *ngIf="this.compartirUno.estado===true || this.creador===true">
     <ion-segment >
       <ion-segment-button (click)="Festado('activar')" value="true">
         <ion-label><ion-icon name="eye-outline"></ion-icon></ion-label>
@@ -39,11 +38,11 @@
     <ion-item #capturableArea [id]="'item-' + x" *ngFor="let res of this.item.tarjetas; let x=index;" [disabled]="this.item.estado">
       <ion-card>
         <ion-card-header>
-          <ion-card-title>{{res.nombre}} <ion-button class="estado" id="present-alert4" (click)="EliminarItem(x)" fill="clear" color={{res.color}}><ion-icon class="estado-icono" name="close-outline"></ion-icon></ion-button></ion-card-title>
+          <ion-card-title>{{res.nombre}}
+             <ion-button *ngIf="this.compartirUno.estado===true || this.creador===true" class="estado" id="present-alert4" (click)="EliminarItem(x)" fill="clear" color={{res.color}}><ion-icon class="estado-icono" name="close-outline"></ion-icon></ion-button></ion-card-title>
           <ion-card-subtitle>$ <span>{{formatNumberMil(res.subtotal) }}</span></ion-card-subtitle>
-          <ion-button expand="full" color={{res.color}}  (click)="show(x)"><ion-icon name="eye-outline"></ion-icon></ion-button>
+          <ion-button  expand="full" color={{res.color}}  (click)="show(x)"><ion-icon name="eye-outline"></ion-icon></ion-button>
         </ion-card-header>
-      </ion-card>
       <ion-card-content *ngIf="cardStates[x]===true">
         <ion-item>
           <ion-grid>
@@ -60,22 +59,24 @@
             <ion-row *ngFor="let item2 of res.depositos; let z=index">
               <ion-col>{{formatNumberMil(item2.valor)}}</ion-col>
               <ion-col>{{item2.fecha}}</ion-col>
-              <ion-col><ion-button class="estado" (click)="EliminarDeposito(x,z)" fill="clear" color={{res.color}}>X</ion-button></ion-col>
+              <ion-col *ngIf="this.compartirUno.estado===true || this.creador===true"><ion-button class="estado" (click)="EliminarDeposito(x,z)" fill="clear" color={{res.color}}>X</ion-button></ion-col>
             </ion-row>
           </ion-grid>
         </ion-item>
 
       </ion-list>
 
-        <div class="btns">
+        <div class="btns" *ngIf="this.compartirUno.estado===true || this.creador===true">
           <ion-input class="itemInput" type="number" [(ngModel)]="this.deposito.valor" label="Ingresa el valor" label-placement="floating"></ion-input>
           <ion-button class="btnoption" (click)="depositar(x,'sumar')" color="success"><ion-icon name="add-outline"></ion-icon></ion-button>
           <ion-button class="btnoption" (click)="depositar(x,'restar')" color="warning"><ion-icon name="remove-outline"></ion-icon></ion-button>
         </div>
         <ion-button color={{res.color}} (click)="CapturaPantalla(x)" expand="full"><ion-icon name="camera-outline"></ion-icon></ion-button>
       </ion-card-content>
+    </ion-card>
     </ion-item>
     <ion-item>Total: $ <span>{{this.totalTemp}}</span> </ion-item>
+    <ion-item>Creado por: <span> {{this.item.userId}}</span> </ion-item>
   </ion-list>
 
 
@@ -163,15 +164,62 @@
         </ion-content>
       </ng-template>
     </ion-modal>
+
+      <ion-modal [isOpen]="isModalOpen">
+        <ng-template>
+          <ion-header>
+            <ion-toolbar>
+              <ion-title>Compartir Item</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="setOpen(false)">Close</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <ion-content class="ion-padding">
+            <ion-searchbar
+            *ngIf="this.compartirUno.estado===true || this.creador===true"
+             show-clear-button="always"
+             placeholder="Escribe aquí el email, nombre o apellido"
+             (input)="buscar($event)"
+            ></ion-searchbar>
+              <!-- Muestra los resultados en tiempo real -->
+            <ion-list *ngIf="resultados.length > 0 && this.compartirUno.estado===true || this.creador===true">
+              <ion-button *ngFor="let usuario of resultados" (click)="add(usuario.id,usuario.email)">
+                {{ usuario.name }} - {{ usuario.email }}
+              </ion-button>
+            </ion-list>
+
+            <!-- Muestra un mensaje si no hay resultados -->
+            <div *ngIf="resultados.length === 0 && this.compartirUno.estado===true || this.creador===true">
+              No se encontraron usuarios.
+            </div>
+
+            <ion-list class="list-compartidos">
+              <label for="">Personas en el Item</label>
+              <ion-item class="personas" *ngFor="let compartir of this.item.compartir; let z=index">
+                  {{compartir.email}}
+                  <ion-select *ngIf="this.compartirUno.estado===true || this.creador===true" class="permisos" (ionChange)="permisos($event,compartir.iduser!)" aria-label="Estados" interface="popover" placeholder='"Editar: " {{compartir.estado}}'>
+                    <ion-select-option value={{true}}>Editar</ion-select-option>
+                    <ion-select-option value={{false}}>Solo ver</ion-select-option>
+                  </ion-select>
+                   <ion-button *ngIf="this.compartirUno.estado===true || this.creador===true" color="danger" class="btn-eliminar-compartido" (click)="EliminarCompartido(compartir.iduser!, z)">
+                    <ion-icon name="close-circle-outline"></ion-icon>
+                   </ion-button>
+              </ion-item>
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
   </ion-content>
 
-  <ion-popover trigger="popover-button2" [dismissOnSelect]="true">
+  <ion-popover  trigger="popover-button2" [dismissOnSelect]="true">
     <ng-template>
       <ion-content>
-        <ion-list>
+        <ion-list *ngIf="this.compartirUno.estado===true || this.creador===true">
           <ion-item [button]="true" id="nested-trigger">Ordenar Por</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="openModal = !openModal">Nuevo</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="presentAlert2()">Editar</ion-item>
+          <ion-item [button]="true" [detail]="false" (click)="setOpen(true)">Compartir</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="openModal2 = !openModal2">Eliminar</ion-item>
 
           <ion-popover trigger="nested-trigger" [dismissOnSelect]="true" side="end">
@@ -186,6 +234,11 @@
             </ng-template>
           </ion-popover>
         </ion-list>
+
+        <ion-list *ngIf="this.compartirUno.estado===false">
+          <ion-item [button]="true" [detail]="false" (click)="setOpen(true)">Ver Integrantes</ion-item>
+        </ion-list>
+
       </ion-content>
     </ng-template>
   </ion-popover>

@@ -13,6 +13,8 @@ import { LoadingController } from '@ionic/angular';
 export class Tab2Page implements OnInit{
   public item= new Items();
   public items:Items[]=[];
+  public item2= new Items();
+  public items2:Items[]=[];
   public isLoading = true;
   public loading:any;
 
@@ -36,15 +38,31 @@ async ngOnInit(){
     await this.loading.present();
 
     if(await this.userService.Verificar()){
-        this.itemService.allitems().then(async (res)=>{
-          this.items=res
-          const { value } = await Preferences.get({ key: 'IntemsOrden' });
-          if(value){
-            this.Ordenar(value)
-          }
+
+      const { value } = await Preferences.get({ key: 'token' });
+      if(value){
+        this.userService.Quien(value).then((data)=>{
+          this.itemService.allitems(data.data).then(async (res)=>{
+            this.items=res
+
+            //buscando los compartidos
+            this.itemService.compartidos(data.data).then((res)=>{
+              this.items2=res
+            })
+
+            //
+
+            this.loading.dismiss();
+            this.isLoading = false;
+            const { value } = await Preferences.get({ key: 'IntemsOrden' });
+            if(value){
+              this.Ordenar(value)
+            }
+          })
         })
       }
-      this.loading.dismiss();
+    }
+    this.loading.dismiss();
       this.isLoading = false;
   }
 
