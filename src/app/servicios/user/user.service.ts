@@ -89,8 +89,9 @@ export class UserService {
       return true
     };
 
-    async buscar(event:any){
-      const query = event.target.value;
+    async buscar(event:string){
+      const query = event;
+      //event.target.value
       const { value } = await Preferences.get({ key: 'token' });
       const options = {
         url: this.url+'/users/search?query='+query,

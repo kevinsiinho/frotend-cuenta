@@ -387,9 +387,13 @@ CapturaPantalla(x: number) {
 
 buscar(buscando:any){
   this.resultados=[]
-  this.userService.buscar(buscando).then((data)=>{
-    this.resultados=data
-  })
+  if(buscando.target.value.length>0){
+    this.userService.buscar(buscando.target.value).then((data)=>{
+      this.resultados=data
+    })
+  }else{
+    this.resultados=[]
+  }
 }
 
 permisos(event:any,id:string) {

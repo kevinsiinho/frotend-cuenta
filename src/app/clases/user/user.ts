@@ -1,10 +1,10 @@
 export class User {
   public id?:string
-  public name!:String
-  public nickname!:String
-  public email!:String
-  public password:String=""
-  public estado!:String
+  public name!:string
+  public nickname!:string
+  public email!:string
+  public password:string=""
+  public estado!:string
   SetValues(item:any){
     this.id=item.id
     this.name=item.nombre

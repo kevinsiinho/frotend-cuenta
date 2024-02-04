@@ -36,24 +36,26 @@ export class RegistrarsePage {
       message: 'Verificando...',
     });
     if(this.user.name!="" && this.user.nickname!="" && this.user.email!="" && this.user.password!=""){
+
         if(this.user.password.length>5){
-            if(this.user.password==="123456"){
-              this.presentAlert("Contraseña insegura")
-            }else{
-              this.user.estado="Activo"
-              this.userService.Create(this.user).then((data)=>{
-                this.loading.dismiss();
-                if(data==200){
-                  this.presentAlert("Te haz unidos a nosotros exitosamente")
-                  this.user= new User()
-                  this.link.navigate(['/login'])
-                }else{
-                  this.presentAlert("Error en el servidor, intenta nuevamente")
-                }
+          if(await this.VerificarEmail()){
+              if(this.user.password==="123456"){
+                this.presentAlert("Contraseña insegura")
+              }else{
+                this.user.estado="Activo"
+                this.userService.Create(this.user).then((data)=>{
+                  this.loading.dismiss();
+                  if(data==200){
+                    this.presentAlert("Te haz unidos a nosotros exitosamente")
+                    this.user= new User()
+                    this.link.navigate(['/login'])
+                  }else{
+                    this.presentAlert("Error en el servidor, intenta nuevamente")
+                  }
 
-              })
-            }
-
+                })
+              }
+          }
         }else{
           this.loading.dismiss();
           this.presentAlert("La contraseña debe tener más de 5 caracteres")
@@ -64,5 +66,16 @@ export class RegistrarsePage {
     }
 
   }
+
+  async VerificarEmail(): Promise<boolean> {
+    const res = await this.userService.buscar(this.user.email);
+    if (res.length > 0) {
+      this.presentAlert("Correo registrado");
+      return false;
+    } else {
+      return true;
+    }
+  }
+
 
 }

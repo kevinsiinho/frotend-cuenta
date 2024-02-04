@@ -24,6 +24,10 @@ export class Tab2Page implements OnInit{
     private loadingController: LoadingController
   ) {}
 
+
+  async ionViewWillEnter() {
+      await this.Principal()
+  }
   handleRefresh(event:any) {
     setTimeout(() => {
       this.ngOnInit()
@@ -31,7 +35,11 @@ export class Tab2Page implements OnInit{
     }, 2000);
   }
 
-async ngOnInit(){
+  ngOnInit() {
+      console.log()
+  }
+
+async Principal(){
     this.loading = await this.loadingController.create({
       message: '',
     });
