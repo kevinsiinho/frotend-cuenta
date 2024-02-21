@@ -17,6 +17,7 @@ export class LoginPage implements OnInit{
   public token:string=""
   public recordaremail:Boolean=true
   public loading:any;
+  public viewPassword:Boolean=false
 
   constructor(
     private alertController: AlertController,
@@ -35,8 +36,12 @@ export class LoginPage implements OnInit{
     await alert.present();
   }
 
-  ngOnInit() {
+async ngOnInit() {
       this.RecordarEmail();
+
+      this.loading = await this.loadingController.create({
+        message: 'Verificando...',
+      });
 
   }
 
@@ -51,10 +56,12 @@ export class LoginPage implements OnInit{
   }
 
 async ingresar(){
-  this.loading = await this.loadingController.create({
-    message: 'Verificando...',
-  });
+
   await this.loading.present();
+
+  //convierte el texto a minuscula
+  this.login.email = this.login.email.toLowerCase();
+
   if(this.login.email!=null && this.login.password!=null){
     this.userService.Login(this.login).then(async(res)=>{
        await Preferences.set({
@@ -72,6 +79,7 @@ async ingresar(){
       if(res.data.token){
          this.loading.dismiss();
          this.link.navigate(['tabs/tab2'])
+         this.login= new Login ()
       }else{
         this.loading.dismiss();
         this.presentAlert("Usuario no encontrado")
@@ -82,6 +90,21 @@ async ingresar(){
     this.presentAlert("Faltan campos por llenar")
   }
 
+}
+
+async continuar(){
+
+  await this.loading.present();
+
+  this.userService.buscar(this.login.email).then((data)=>{
+    if(data.length>0){
+      this.loading.dismiss();
+      this.viewPassword=true
+    }else{
+      this.loading.dismiss();
+      this.presentAlert("Email no encontrado")
+    }
+  })
 }
 
 }

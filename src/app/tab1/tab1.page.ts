@@ -51,19 +51,24 @@ async Guardar(){
     this.item.estado=true;
     this.item.favorito=false;
     this.item.total=0;
-    this.itemService.Create(this.item).then((res)=>{
-      if(res===200){
-        this.loading.dismiss();
-        this.isLoading = false;
-        this.presentAlert("Guardado correctamente");
-        this.item = new Items()
-      }else{
-        this.loading.dismiss();
-        this.isLoading = false;
-        this.presentAlert("Error, verifica los datos e intenta nuevamente");
-      }
-    })
-
+    if(this.item.color!=null && this.item.itemname!=""){
+      this.itemService.Create(this.item).then((res)=>{
+        if(res===200){
+          this.loading.dismiss();
+          this.isLoading = false;
+          this.presentAlert("Guardado correctamente");
+          this.item = new Items()
+        }else{
+          this.loading.dismiss();
+          this.isLoading = false;
+          this.presentAlert("Error en el servidor");
+        }
+      })
+    }else{
+      this.loading.dismiss();
+      this.isLoading = false;
+      this.presentAlert("Error, verifica los datos e intenta nuevamente");
+    }
   }
 
   async OnQuien(){

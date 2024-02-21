@@ -10,17 +10,25 @@
 
     <ion-list class="form">
       <div class="title2">Iniciar Sesión</div>
-      <ion-item class="inputs">
-        <ion-input label="Correo electrónico" labelPlacement="floating" [(ngModel)]="this.login.email" placeholder="example@gmail.com"></ion-input>
+
+      <label class="lbl-login" *ngIf="this.viewPassword===false">Correo electrónico</label>
+      <ion-item class="item-inputs" *ngIf="this.viewPassword===false">
+        <ion-input class="input"  [(ngModel)]="this.login.email" placeholder="example@gmail.com"></ion-input>
       </ion-item>
-      <ion-item class="inputs">
-        <ion-input label="contraseña" type="password" [(ngModel)]="this.login.password" labelPlacement="floating" placeholder="Escribe aquí la contraseña"></ion-input>
+
+      <label class="lbl-login" *ngIf="this.viewPassword===true">Password</label>
+      <ion-item class="item-inputs" *ngIf="this.viewPassword===true">
+        <ion-input class="input" type="password" [(ngModel)]="this.login.password" placeholder="Escribe aquí la contraseña"></ion-input>
       </ion-item>
-      <ion-button color="medium" (click)="ingresar()" expand="block">Ingresar</ion-button>
+
+      <ion-button class="btn-ingresar" *ngIf="this.viewPassword===false" color="medium" (click)="continuar()" expand="block">Continuar</ion-button>
+      <ion-button class="btn-ingresar" *ngIf="this.viewPassword===true" color="medium" (click)="ingresar()" expand="block">Ingresar</ion-button>
     </ion-list>
     <ion-checkbox [(ngModel)]="this.recordaremail" (ionChange)="RecordarEmail()" labelPlacement="end">Recordar datos</ion-checkbox>
     <a class="recuperarPassword" [routerLink]="['/registrarse']" >Registrarme</a>
   <!-- <a class="recuperarPassword" [routerLink]="['/change-password']" >¿Recuperar contraseña?</a>-->
   </div>
+
   <div class="abajo"></div>
+  <ion-label class="lbl-net">No estás conectado a internet</ion-label>
 </ion-content>

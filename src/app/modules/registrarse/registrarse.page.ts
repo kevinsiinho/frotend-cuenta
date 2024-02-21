@@ -9,17 +9,26 @@ import { UserService } from 'src/app/servicios/user/user.service';
   templateUrl: './registrarse.page.html',
   styleUrls: ['./registrarse.page.scss'],
 })
-export class RegistrarsePage {
+export class RegistrarsePage implements OnInit{
 
   public user= new User()
   public loading:any;
-
+  public showBTN:boolean=true
   constructor(
     private alertController: AlertController,
     public userService: UserService,
     public link:Router,
     private loadingController: LoadingController
     ) { }
+
+
+  async ngOnInit() {
+      this.loading = await this.loadingController.create({
+        message: 'Verificando...',
+      });
+  }
+
+
 
     async presentAlert(msn:String) {
 
@@ -31,14 +40,16 @@ export class RegistrarsePage {
       await alert.present();
     }
 
+
  async create(){
-    this.loading = await this.loadingController.create({
-      message: 'Verificando...',
-    });
+  this.showBTN=false
+
+  this.user.email = this.user.email.toLowerCase();
+  await this.loading.present();
     if(this.user.name!="" && this.user.nickname!="" && this.user.email!="" && this.user.password!=""){
 
         if(this.user.password.length>5){
-          if(await this.VerificarEmail()){
+          if(await this.VerificarEmail()===true){
               if(this.user.password==="123456"){
                 this.presentAlert("Contraseña insegura")
               }else{
@@ -64,10 +75,10 @@ export class RegistrarsePage {
       this.loading.dismiss();
       this.presentAlert("Faltan campos por llenar")
     }
-
+    this.showBTN=true
   }
 
-  async VerificarEmail(): Promise<boolean> {
+  async VerificarEmail(){
     const res = await this.userService.buscar(this.user.email);
     if (res.length > 0) {
       this.presentAlert("Correo registrado");
