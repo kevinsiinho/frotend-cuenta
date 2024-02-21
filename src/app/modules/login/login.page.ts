@@ -4,6 +4,7 @@ import { Preferences } from '@capacitor/preferences';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Login } from 'src/app/clases/login/login';
 import { UserService } from 'src/app/servicios/user/user.service';
+import { Network } from '@capacitor/network';
 
 
 @Component({
@@ -18,7 +19,6 @@ export class LoginPage implements OnInit{
   public recordaremail:Boolean=true
   public loading:any;
   public viewPassword:Boolean=false
-
   constructor(
     private alertController: AlertController,
     public userService: UserService,
@@ -36,7 +36,22 @@ export class LoginPage implements OnInit{
     await alert.present();
   }
 
+  async verificarConexion() {
+    const status = await Network.getStatus();
+    console.log('Estado de conexión:', status.connected ? 'Conectado' : 'Desconectado');
+  }
+
+  escucharCambiosConexion() {
+    Network.addListener('networkStatusChange', (status) => {
+      console.log('Estado de conexión cambiado:', status.connected ? 'Conectado' : 'Desconectado');
+    });
+  }
+
+
 async ngOnInit() {
+
+    await this.verificarConexion();
+    this.escucharCambiosConexion();
       this.RecordarEmail();
 
       this.loading = await this.loadingController.create({
