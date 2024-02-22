@@ -4,6 +4,7 @@ import { UserService } from '../servicios/user/user.service';
 import { Items } from '../clases/Items/items';
 import { ItemsService } from '../servicios/items/items.service';
 import { LoadingController } from '@ionic/angular';
+import { User } from '../clases/user/user';
 
 @Component({
   selector: 'app-tab2',
@@ -17,6 +18,7 @@ export class Tab2Page implements OnInit{
   public items2:Items[]=[];
   public isLoading = true;
   public loading:any;
+  public user = new User()
 
   constructor(
     public userService:UserService,
@@ -35,14 +37,14 @@ export class Tab2Page implements OnInit{
     }, 2000);
   }
 
-  ngOnInit() {
-      console.log()
-  }
-
-async Principal(){
+async ngOnInit() {
     this.loading = await this.loadingController.create({
       message: '',
     });
+  }
+
+async Principal(){
+
     await this.loading.present();
 
     if(await this.userService.Verificar()){
@@ -50,6 +52,11 @@ async Principal(){
       const { value } = await Preferences.get({ key: 'token' });
       if(value){
         this.userService.Quien(value).then((data)=>{
+
+          this.userService.InfoUser(data.data).then((res)=>{
+            this.user=res
+          })
+
           this.itemService.allitems(data.data).then(async (res)=>{
             this.items=res
 
@@ -59,7 +66,6 @@ async Principal(){
             })
 
             //
-
             this.loading.dismiss();
             this.isLoading = false;
             const { value } = await Preferences.get({ key: 'IntemsOrden' });

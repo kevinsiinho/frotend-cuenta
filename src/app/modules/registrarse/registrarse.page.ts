@@ -28,8 +28,6 @@ export class RegistrarsePage implements OnInit{
       });
   }
 
-
-
     async presentAlert(msn:String) {
 
       const alert = await this.alertController.create({
@@ -39,7 +37,6 @@ export class RegistrarsePage implements OnInit{
       });
       await alert.present();
     }
-
 
  async create(){
   this.showBTN=false

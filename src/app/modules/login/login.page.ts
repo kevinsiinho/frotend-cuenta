@@ -19,6 +19,8 @@ export class LoginPage implements OnInit{
   public recordaremail:Boolean=true
   public loading:any;
   public viewPassword:Boolean=false
+  public emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
   constructor(
     private alertController: AlertController,
     public userService: UserService,
@@ -77,7 +79,7 @@ async ingresar(){
   //convierte el texto a minuscula
   this.login.email = this.login.email.toLowerCase();
 
-  if(this.login.email!=null && this.login.password!=null){
+  if(this.login.password!=null){
     this.userService.Login(this.login).then(async(res)=>{
        await Preferences.set({
         key: 'token',
@@ -102,7 +104,7 @@ async ingresar(){
    })
   }else{
     this.loading.dismiss();
-    this.presentAlert("Faltan campos por llenar")
+    this.presentAlert("Escribe tu contraseña")
   }
 
 }
@@ -111,15 +113,25 @@ async continuar(){
 
   await this.loading.present();
 
-  this.userService.buscar(this.login.email).then((data)=>{
-    if(data.length>0){
-      this.loading.dismiss();
-      this.viewPassword=true
+  if(this.login.email!=null){
+    const isValidEmail = this.emailPattern.test(this.login.email);
+    if (isValidEmail) {
+      this.userService.buscar(this.login.email).then((data)=>{
+        if(data.length>0){
+          this.viewPassword=true
+        }else{
+          this.presentAlert("Email no encontrado")
+        }
+      })
+
     }else{
-      this.loading.dismiss();
-      this.presentAlert("Email no encontrado")
+      this.presentAlert("El correo electrónico ingresado no es válido")
     }
-  })
+
+  }else{
+    this.presentAlert("Introduce un Email")
+  }
+  this.loading.dismiss();
 }
 
 }

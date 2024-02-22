@@ -8,9 +8,12 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
- <ion-list>
+
+ <ion-list class="list-principal">
+
+  <label for="">Nombre del Item</label>
     <ion-item>
-      <ion-input label="Nombre del Item" [(ngModel)]="this.item.itemname" label-placement="floating" fill="outline" placeholder="Escribe aquí"></ion-input>
+      <ion-input class="inputItem"  [(ngModel)]="this.item.itemname" placeholder="Escribe aquí el nombre del Item"></ion-input>
     </ion-item>
     <ion-item>
       <ion-list>
@@ -39,9 +42,9 @@
       </ion-input>
     </ion-item>
     -->
-    <ion-button color="medium" (click)="Guardar()" expand="full">Guardar</ion-button>
+    <ion-button  color="medium" (click)="Guardar()" expand="full">Guardar</ion-button>
  </ion-list>
-
+<!--
  <ion-grid class="colores">
   <ion-row>
     <ion-col>
@@ -82,5 +85,6 @@
     </ion-col>
   </ion-row>
 </ion-grid>
+-->
 
 </ion-content>

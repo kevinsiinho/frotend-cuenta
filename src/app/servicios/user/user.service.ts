@@ -66,6 +66,57 @@ export class UserService {
     return response.status
   };
 
+  async Update(user:User){
+    const { value } = await Preferences.get({ key: 'token' });
+    const options = {
+      url: this.url+'/user/'+user.id,
+      headers: { "Content-Type": "application/json",
+      "Authorization": 'Bearer ' + value
+      },
+      data:user
+    };
+  const response: HttpResponse = await CapacitorHttp.put(options);
+        return response.status;
+  }
+
+  async UpdatePassword(id:string, password:string){
+
+    const { value } = await Preferences.get({ key: 'token' });
+    const options = {
+      url: this.url+'/user/'+id+"/password",
+      headers: { "Content-Type": "application/json",
+      "Authorization": 'Bearer ' + value
+      },
+      data:{password:password}
+    };
+        const response: HttpResponse = await CapacitorHttp.put(options);
+        return response.status;
+  }
+
+  async DeleteUser(id:String){
+    const { value } = await Preferences.get({ key: 'token' });
+    const options = {
+      url: this.url+'/user/'+id,
+      headers: { "Content-Type": "application/json",
+      "Authorization": 'Bearer ' + value
+      },
+      };
+    const response: HttpResponse = await CapacitorHttp.delete(options);
+    return response.status
+  };
+
+  async DeletePassword(id:String){
+    const { value } = await Preferences.get({ key: 'token' });
+    const options = {
+      url: this.url+'/user/credenciales/'+id,
+      headers: { "Content-Type": "application/json",
+      "Authorization": 'Bearer ' + value
+      },
+      };
+    const response: HttpResponse = await CapacitorHttp.delete(options);
+    return response.status
+  };
+
   async InfoUser(id:string){
     const { value } = await Preferences.get({ key: 'token' });
     const options = {

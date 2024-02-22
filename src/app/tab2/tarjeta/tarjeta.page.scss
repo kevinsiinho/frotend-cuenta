@@ -10,6 +10,9 @@ ion-router-outlet {
 }
 
 ion-title{
+  margin-top: 20px;
+  font-size: 20px;
+  margin-bottom: 10px;
   color: #ff8a08;
 }
 
@@ -80,10 +83,6 @@ ion-segment-button{
 
 .permisos{
   margin-left: 12px;
-}
-
-.personas{
-  font-size: 20px;
 }
 
 /*-----------------------------------------------------------------------*/

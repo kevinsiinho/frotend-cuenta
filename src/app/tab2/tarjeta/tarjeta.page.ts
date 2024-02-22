@@ -11,6 +11,7 @@ import { UserService } from 'src/app/servicios/user/user.service';
 import html2canvas from 'html2canvas';
 import { Preferences } from '@capacitor/preferences';
 import { Compartir } from 'src/app/clases/compartir/compartir';
+import { User } from 'src/app/clases/user/user';
 
 
 @Component({
@@ -29,6 +30,7 @@ export class TarjetaPage implements OnInit {
   public items:Items[]=[];
   public tarjeta=new Tarjetas();
   public tarjetas:Tarjetas[]=[];
+  public user = new User()
   public deposito= new Depositos()
   public depositos:Depositos[]=[];
   public alertInputs2:any[]=[];
@@ -88,13 +90,6 @@ export class TarjetaPage implements OnInit {
   }
 
 
-async cargando(){
-    this.loading = await this.loadingController.create({
-      message: '',
-    });
-    await this.loading.present();
-  }
-
   handleRefresh(event:any) {
     setTimeout(() => {
       this.ngOnInit()
@@ -110,6 +105,15 @@ async ngOnInit() {
   await this.loading.present();
 
   if(await this.userService.Verificar()){
+    const { value } = await Preferences.get({ key: 'token' });
+    if(value){
+      this.userService.Quien(value).then((data)=>{
+
+        this.userService.InfoUser(data.data).then((res)=>{
+          this.user=res
+        })
+      })
+    }
     this.id=this.router.snapshot.paramMap.get('id')!
     this.itemService.GetItem(this.id).then(async (res)=>{
       this.item=res;

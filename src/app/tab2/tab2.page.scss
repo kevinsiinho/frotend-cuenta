@@ -3,6 +3,10 @@ ion-toolbar{
   color: #ff8a08;
 }
 
+ion-title{
+  margin-top: 30px;
+}
+
 ion-card{
   width: 100%;
   color: white;
@@ -25,10 +29,9 @@ ion-card{
 }
 
 .btns2{
-  font-size: 20px;
+  font-size: 25px;
   float: right;
-  margin-left: auto;
-  margin-top: -10px;
+  margin-top: -20px;
 }
 
 .btns2 ion-icon{

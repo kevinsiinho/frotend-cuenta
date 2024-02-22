@@ -22,6 +22,18 @@ const routes: Routes = [
   {
     path: 'registrarse',
     loadChildren: () => import('./modules/registrarse/registrarse.module').then( m => m.RegistrarsePageModule)
+  },
+  {
+    path: 'update-user',
+    loadChildren: () => import('./modules/update-user/update-user.module').then( m => m.UpdateUserPageModule)
+  },
+  {
+    path: 'delete-user',
+    loadChildren: () => import('./modules/delete-user/delete-user.module').then( m => m.DeleteUserPageModule)
+  },
+  {
+    path: 'modificar-password',
+    loadChildren: () => import('./modules/modificar-password/modificar-password.module').then( m => m.ModificarPasswordPageModule)
   }
 ];
 @NgModule({

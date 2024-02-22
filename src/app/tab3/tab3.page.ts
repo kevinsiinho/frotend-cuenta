@@ -21,6 +21,14 @@ export class Tab3Page implements OnInit {
     public link:Router,
     private loadingController: LoadingController) {}
 
+
+    public menu=[
+      {name:"Modificar datos", icono:"", link:"/update-user", estado:true},
+      {name:"Modificar Contraseña", icono:"", link:"/modificar-password", estado:true},
+      {name:"Eliminar cuenta", icono:"", link:"/delete-user", estado:true}
+
+    ]
+
   async ngOnInit() {
 
     const loading = await this.loadingController.create({

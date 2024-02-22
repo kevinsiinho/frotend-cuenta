@@ -2,7 +2,7 @@
   <ion-toolbar>
     <ion-title>{{this.item.itemname}}
     <ion-button fill="clear" class="btns2" id="popover-button2">
-      <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+      <ion-icon name="ellipsis-vertical-outline"   slot="end"></ion-icon>
     </ion-button>
 
     <ion-button class="btns2" *ngIf="this.item.favorito===false && this.creador===true" (click)="Favorito()" fill="clear">
@@ -14,7 +14,6 @@
     </ion-button>
     </ion-title>
   </ion-toolbar>
-
   <ion-toolbar *ngIf="this.compartirUno.estado===true || this.creador===true">
     <ion-segment >
       <ion-segment-button (click)="Festado('activar')" value="true">
@@ -76,7 +75,7 @@
     </ion-card>
     </ion-item>
     <ion-item>Total: $ <span>{{this.totalTemp}}</span> </ion-item>
-    <ion-item>Creado por: <span> {{this.item.userId}}</span> </ion-item>
+    <ion-item>Creado por --  <span> {{ this.user.name}}</span> </ion-item>
   </ion-list>
 
 

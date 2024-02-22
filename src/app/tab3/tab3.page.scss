@@ -1,3 +1,23 @@
 .salir{
   color: #ff8a08;
 }
+
+.toolbar-menu{
+  color: #ff8a08;
+}
+
+a{
+  text-decoration: none;
+  color: none;
+}
+
+
+ion-menu::part(backdrop) {
+  background-color: rgba(217, 184, 217, 0.5);
+}
+
+ion-menu::part(container) {
+  border-radius: 0 20px 20px 0;
+
+  box-shadow: 4px 0px 16px rgba(212, 164, 212, 0.18);
+}

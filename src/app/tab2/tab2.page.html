@@ -3,7 +3,7 @@
     <ion-title>
       Home
       <ion-item [button]="true" [detail]="false" class="btns2" id="popover-button">
-        <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+        <ion-icon name="ellipsis-vertical-outline"  slot="end"></ion-icon>
       </ion-item>
     </ion-title>
     <ion-progress-bar *ngIf="this.isLoading===true" color="warning" type="indeterminate"></ion-progress-bar>
@@ -25,12 +25,14 @@
       </ion-card>
     </ion-item>
   </ion-list>
+
   <ion-list lines="none" *ngIf="this.items2.length>0">
     <label class="label-msn" for="">Compartidos</label>
     <ion-item *ngFor="let item of this.items2">
       <ion-card color={{item.color}} >
         <ion-card-header>
           <ion-card-title> <ion-button class="btn" expand="full" color={{item.color}} [routerLink]="['/tabs/tab2/tarjeta/',item.id]">{{item.itemname}} <ion-icon class="icons" name="chevron-forward-outline"></ion-icon></ion-button> </ion-card-title>
+          Email: {{this.user.email}} Compartido: {{item.compartir.length}}
         </ion-card-header>
       </ion-card>
     </ion-item>
