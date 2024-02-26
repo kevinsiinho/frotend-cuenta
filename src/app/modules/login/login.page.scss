@@ -70,7 +70,7 @@ ion-list{
 
 }
 
-.btn-ingresar{
+.btn-ingresar, .btn-regresar{
   margin-top: 30px;
   width: 92%;
   margin: 0 auto;
@@ -80,6 +80,9 @@ ion-list{
 
 }
 
+.btn-regresar{
+  margin-top: 20px;
+}
 
 /*fondo*/
 .abajo{
