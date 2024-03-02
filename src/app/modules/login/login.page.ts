@@ -17,6 +17,8 @@ export class LoginPage implements OnInit{
   public login= new Login()
   public token:string=""
   public recordaremail!:Boolean
+  public estadoBuscar:Boolean=false
+  public email:string=""
   public loading:any;
   public viewPassword:Boolean=false
   public emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -49,18 +51,19 @@ export class LoginPage implements OnInit{
     });
   }
 
-
 async ngOnInit() {
     await this.verificarConexion();
     this.escucharCambiosConexion();
-     // this.RecordarEmail();
      const result2 = await Preferences.get({ key: 'select' });
     this.recordaremail = Boolean(JSON.parse(result2.value!))
+
     if (this.recordaremail) {
       const result = await Preferences.get({ key: 'email' });
+      this.email = result.value!;
       this.login.email = result.value!;
     } else {
-      this.login.email = "";
+      this.email = "";
+      this.login.email="";
       await Preferences.remove({ key: 'email' });
     }
       this.loading = await this.loadingController.create({
@@ -69,17 +72,14 @@ async ngOnInit() {
 
   }
 
-
   async RecordarEmail() {
 
-    if(!this.recordaremail){
-      this.recordaremail=true
+    if(this.recordaremail){
       await Preferences.set({
         key: 'select',
         value:'true',
       });
     }else{
-      this.recordaremail=false
       await Preferences.set({
         key: 'select',
         value:'false',
@@ -125,39 +125,39 @@ async ingresar(){
 }
 
 async continuar(){
+  await this.loading.present();
 
-  //const { value } = await Preferences.get({ key: 'email' });
-  //if(value ){
-    //this.viewPassword=true
-  //}else{
+    if(this.login.email!=null && this.recordaremail){
+      this.viewPassword=true
+      this.loading.dismiss();
+    }else{
 
-    await this.loading.present();
-
-    if(this.login.email!=null){
-      const isValidEmail = this.emailPattern.test(this.login.email);
-      if (isValidEmail) {
-        this.userService.buscar(this.login.email).then((data)=>{
-          if(data.length>0){
-            this.viewPassword=true
-            this.loading.dismiss();
-          }else{
-            this.presentAlert("Email no encontrado")
-            this.loading.dismiss();
-          }
-        })
-
+      if(this.estadoBuscar){
+        this.viewPassword=true
+        this.loading.dismiss();
       }else{
-        this.presentAlert("El correo electrónico ingresado no es válido")
+        this.presentAlert("Introduce un Email valido")
         this.loading.dismiss();
       }
-
-    }else{
-      this.presentAlert("Introduce un Email")
-      this.loading.dismiss();
     }
 
- // }
+}
 
+buscar(buscando:any){
+  this.estadoBuscar=false
+  var isValidEmail=false
+
+  if(buscando.target.value.length>9){
+    this.userService.buscar(buscando.target.value).then((data)=>{
+      isValidEmail = this.emailPattern.test(buscando.target.value);
+
+      if(data.length>0 && isValidEmail && buscando.target.value===data[0].email){
+        this.login.email=data[0].email
+        this.estadoBuscar=true
+      }
+
+    })
+  }
 }
 
 regresar(){

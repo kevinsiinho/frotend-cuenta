@@ -13,8 +13,14 @@
 
       <label class="lbl-login" *ngIf="this.viewPassword===false">Correo electrónico</label>
       <ion-item class="item-inputs" *ngIf="this.viewPassword===false">
-        <ion-input class="input"  [(ngModel)]="this.login.email" placeholder="example@gmail.com"></ion-input>
-      </ion-item>
+        <ion-input
+              placeholder="example@gmail.com"
+              value="{{this.email}}"
+              class="input"
+              (keyup)="buscar($event)"
+        ></ion-input>
+    </ion-item>
+
 
       <label class="lbl-login" *ngIf="this.viewPassword===true">Password</label>
       <ion-item class="item-inputs" *ngIf="this.viewPassword===true">
