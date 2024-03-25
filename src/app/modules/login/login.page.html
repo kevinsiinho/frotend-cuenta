@@ -11,25 +11,26 @@
     <ion-list class="form">
       <div class="title2">Iniciar Sesión</div>
 
-      <label class="lbl-login" *ngIf="this.viewPassword===false">Correo electrónico</label>
-      <ion-item class="item-inputs" *ngIf="this.viewPassword===false">
+      <label class="lbl-login">Correo electrónico</label>
+      <ion-item class="item-inputs">
         <ion-input
               placeholder="example@gmail.com"
-              value="{{this.email}}"
               class="input"
-              (keyup)="buscar($event)"
+              [(ngModel)]="this.login.email"
         ></ion-input>
     </ion-item>
 
-
-      <label class="lbl-login" *ngIf="this.viewPassword===true">Password</label>
-      <ion-item class="item-inputs" *ngIf="this.viewPassword===true">
-        <ion-input class="input" type="password" [(ngModel)]="this.login.password" placeholder="Escribe aquí la contraseña"></ion-input>
+      <label class="lbl-login" >Password</label>
+      <ion-item class="item-inputs" >
+        <ion-input
+              class="input"
+              type="password"
+              [(ngModel)]="this.login.password"
+              placeholder="Escribe aquí la contraseña">
+        </ion-input>
       </ion-item>
 
-      <ion-button class="btn-ingresar" *ngIf="this.viewPassword===false" color="medium" (click)="continuar()" expand="block">Continuar</ion-button>
-      <ion-button class="btn-ingresar" *ngIf="this.viewPassword===true" color="medium" (click)="ingresar()" expand="block">Ingresar</ion-button>
-      <ion-button class="btn-regresar" *ngIf="this.viewPassword===true" color="dark" (click)="regresar()" expand="block">Regresar</ion-button>
+      <ion-button class="btn-ingresar" color="medium" (click)="ingresar()" expand="block">Ingresar</ion-button>
     </ion-list>
     <ion-checkbox value="{{this.recordaremail}}" [(ngModel)]="this.recordaremail" (ionChange)="RecordarEmail()" labelPlacement="end">Recordar datos</ion-checkbox>
     <a class="recuperarPassword" [routerLink]="['/registrarse']" >Registrarme</a>

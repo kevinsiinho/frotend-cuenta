@@ -17,10 +17,8 @@ export class LoginPage implements OnInit{
   public login= new Login()
   public token:string=""
   public recordaremail!:Boolean
-  public estadoBuscar:Boolean=false
   public email:string=""
   public loading:any;
-  public viewPassword:Boolean=false
   public emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   constructor(
@@ -52,7 +50,7 @@ export class LoginPage implements OnInit{
   }
 
 async ngOnInit() {
-    await this.verificarConexion();
+   // await this.verificarConexion();
     this.escucharCambiosConexion();
      const result2 = await Preferences.get({ key: 'select' });
     this.recordaremail = Boolean(JSON.parse(result2.value!))
@@ -88,13 +86,16 @@ async ngOnInit() {
   }
 
 async ingresar(){
-
+ var isValidEmail=false
   await this.loading.present();
 
   //convierte el texto a minuscula
-  this.login.email = this.login.email.toLowerCase();
+  isValidEmail = this.emailPattern.test(this.login.email);
 
-  if(this.login.password!=null){
+  if(this.login.password!=null && isValidEmail){
+
+    this.login.email = this.login.email.toLowerCase();
+
     this.userService.Login(this.login).then(async(res)=>{
        await Preferences.set({
         key: 'token',
@@ -109,60 +110,19 @@ async ingresar(){
       }
 
       if(res.data.token){
-         this.loading.dismiss();
          this.link.navigate(['tabs/tab2'])
          this.login= new Login ()
+         this.loading.dismiss();
       }else{
         this.loading.dismiss();
         this.presentAlert("Usuario no encontrado")
       }
-   })
+   }).then
   }else{
     this.loading.dismiss();
-    this.presentAlert("Escribe tu contraseña")
+    this.presentAlert("Verifica los campos e intenta nuevamente.")
   }
 
 }
 
-async continuar(){
-  await this.loading.present();
-
-    if(this.login.email!=null && this.recordaremail){
-      this.viewPassword=true
-      this.loading.dismiss();
-    }else{
-
-      if(this.estadoBuscar){
-        this.viewPassword=true
-        this.loading.dismiss();
-      }else{
-        this.presentAlert("Introduce un Email valido")
-        this.loading.dismiss();
-      }
-    }
-
 }
-
-buscar(buscando:any){
-  this.estadoBuscar=false
-  var isValidEmail=false
-
-  if(buscando.target.value.length>9){
-    this.userService.buscar(buscando.target.value).then((data)=>{
-      isValidEmail = this.emailPattern.test(buscando.target.value);
-
-      if(data.length>0 && isValidEmail && buscando.target.value===data[0].email){
-        this.login.email=data[0].email
-        this.estadoBuscar=true
-      }
-
-    })
-  }
-}
-
-regresar(){
-  this.viewPassword=false
-}
-
-}
-

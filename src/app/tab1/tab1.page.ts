@@ -51,6 +51,7 @@ async Guardar(){
     this.item.estado=true;
     this.item.favorito=false;
     this.item.total=0;
+    console.log(this.item)
     if(this.item.color!=null && this.item.itemname!=""){
       this.itemService.Create(this.item).then((res)=>{
         if(res===200){
