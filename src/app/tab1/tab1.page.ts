@@ -16,6 +16,7 @@ export class Tab1Page implements OnInit{
     public items:Items[]=[];
     public isLoading = false;
     public loading:any;
+    public iduser!:string
   constructor(
     public itemService:ItemsService,
     public link:Router,
@@ -34,37 +35,55 @@ export class Tab1Page implements OnInit{
     await alert.present();
   }
 
-
 async ngOnInit(){
-    if(await this.userService.Verificar()){
-      this.OnQuien()
-      }
 
+  if(await this.userService.Verificar()){
+
+    const { value } = await Preferences.get({ key: 'token' });
+    if(value){
+      this.userService.Quien(value).then((data)=>{
+        this.iduser=data.data
+        this.itemService.allitems(data.data).then(async (res)=>{
+          this.items=res
+        })
+      })
+    }
   }
 
+}
+
 async Guardar(){
+
   this.loading = await this.loadingController.create({
     message: 'Cargando...',
   });
+
   await this.loading.present();
   this.isLoading = true;
     this.item.estado=true;
     this.item.favorito=false;
     this.item.total=0;
-    console.log(this.item)
+    this.item.userId=this.iduser
     if(this.item.color!=null && this.item.itemname!=""){
-      this.itemService.Create(this.item).then((res)=>{
-        if(res===200){
-          this.loading.dismiss();
-          this.isLoading = false;
-          this.presentAlert("Guardado correctamente");
-          this.item = new Items()
-        }else{
-          this.loading.dismiss();
-          this.isLoading = false;
-          this.presentAlert("Error en el servidor");
-        }
-      })
+
+      if(this.Duplicado()){
+            this.presentAlert("Ese nombre ya existe, intenta con uno diferente.");
+            this.loading.dismiss();
+            this.isLoading = false;
+      }else{
+        this.itemService.Create(this.item).then((res)=>{
+          if(res===200){
+            this.loading.dismiss();
+            this.isLoading = false;
+            this.presentAlert("Guardado correctamente");
+            this.item = new Items()
+          }else{
+            this.loading.dismiss();
+            this.isLoading = false;
+            this.presentAlert("Error en el servidor");
+          }
+        })
+      }
     }else{
       this.loading.dismiss();
       this.isLoading = false;
@@ -72,11 +91,17 @@ async Guardar(){
     }
   }
 
-  async OnQuien(){
-    const { value } = await Preferences.get({ key: 'token' });
-    if(value)
-    this.userService.Quien(value).then((res)=>{
-      this.item.userId=res.data
-    })
-  }
+//Verifica que no haya dos items iguales
+Duplicado(){
+ let duplicado=false
+
+  this.items.forEach(item => {
+    if(item.itemname==this.item.itemname){
+        duplicado=true
+    }
+  });
+
+  return duplicado;
+}
+
 }

@@ -75,7 +75,7 @@
     </ion-card>
     </ion-item>
     <ion-item>Total: $ <span>{{this.totalTemp}}</span> </ion-item>
-    <ion-item>Creado por --  <span> {{ this.user.name}}</span> </ion-item>
+    <ion-item>Usuario --  <span> {{ this.user.name}}</span> </ion-item>
   </ion-list>
 
 
@@ -197,9 +197,9 @@
               <label for="">Personas en el Item</label>
               <ion-item class="personas" *ngFor="let compartir of this.item.compartir; let z=index">
                   {{compartir.email}}
-                  <ion-select *ngIf="this.compartirUno.estado===true || this.creador===true" class="permisos" (ionChange)="permisos($event,compartir.iduser!)" aria-label="Estados" interface="popover" placeholder='"Editar: " {{compartir.estado}}'>
-                    <ion-select-option value={{true}}>Editar</ion-select-option>
-                    <ion-select-option value={{false}}>Solo ver</ion-select-option>
+                  <ion-select [(ngModel)]="this.EstadoEditar" *ngIf="this.compartirUno.estado===true || this.creador===true" class="permisos" (ionChange)="permisos($event,compartir.iduser!)" aria-label="Estados" interface="popover" placeholder='"Editar: " {{compartir.estado}}'>
+                    <ion-select-option value="editar" >Editar</ion-select-option>
+                    <ion-select-option value="ver" >Solo ver</ion-select-option>
                   </ion-select>
                    <ion-button *ngIf="this.compartirUno.estado===true || this.creador===true" color="danger" class="btn-eliminar-compartido" (click)="EliminarCompartido(compartir.iduser!, z)">
                     <ion-icon name="close-circle-outline"></ion-icon>
@@ -217,7 +217,7 @@
         <ion-list *ngIf="this.compartirUno.estado===true || this.creador===true">
           <ion-item [button]="true" id="nested-trigger">Ordenar Por</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="openModal = !openModal">Nuevo</ion-item>
-          <ion-item [button]="true" [detail]="false" (click)="presentAlert2()">Editar</ion-item>
+          <ion-item *ngIf="this.creador===true" [button]="true" [detail]="false" (click)="presentAlert2()">Editar</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="setOpen(true)">Compartir</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="openModal2 = !openModal2">Eliminar</ion-item>
 

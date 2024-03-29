@@ -32,7 +32,7 @@
       <ion-card color={{item.color}} >
         <ion-card-header>
           <ion-card-title> <ion-button class="btn" expand="full" color={{item.color}} [routerLink]="['/tabs/tab2/tarjeta/',item.id]">{{item.itemname}} <ion-icon class="icons" name="chevron-forward-outline"></ion-icon></ion-button> </ion-card-title>
-          Email: {{this.user.email}} Compartido: {{item.compartir.length}}
+           Número de veces compartidos: {{item.compartir.length}}
         </ion-card-header>
       </ion-card>
     </ion-item>

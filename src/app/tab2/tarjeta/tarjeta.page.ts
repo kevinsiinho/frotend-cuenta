@@ -43,6 +43,7 @@ export class TarjetaPage implements OnInit {
   public totalTemp:string=""
   public colorFav!:string;
   public creador!:boolean
+  public EstadoEditar!:string
   openModal = false;
   openModal2 = false;
   isModalOpen = false;
@@ -114,6 +115,7 @@ async ngOnInit() {
         })
       })
     }
+
     this.id=this.router.snapshot.paramMap.get('id')!
     this.itemService.GetItem(this.id).then(async (res)=>{
       this.item=res;
@@ -148,8 +150,6 @@ async ngOnInit() {
         this.item.compartir.forEach(element => {
           if(res.data===element.iduser){
             this.compartirUno=element
-            this.compartirUno.estado = this.compartirUno.estado ? true : false;
-            console.log(this.compartirUno)
           }
         });
        }
@@ -387,8 +387,6 @@ CapturaPantalla(x: number) {
 }
 
 /*Buscar */
-
-
 buscar(buscando:any){
   this.resultados=[]
   if(buscando.target.value.length>0){
@@ -402,15 +400,19 @@ buscar(buscando:any){
 
 permisos(event:any,id:string) {
   const valorSeleccionado = event.detail.value;
+
   this.item.compartir.forEach(element => {
     if(element.iduser===id){
-      element.estado=valorSeleccionado
+      if(this.EstadoEditar=="editar"){
+        element.estado=true
+      }else if(this.EstadoEditar=="ver"){
+        element.estado=false
+      }
       return
     }
   });
   this.Update()
 }
-
 
 async add(id:string, email:string){
 
