@@ -68,7 +68,6 @@ async  verificar(){
               const { value } = await Preferences.get({ key: 'token' });
             if(value){
               this.userService.Quien(value).then((res)=>{
-                console.log(res.data)
                 this.userService.UpdatePassword(res.data,this.password2).then((res)=>{
                   if(res==204){
                     this.loading.dismiss();

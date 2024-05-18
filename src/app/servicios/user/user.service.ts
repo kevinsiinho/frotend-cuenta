@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { CapacitorHttp, HttpResponse } from '@capacitor/core';
 import { Preferences } from '@capacitor/preferences';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { Login } from 'src/app/clases/login/login';
 import { User } from 'src/app/clases/user/user';
 import { environment } from 'src/environments/environment.prod';
@@ -15,7 +16,22 @@ export class UserService {
   public url = environment.url
   public users:User[]=[];
   public user= new User()
-  constructor(public link:Router) { }
+  constructor(
+    public link:Router,
+    private alertController: AlertController,
+    private loadingController: LoadingController
+    ) { }
+
+    async presentAlert(msn:String) {
+
+      const alert = await this.alertController.create({
+        header: 'Mensaje',
+        message: ''+msn,
+        buttons: ['ACEPTAR'],
+      });
+      await alert.present();
+    }
+
 /*
   async alluser():Promise<any>{
     this.users=[]
@@ -33,7 +49,8 @@ export class UserService {
         return this.users
   }
 */
-  async Login(login:Login){
+
+async Login(login:Login){
     const options = {
       url: this.url+'/users/login/',
       headers: { "Content-Type": "application/json" },
@@ -43,6 +60,7 @@ export class UserService {
   const response: HttpResponse = await CapacitorHttp.post(options);
    return response
   }
+
 
   async Quien(token:string){
     const options = {
@@ -63,15 +81,14 @@ export class UserService {
       data: user
       };
     const response: HttpResponse = await CapacitorHttp.post(options);
-    return response.status
+    return response
   };
 
   async Update(user:User){
     const { value } = await Preferences.get({ key: 'token' });
     const options = {
       url: this.url+'/user/'+user.id,
-      headers: { "Content-Type": "application/json",
-      "Authorization": 'Bearer ' + value
+      headers: { "Content-Type": "application/json"
       },
       data:user
     };
@@ -118,11 +135,9 @@ export class UserService {
   };
 
   async InfoUser(id:string){
-    const { value } = await Preferences.get({ key: 'token' });
     const options = {
-      url: this.url+'/whoAmI'+id,
-      headers: { "Content-Type": "application/json",
-      "Authorization": 'Bearer ' + value
+      url: this.url+'/whoAmI/'+id,
+      headers: { "Content-Type": "application/json"
       }
     };
 
@@ -130,15 +145,47 @@ export class UserService {
   return response.data
   }
 
-
+  //mejorar esto
   async Verificar(){
     const { value } = await Preferences.get({ key: 'token' });
-    if(!value){
-      this.link.navigate(['login'])
-      return false
-      }
-      return true
+
+   try {
+    const options = {
+      url: this.url+'/whoAmI',
+      headers: { "Content-Type": "application/json",
+                  "Authorization": 'Bearer ' + value
+               }
     };
+
+  const response: HttpResponse = await CapacitorHttp.get(options);
+
+  if(response.status===401){
+    this.link.navigate(['login'])
+    return false
+  }else{
+    let valor=false
+    return  this.InfoUser(response.data).then((user)=>{
+      if(user.estado=="Activo"){
+        valor=true
+      }else if(user.estado=="verificar"){
+        this.link.navigate(['/codigo/'+user.id])
+      }else{
+        this.link.navigate(['login'])
+        valor= false
+      }
+      return valor
+    })
+
+
+  }
+
+   } catch (error) {
+    this.link.navigate(['login'])
+    this.presentAlert("Error en el servidor intenta más tarde")
+    return false
+   }
+
+};
 
     async buscar(event:string){
       const query = event;
@@ -154,7 +201,4 @@ export class UserService {
     const response: HttpResponse = await CapacitorHttp.get(options);
     return response.data
     }
-
-
-
 }

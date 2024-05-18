@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { User } from '../clases/user/user';
+import { UserService } from '../servicios/user/user.service';
+import { Preferences } from '@capacitor/preferences';
 
 @Component({
   selector: 'app-tabs',
@@ -6,7 +9,4 @@ import { Component } from '@angular/core';
   styleUrls: ['tabs.page.scss']
 })
 export class TabsPage {
-
-  constructor() {}
-
 }

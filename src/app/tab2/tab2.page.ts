@@ -30,6 +30,7 @@ export class Tab2Page implements OnInit{
   async ionViewWillEnter() {
       await this.Principal()
   }
+
   handleRefresh(event:any) {
     setTimeout(() => {
       this.ngOnInit()

@@ -60,7 +60,7 @@ async presentAlert(msn:String) {
 async actualizar(){
   this.user.email = this.user.email.toLowerCase();
   await this.loading.present();
-  if(this.user.name!="" && this.user.nickname!="" && this.user.email!=""){
+  if(this.user.name!="" && this.user.nickname!="" && this.user.email!="" && this.user.cel>2999999999 && this.user.cel<4000000000){
     if(this.email!=this.user.email){
       if(await this.VerificarEmail(this.email)==false){
         this.permitir=true
@@ -84,11 +84,10 @@ async actualizar(){
       })
       }
 
+  }else{
+    this.presentAlert("Verifica los campos")
   }
 }
-
-
-
 
   async VerificarEmail(email:string){
     const res = await this.userService.buscar(email);

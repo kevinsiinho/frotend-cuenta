@@ -1,3 +1,16 @@
 ion-tabs ion-tab-bar ion-tab-button{
   color:#ff8a08;
 }
+
+.avatar{
+  width: 25px;
+  height: 25px;
+  border: 0.5px solid;
+  border-radius: 50%;
+  background-color: none;
+  color:#ff8a08;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

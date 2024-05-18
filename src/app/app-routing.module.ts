@@ -34,6 +34,14 @@ const routes: Routes = [
   {
     path: 'modificar-password',
     loadChildren: () => import('./modules/modificar-password/modificar-password.module').then( m => m.ModificarPasswordPageModule)
+  },
+  {
+    path: 'codigo/:id',
+    loadChildren: () => import('./modules/codigo/codigo.module').then( m => m.CodigoPageModule)
+  },
+  {
+    path: 'ingresar-codigo/:id',
+    loadChildren: () => import('./modules/ingresar-codigo/ingresar-codigo.module').then( m => m.IngresarCodigoPageModule)
   }
 ];
 @NgModule({

@@ -5,6 +5,7 @@ import { AlertController, LoadingController } from '@ionic/angular';
 import { Login } from 'src/app/clases/login/login';
 import { UserService } from 'src/app/servicios/user/user.service';
 import { Network } from '@capacitor/network';
+import { User } from 'src/app/clases/user/user';
 
 
 @Component({
@@ -50,7 +51,7 @@ export class LoginPage implements OnInit{
   }
 
 async ngOnInit() {
-   // await this.verificarConexion();
+    await this.verificarConexion();
     this.escucharCambiosConexion();
      const result2 = await Preferences.get({ key: 'select' });
     this.recordaremail = Boolean(JSON.parse(result2.value!))
@@ -89,7 +90,7 @@ async ingresar(){
  var isValidEmail=false
   await this.loading.present();
 
-  //convierte el texto a minuscula
+  //verifica si el correo es valido
   isValidEmail = this.emailPattern.test(this.login.email);
 
   if(this.login.password!=null && isValidEmail){
@@ -97,27 +98,47 @@ async ingresar(){
     this.login.email = this.login.email.toLowerCase();
 
     this.userService.Login(this.login).then(async(res)=>{
-       await Preferences.set({
-        key: 'token',
-        value: res.data.token,
-      });
 
-      if(this.recordaremail){
+      if(res.status===200){
         await Preferences.set({
-          key: 'email',
-          value: this.login.email,
+          key: 'token',
+          value: res.data.token,
         });
-      }
 
-      if(res.data.token){
-         this.link.navigate(['tabs/tab2'])
-         this.login= new Login ()
-         this.loading.dismiss();
+        if(this.recordaremail){
+          await Preferences.set({
+            key: 'email',
+            value: this.login.email,
+          });
+          this.login= new Login ()
+        //Verificando el estado de la cuenta
+        this.userService.Quien(res.data.token).then((res)=>{
+          this.userService.InfoUser(res.data).then((info:User)=>{
+            this.loading.dismiss();
+            if(info.estado=="Activo"){
+              this.link.navigate(['tabs/tab2'])
+            }else if(info.estado=="pendiente"){
+              //para recuperar la contraseña
+            }else if(info.estado=="verificar"){
+              this.link.navigate(['/codigo/'+info.id])
+            }else if(info.estado=="suspendida"){
+              //poner para cuando sea suspendida
+            }else if(info.estado=="desactivada"){
+              this.presentAlert("Tu cuenta ha sido bloqueado por uso inadecuado, si consideras que hay un error por favor comunicate con atención al usuario.")
+            }
+          })
+
+        })
+
+        }
+
+
       }else{
         this.loading.dismiss();
-        this.presentAlert("Usuario no encontrado")
+        this.presentAlert("Credenciales invalidas, intentanuevamente")
       }
-   }).then
+   })
+
   }else{
     this.loading.dismiss();
     this.presentAlert("Verifica los campos e intenta nuevamente.")

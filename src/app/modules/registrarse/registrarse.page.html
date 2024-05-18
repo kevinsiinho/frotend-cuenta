@@ -10,6 +10,7 @@
 
     <ion-list class="form">
       <div class="title2">Registrarme</div>
+      <div class="form1" *ngIf="!this.showBTN">
       <ion-item class="inputs">
         <ion-input label="Nombres" labelPlacement="floating" [(ngModel)]="this.user.name" placeholder="Escribe aquí"></ion-input>
       </ion-item>
@@ -17,12 +18,31 @@
         <ion-input label="Apellidos" labelPlacement="floating" [(ngModel)]="this.user.nickname" placeholder="Escribe aquí"></ion-input>
       </ion-item>
       <ion-item class="inputs">
-        <ion-input label="Correo electrónico" type="email" labelPlacement="floating" [(ngModel)]="this.user.email" placeholder="example@gmail.com"></ion-input>
+        <ion-input label="Número de celular" type="number" labelPlacement="floating" [(ngModel)]="this.user.cel" placeholder="3XX XXX XXXX"></ion-input>
       </ion-item>
       <ion-item class="inputs">
         <ion-input label="contraseña" type="password" [(ngModel)]="this.user.password" labelPlacement="floating" placeholder="Escribe aquí la contraseña"></ion-input>
       </ion-item>
-      <ion-button *ngIf="this.showBTN===true" color="medium" (click)="create()" expand="block">Crear cuenta</ion-button>
+    </div>
+
+    <div class="form2" *ngIf="this.showBTN">
+      <ion-item>
+      Debes tener en cuenta que el correo electrónico que ingreses debe ser único,
+      estar activo y no estar registrado.
+      </ion-item>
+
+      <ion-item class="inputs">
+        <ion-input label="Correo electrónico" type="email" labelPlacement="floating" [(ngModel)]="this.user.email" placeholder="example@gmail.com"></ion-input>
+      </ion-item>
+
+      <ion-item class="inputs">
+        <ion-input label="Repite tu correo electrónico" type="email" labelPlacement="floating" [(ngModel)]="this.email" placeholder="example@gmail.com"></ion-input>
+      </ion-item>
+    </div>
+
+      <ion-button *ngIf="this.showBTN" color="medium" (click)="create()" expand="block">Crear cuenta</ion-button>
+      <ion-button *ngIf="!this.showBTN" color="medium" (click)="Datos()" expand="block">Siguiente</ion-button>
+      <ion-button *ngIf="this.showBTN" color="medium" (click)="Regresar()" expand="block">Regresar</ion-button>
     </ion-list>
     <a class="recuperarPassword" [routerLink]="['/login']" >Iniciar Sesión</a>
   </div>
