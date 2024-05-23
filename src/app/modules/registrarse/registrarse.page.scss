@@ -41,8 +41,10 @@ a{
 .inputs{
   margin-bottom: 20px;
   font-size: 20px;
-  background-color: none;
-  border: none;
+}
+
+.inputs ion-input{
+  border-bottom: solid 1px;
 }
 
 ion-list{

@@ -163,52 +163,6 @@
         </ion-content>
       </ng-template>
     </ion-modal>
-
-      <ion-modal [isOpen]="isModalOpen">
-        <ng-template>
-          <ion-header>
-            <ion-toolbar>
-              <ion-title>Compartir Item</ion-title>
-              <ion-buttons slot="end">
-                <ion-button (click)="setOpen(false)">Close</ion-button>
-              </ion-buttons>
-            </ion-toolbar>
-          </ion-header>
-          <ion-content class="ion-padding">
-            <ion-searchbar
-            *ngIf="this.compartirUno.estado===true || this.creador===true"
-             show-clear-button="always"
-             placeholder="Escribe aquí el email, nombre o apellido."
-             (input)="buscar($event)"
-            ></ion-searchbar>
-              <!-- Muestra los resultados en tiempo real -->
-            <ion-list *ngIf="resultados.length > 0 && this.compartirUno.estado===true || this.creador===true">
-              <ion-button *ngFor="let usuario of resultados" (click)="add(usuario.id,usuario.email)">
-                {{ usuario.name }} - {{ usuario.email }}
-              </ion-button>
-            </ion-list>
-
-            <!-- Muestra un mensaje si no hay resultados -->
-            <div *ngIf="resultados.length === 0 ">
-
-            </div>
-
-            <ion-list class="list-compartidos">
-              <label for="">Personas en el Item</label>
-              <ion-item class="personas" *ngFor="let compartir of this.item.compartir; let z=index">
-                  {{compartir.email}}
-                  <ion-select [(ngModel)]="this.EstadoEditar" *ngIf="this.compartirUno.estado===true || this.creador===true" class="permisos" (ionChange)="permisos($event,compartir.iduser!)" aria-label="Estados" interface="popover" placeholder='"Editar: " {{compartir.estado}}'>
-                    <ion-select-option value="editar" >Editar</ion-select-option>
-                    <ion-select-option value="ver" >Solo ver</ion-select-option>
-                  </ion-select>
-                   <ion-button *ngIf="this.compartirUno.estado===true || this.creador===true" color="danger" class="btn-eliminar-compartido" (click)="EliminarCompartido(compartir.iduser!, z)">
-                    <ion-icon name="close-circle-outline"></ion-icon>
-                   </ion-button>
-              </ion-item>
-            </ion-list>
-          </ion-content>
-        </ng-template>
-      </ion-modal>
   </ion-content>
 
   <ion-popover  trigger="popover-button2" [dismissOnSelect]="true">
@@ -218,7 +172,7 @@
           <ion-item [button]="true" id="nested-trigger">Ordenar Por</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="openModal = !openModal">Nuevo</ion-item>
           <ion-item *ngIf="this.creador===true" [button]="true" [detail]="false" (click)="presentAlert2()">Editar</ion-item>
-          <ion-item [button]="true" [detail]="false" (click)="setOpen(true)">Compartir</ion-item>
+          <ion-item [button]="true" [detail]="false" (click)="Compartir()">Compartir</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="openModal2 = !openModal2">Eliminar</ion-item>
 
           <ion-popover trigger="nested-trigger" [dismissOnSelect]="true" side="end">

@@ -1,0 +1,28 @@
+ion-segment-button{
+  font-size: 25px;
+  color: white;
+}
+
+.avatar{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+  background-color: #ff8a08;
+}
+.list-compartidos{
+  margin-top: 10px;
+}
+
+.btn-eliminar-compartido{
+  margin-left: 10px;
+  font-size: 15px;
+}
+
+.permisos{
+  margin-left: 12px;
+}

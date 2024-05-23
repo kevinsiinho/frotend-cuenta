@@ -42,19 +42,19 @@ a{
 .item-inputs{
   margin-bottom: 20px;
   font-size: 20px;
-  background-color: none;
-  border: none;
 }
+
+.item-inputs ion-input{
+  border-bottom: solid 1px;
+}
+
 
 ion-list{
   margin-bottom: 10px;
+  background-color: none;
 }
 
-.input{
-  border: 2px solid gray;
-  border-radius: 10px;
-  margin-top: 5px;
-}
+
 
 .lbl-login{
   margin-left: 20px;

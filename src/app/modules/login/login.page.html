@@ -11,19 +11,19 @@
     <ion-list class="form">
       <div class="title2">Iniciar Sesión</div>
 
-      <label class="lbl-login">Correo electrónico</label>
       <ion-item class="item-inputs">
         <ion-input
+              label="Correo"
+              labelPlacement="floating"
               placeholder="example@gmail.com"
-              class="input"
               [(ngModel)]="this.login.email"
         ></ion-input>
     </ion-item>
 
-      <label class="lbl-login" >Password</label>
       <ion-item class="item-inputs" >
         <ion-input
-              class="input"
+              label="Contraseña"
+              labelPlacement="floating"
               type="password"
               [(ngModel)]="this.login.password"
               placeholder="Escribe aquí la contraseña">

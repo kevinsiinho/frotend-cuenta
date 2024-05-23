@@ -1,0 +1,51 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Compartir</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+    <ion-searchbar
+    *ngIf="this.compartirUno.estado===true || this.creador===true"
+     show-clear-button="always"
+     placeholder="Escribe aquí el email, nombre o apellido."
+     (input)="buscar($event)"
+    ></ion-searchbar>
+      <!-- Muestra los resultados en tiempo real -->
+    <ion-list *ngIf="resultados.length > 0 && this.compartirUno.estado===true || this.creador===true">
+      <ion-button *ngFor="let usuario of resultados" (click)="add(usuario.id,usuario.email,usuario.name,usuario.nickname)">
+        {{ usuario.name }} - {{ usuario.email }}
+      </ion-button>
+    </ion-list>
+
+    <!-- Muestra un mensaje si no hay resultados -->
+    <div *ngIf="resultados.length === 0 ">
+
+    </div>
+
+    <ion-list class="list-compartidos">
+      <label for="">Personas en el Item</label>
+      <ion-item class="personas" *ngFor="let compartir of this.item.compartir; let z=index">
+
+        <div class="avatar">{{ compartir.nombre!.charAt(0) }}</div>{{compartir.email}}
+        <!--  <ion-select [(ngModel)]="this.EstadoEditar" *ngIf="this.compartirUno.estado===true || this.creador===true" class="permisos" (ionChange)="permisos($event,compartir.iduser!)" aria-label="Estados" interface="popover" placeholder='"Editar: " {{compartir.estado}}'>
+            <ion-select-option value="editar" >Editar</ion-select-option>
+            <ion-select-option value="ver" >Solo ver</ion-select-option>
+          </ion-select>
+           <ion-button *ngIf="this.compartirUno.estado===true || this.creador===true" color="danger" class="btn-eliminar-compartido" (click)="EliminarCompartido(compartir.iduser!, z)">
+            <ion-icon name="close-circle-outline"></ion-icon>
+           </ion-button>
+
+        -->
+      </ion-item>
+    </ion-list>
+
+
+<ion-alert
+  trigger="present-alert"
+  header="Select your favorite color"
+  [buttons]="alertButtons"
+  [inputs]="alertInputs"
+></ion-alert>
+  </ion-content>

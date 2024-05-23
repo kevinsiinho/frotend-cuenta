@@ -11,9 +11,13 @@
 
  <ion-list class="list-principal">
 
-  <label for="">Nombre del Item</label>
-    <ion-item>
-      <ion-input class="inputItem"  [(ngModel)]="this.item.itemname" placeholder="Escribe aquí el nombre del Item"></ion-input>
+    <ion-item class="item-input">
+      <ion-input
+            label="Nombre del Item"
+            labelPlacement="floating"
+            [(ngModel)]="this.item.itemname"
+            placeholder="Escribe aquí el nombre del Item">
+      </ion-input>
     </ion-item>
     <ion-item>
       <ion-list>

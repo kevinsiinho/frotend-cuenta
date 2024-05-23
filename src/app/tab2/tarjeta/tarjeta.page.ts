@@ -34,7 +34,6 @@ export class TarjetaPage implements OnInit {
   public deposito= new Depositos()
   public depositos:Depositos[]=[];
   public alertInputs2:any[]=[];
-  public resultados:any[]=[];
   public compartir=new Compartir()
   public compartirUno=new Compartir()
   public isLoading = true;
@@ -89,7 +88,6 @@ export class TarjetaPage implements OnInit {
     });
     await alert.present();
   }
-
 
   handleRefresh(event:any) {
     setTimeout(() => {
@@ -256,16 +254,8 @@ async EliminarItem(x:number){
     this.Update();
   }
 
-  EliminarCompartido(id:string, z:number){
-
-    this.item.compartir.forEach((element) => {
-      if(id===element.iduser){
-         this.item.compartir.splice(z,1)
-        return;
-      }
-    });
-
-    this.Update();
+  Compartir(){
+    this.link.navigate(['compartir/',this.id])
   }
 
   depositar(x:number,tipo:string){
@@ -386,67 +376,5 @@ CapturaPantalla(x: number) {
   });
 }
 
-/*Buscar */
-buscar(buscando:any){
-  this.resultados=[]
-  if(buscando.target.value.length>0){
-    this.userService.buscar(buscando.target.value).then((data)=>{
-      this.resultados=data
-    })
-  }else{
-    this.resultados=[]
-  }
-}
-
-permisos(event:any,id:string) {
-  const valorSeleccionado = event.detail.value;
-
-  this.item.compartir.forEach(element => {
-    if(element.iduser===id){
-      if(this.EstadoEditar=="editar"){
-        element.estado=true
-      }else if(this.EstadoEditar=="ver"){
-        element.estado=false
-      }
-      return
-    }
-  });
-  this.Update()
-}
-
-async add(id:string, email:string){
-
-  this.compartir.iduser=id
-  this.compartir.email=email
-  this.compartir.estado=false
-
-  const { value } = await Preferences.get({ key: 'token' });
-  if(value){
-    this.userService.Quien(value).then((res)=>{
-      if(this.compartir.iduser===res.data){
-        this.presentAlert("No puedes añadirte")
-      }else{
-        if(this.item.compartir.length === 0){
-          this.item.compartir.push(this.compartir)
-          this.presentAlert("Añadido")
-          this.Update()
-          this.compartir=new Compartir()
-        }else{
-          console.log("entró")
-          this.item.compartir.forEach(element => {
-            if(element.iduser===this.compartir.iduser){
-              this.presentAlert("Ya lo haz agregado")
-            }else{
-              this.item.compartir.push(this.compartir)
-              this.presentAlert("Añadido")
-              this.Update()
-              this.compartir=new Compartir()
-            }
-          });
-        }
-      }
-    })
-  }
-}
 
 }

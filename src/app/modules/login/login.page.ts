@@ -52,9 +52,16 @@ export class LoginPage implements OnInit{
 
 async ngOnInit() {
     await this.verificarConexion();
+
     this.escucharCambiosConexion();
      const result2 = await Preferences.get({ key: 'select' });
     this.recordaremail = Boolean(JSON.parse(result2.value!))
+    if(await this.userService.Verificar()){
+
+      console.log("entró ")
+    }else{
+      await Preferences.remove({ key: 'token' });
+    }
 
     if (this.recordaremail) {
       const result = await Preferences.get({ key: 'email' });
@@ -86,7 +93,7 @@ async ngOnInit() {
     }
   }
 
-async ingresar(){
+ async ingresar(){
  var isValidEmail=false
   await this.loading.present();
 
@@ -127,23 +134,17 @@ async ingresar(){
               this.presentAlert("Tu cuenta ha sido bloqueado por uso inadecuado, si consideras que hay un error por favor comunicate con atención al usuario.")
             }
           })
-
         })
-
         }
-
-
       }else{
         this.loading.dismiss();
         this.presentAlert("Credenciales invalidas, intentanuevamente")
       }
    })
-
   }else{
     this.loading.dismiss();
     this.presentAlert("Verifica los campos e intenta nuevamente.")
   }
-
 }
 
 }

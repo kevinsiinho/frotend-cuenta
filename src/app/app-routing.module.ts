@@ -42,6 +42,10 @@ const routes: Routes = [
   {
     path: 'ingresar-codigo/:id',
     loadChildren: () => import('./modules/ingresar-codigo/ingresar-codigo.module').then( m => m.IngresarCodigoPageModule)
+  },
+  {
+    path: 'compartir/:id',
+    loadChildren: () => import('./modules/compartir/compartir.module').then( m => m.CompartirPageModule)
   }
 ];
 @NgModule({
