@@ -76,25 +76,6 @@ export class CompartirPage implements OnInit {
       this.isLoading = false;
 }
 
-public alertButtons = ['OK'];
-public alertInputs = [
-  {
-    label: 'Red',
-    type: 'radio',
-    value: 'red',
-  },
-  {
-    label: 'Blue',
-    type: 'radio',
-    value: 'blue',
-  },
-  {
-    label: 'Green',
-    type: 'radio',
-    value: 'green',
-  },
-];
-
 
   Update(){
     this.itemService.Update(this.item).then((res)=>{
