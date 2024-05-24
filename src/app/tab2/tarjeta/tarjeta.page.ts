@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertController, IonContent, IonModal, LoadingController } from '@ionic/angular';
+import { ActionSheetController, AlertController, IonContent, IonModal, LoadingController } from '@ionic/angular';
 import { OverlayEventDetail } from '@ionic/core';
 import { Subscription } from 'rxjs';
 import { Depositos } from 'src/app/clases/Items/depositos';
@@ -46,6 +46,7 @@ export class TarjetaPage implements OnInit {
   openModal = false;
   openModal2 = false;
   isModalOpen = false;
+  public btnEliminar=true;
 
   setOpen(isOpen: boolean) {
     this.isModalOpen = isOpen;
@@ -59,8 +60,56 @@ export class TarjetaPage implements OnInit {
     public userService:UserService,
     public link:Router,
     private loadingController: LoadingController,
+    private actionSheetController: ActionSheetController
   ) { }
 
+  public async presentActionSheetEliminar(x:number,z:number) {
+    let datos = new Depositos()
+    this.item.tarjetas.forEach((element,index) => {
+      if(index===x){
+           element.depositos!.forEach((deposito:Depositos,index) => {
+             if(index===z){
+                datos=deposito
+                return
+             }
+          });
+      }
+    });
+
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Información del deposito',
+      buttons: [
+        {
+          text: 'Creado por: '+datos.email,
+        },
+        {
+          text: 'Fecha: $'+datos.fecha,
+        },
+        {
+          text: 'Valor: $'+datos.valor,
+        },
+        {
+          text: datos.comentario,
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => {
+            this.AlertEliminar(x,z)
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          data: {
+            action: 'cancel',
+          },
+        },
+      ],
+    });
+
+    await actionSheet.present();
+  }
 
   public alertButtons3 = [
     {
@@ -78,6 +127,31 @@ export class TarjetaPage implements OnInit {
       }
     },
   ];
+
+  public getBtnEliminar(x: number, z: number) {
+    return [
+      {
+        text: 'No',
+        role: 'cancel',
+        cssClass: 'secondary',
+      },
+      {
+        text: 'Sí',
+        handler: () => {
+          this.EliminarDeposito(x, z);
+        }
+      }
+    ];
+  }
+
+  async AlertEliminar(x: number, z: number) {
+    const alert = await this.alertController.create({
+      header: '¿Estás seguro?',
+      buttons: this.getBtnEliminar(x,z),
+    });
+
+    await alert.present();
+  }
 
   async presentAlert(msn:String) {
 
@@ -264,12 +338,12 @@ async EliminarItem(x:number){
     const mes = fecha.getMonth() + 1; // Los meses empiezan desde 0, por lo que sumamos 1
     const ano = fecha.getFullYear();
     this.deposito.fecha = dia+"/"+mes+"/"+ano;
+    this.deposito.email=this.user.email
 
     if(this.deposito.valor!=null){
 
       if(tipo==="restar"){
         this.deposito.valor=this.deposito.valor*-1;
-        console.log(this.deposito.valor)
       }
       this.item.tarjetas.forEach((element,index) => {
         if(index===x){
@@ -375,6 +449,5 @@ CapturaPantalla(x: number) {
     this.presentAlert("Imagen descargada")
   });
 }
-
 
 }

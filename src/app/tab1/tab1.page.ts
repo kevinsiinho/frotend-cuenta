@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Preferences } from '@capacitor/preferences';
 import { UserService } from '../servicios/user/user.service';
+import { ColoresComponent } from '../componentes/colores/colores.component';
 
 @Component({
   selector: 'app-tab1',

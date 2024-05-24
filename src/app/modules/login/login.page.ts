@@ -56,12 +56,7 @@ async ngOnInit() {
     this.escucharCambiosConexion();
      const result2 = await Preferences.get({ key: 'select' });
     this.recordaremail = Boolean(JSON.parse(result2.value!))
-    if(await this.userService.Verificar()){
-
-      console.log("entró ")
-    }else{
-      await Preferences.remove({ key: 'token' });
-    }
+    if(await this.userService.Verificar()){}
 
     if (this.recordaremail) {
       const result = await Preferences.get({ key: 'email' });

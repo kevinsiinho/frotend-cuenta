@@ -3,17 +3,6 @@ ion-segment-button{
   color: white;
 }
 
-.avatar{
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  font-size: 25px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 10px;
-  background-color: #ff8a08;
-}
 .list-compartidos{
   margin-top: 10px;
 }
@@ -23,6 +12,47 @@ ion-segment-button{
   font-size: 15px;
 }
 
+.btnRegresar{
+  font-size: 22px;
+  float: left;
+  margin-top: -10px;
+  color: #ff8a08;
+}
+
+.btnRegresar ion-icon{
+  color: #ff8a08;
+  font-size: 27px;
+  float: right;
+  margin-left: auto;
+}
+
+ion-title {
+  color: #ff8a08;
+  margin-top: 20px;
+}
+
+//parte de personas item
+.personas{
+  width: 100%;
+}
+
 .permisos{
-  margin-left: 12px;
+  margin-left: auto;
+}
+
+.personaNombre{
+  margin: auto;
+}
+
+.avatar{
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+  background-color: #ff8a08;
+  margin-right: auto;
 }

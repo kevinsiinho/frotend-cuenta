@@ -44,11 +44,10 @@
         </ion-card-header>
       <ion-card-content *ngIf="cardStates[x]===true">
         <ion-item>
-          <ion-grid>
+          <ion-grid class="grid-principal">
             <ion-row>
-              <ion-col>Valor</ion-col>
-              <ion-col>Fecha</ion-col>
-              <ion-col>Eliminar</ion-col>
+              <ion-col class="valor">Valor</ion-col>
+              <ion-col class="ver">Ver</ion-col>
             </ion-row>
           </ion-grid>
         </ion-item>
@@ -56,9 +55,14 @@
         <ion-item>
           <ion-grid>
             <ion-row *ngFor="let item2 of res.depositos; let z=index">
-              <ion-col>{{formatNumberMil(item2.valor)}}</ion-col>
-              <ion-col>{{item2.fecha}}</ion-col>
-              <ion-col *ngIf="this.compartirUno.estado===true || this.creador===true"><ion-button class="estado" (click)="EliminarDeposito(x,z)" fill="clear" color={{res.color}}>X</ion-button></ion-col>
+              <ion-col class="valor">${{formatNumberMil(item2.valor)}}</ion-col>
+              <ion-col *ngIf="this.compartirUno.estado===true || this.creador===true" class="ver btnVer">
+                <ion-button
+                  (click)="this.presentActionSheetEliminar(x,z)"
+                  color={{res.color}}>
+                  <ion-icon name="eye-outline"></ion-icon>
+                </ion-button>
+              </ion-col>
             </ion-row>
           </ion-grid>
         </ion-item>
@@ -66,16 +70,23 @@
       </ion-list>
 
         <div class="btns" *ngIf="this.compartirUno.estado===true || this.creador===true">
-          <ion-input class="itemInput" type="number" [(ngModel)]="this.deposito.valor" label="Ingresa el valor" label-placement="floating"></ion-input>
-          <ion-button class="btnoption" (click)="depositar(x,'sumar')" color="success"><ion-icon name="add-outline"></ion-icon></ion-button>
+          <ion-item class="list-form">
+            <ion-input class="itemInput" type="number" [(ngModel)]="this.deposito.valor" label="Ingresa el valor" label-placement="floating"></ion-input>
+          </ion-item>
+          <ion-item class="list-form">
+            <ion-textarea label="Comentario" class="itemInput" labelPlacement="floating" [(ngModel)]="this.deposito.comentario" [counter]="true" maxlength="60"></ion-textarea>
+          </ion-item >
+          <ion-item class="list-btns">
+            <ion-button class="btnoption" (click)="depositar(x,'sumar')" color="success"><ion-icon name="add-outline"></ion-icon></ion-button>
           <ion-button class="btnoption" (click)="depositar(x,'restar')" color="warning"><ion-icon name="remove-outline"></ion-icon></ion-button>
+          </ion-item>
+
         </div>
         <ion-button color={{res.color}} (click)="CapturaPantalla(x)" expand="full"><ion-icon name="camera-outline"></ion-icon></ion-button>
       </ion-card-content>
     </ion-card>
     </ion-item>
     <ion-item>Total: $ <span>{{this.totalTemp}}</span> </ion-item>
-    <ion-item>Usuario --  <span> {{ this.user.name}}</span> </ion-item>
   </ion-list>
 
 
@@ -118,48 +129,11 @@
               <ion-select-option value="dark">Dark</ion-select-option>
             </ion-select>
           </ion-item>
-  <ion-item>
-          <ion-grid class="colores">
-            <ion-row>
-              <ion-col>
-                <ion-icon name="brush-outline" color="primary"></ion-icon>
-                Primary
-              </ion-col>
-              <ion-col>
-                <ion-icon name="brush-outline" color="secondary"></ion-icon>
-                Secondary
-              </ion-col>
-              <ion-col>
-                <ion-icon name="brush-outline" color="tertiary"></ion-icon>
-                Tertiary
-              </ion-col>
-              <ion-col>
-                <ion-icon name="brush-outline" color="success"></ion-icon>
-                Success
-              </ion-col>
-              <ion-col>
-                <ion-icon name="brush-outline" color="warning"></ion-icon>
-                Warning
-              </ion-col>
-              <ion-col>
-                <ion-icon name="brush-outline" color="danger"></ion-icon>
-                Danger
-              </ion-col>
-              <ion-col>
-                <ion-icon name="brush-outline" color="light"></ion-icon>
-                Light
-              </ion-col>
-              <ion-col>
-                <ion-icon name="brush-outline" color="medium"></ion-icon>
-                Medium
-              </ion-col>
-              <ion-col>
-                <ion-icon name="brush-outline" color="dark"></ion-icon>
-                Dark
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-  </ion-item>
+          <ion-item>
+             <ion-grid class="colores">
+                <app-colores></app-colores>
+             </ion-grid>
+           </ion-item>
         </ion-content>
       </ng-template>
     </ion-modal>
@@ -195,5 +169,4 @@
       </ion-content>
     </ng-template>
   </ion-popover>
-
 </ion-content>

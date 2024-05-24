@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { TarjetaPageRoutingModule } from './tarjeta-routing.module';
 
 import { TarjetaPage } from './tarjeta.page';
+import { ColoresModule } from 'src/app/componentes/colores/colores.module';
 
 
 @NgModule({
@@ -15,6 +16,7 @@ import { TarjetaPage } from './tarjeta.page';
     FormsModule,
     IonicModule,
     TarjetaPageRoutingModule,
+    ColoresModule,
   ],
   declarations: [TarjetaPage],
 

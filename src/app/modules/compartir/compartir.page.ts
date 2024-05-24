@@ -76,7 +76,6 @@ export class CompartirPage implements OnInit {
       this.isLoading = false;
 }
 
-
   Update(){
     this.itemService.Update(this.item).then((res)=>{
      if(res===204){
@@ -117,20 +116,26 @@ async CompartidoUNO(){
   })
 }
 
-permisos(event:any,id:string) {
+permisos(event:any,id:string,z:number) {
   const valorSeleccionado = event.detail.value;
-
-  this.item.compartir.forEach(element => {
-    if(element.iduser===id){
-      if(this.EstadoEditar=="editar"){
-        element.estado=true
-      }else if(this.EstadoEditar=="ver"){
-        element.estado=false
-      }
-      return
-    }
-  });
+console.log(valorSeleccionado)
+if(valorSeleccionado==="editar"){
+  this.Estado(true,z)
+}else if(valorSeleccionado==="ver"){
+  this.Estado(false,z)
+}else if(valorSeleccionado==="eliminar"){
+  this.EliminarCompartido(id,z)
+}
   this.Update()
+}
+
+Estado(estado:boolean, x:number){
+  this.item.compartir.forEach((element,index) => {
+  if(index===x){
+    element.estado=estado
+    return;
+  }
+  });
 }
 
 async add(id:string, email:string,nombre:string,apellido:string){
@@ -152,15 +157,19 @@ async add(id:string, email:string,nombre:string,apellido:string){
           this.Update()
           this.compartir=new Compartir()
         }else{
-          console.log("entró")
           this.item.compartir.forEach(element => {
-            if(element.iduser===this.compartir.iduser){
+
+            if(element.iduser===this.compartir.iduser && this.compartir.email!.length>7){
               this.presentAlert("Ya lo haz agregado")
+              return
             }else{
-              this.item.compartir.push(this.compartir)
-              this.presentAlert("Añadido")
-              this.Update()
-              this.compartir=new Compartir()
+              if(this.compartir.email!.length>7){
+                this.item.compartir.push(this.compartir)
+                this.presentAlert("Añadido")
+                this.Update()
+                this.compartir=new Compartir()
+                return
+              }
             }
           });
         }
@@ -177,8 +186,10 @@ EliminarCompartido(id:string, z:number){
       return;
     }
   });
+}
 
-  this.Update();
+Regresar(){
+  this.link.navigate(['tabs/tab2/tarjeta/',this.id])
 }
 
 }

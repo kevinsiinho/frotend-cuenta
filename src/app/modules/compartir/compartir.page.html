@@ -1,6 +1,11 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Compartir</ion-title>
+    <ion-title>
+      <ion-item class="btnRegresar" [button]="true" [detail]="false" (click)="Regresar()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-item>
+      <span> Compartir</span>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -25,10 +30,22 @@
     </div>
 
     <ion-list class="list-compartidos">
+
       <label for="">Personas en el Item</label>
+
       <ion-item class="personas" *ngFor="let compartir of this.item.compartir; let z=index">
 
-        <div class="avatar">{{ compartir.nombre!.charAt(0) }}</div>{{compartir.email}}
+        <div class="avatar">{{ compartir.nombre!.charAt(0) }}</div>
+        <span class="personaNombre"> {{compartir.email}}</span>
+        <ion-list class="permisos">
+          <ion-item>
+            <ion-select  [(ngModel)]="this.EstadoEditar" *ngIf="this.creador===true" (ionChange)="permisos($event,compartir.iduser!,z)" aria-label="Permisos" interface="action-sheet" placeholder="abrir">
+              <ion-select-option value="editar">Editar</ion-select-option>
+              <ion-select-option value="ver">Ver</ion-select-option>
+              <ion-select-option value="eliminar">Eliminar</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
         <!--  <ion-select [(ngModel)]="this.EstadoEditar" *ngIf="this.compartirUno.estado===true || this.creador===true" class="permisos" (ionChange)="permisos($event,compartir.iduser!)" aria-label="Estados" interface="popover" placeholder='"Editar: " {{compartir.estado}}'>
             <ion-select-option value="editar" >Editar</ion-select-option>
             <ion-select-option value="ver" >Solo ver</ion-select-option>

@@ -30,23 +30,32 @@ a{
 
 .btns{
   display: flex;
-  align-items: center;
+  flex-direction: column;
   width: 100%;
 }
 
 .itemInput {
-  flex: 1; /* Hace que el input ocupe todo el espacio disponible */
   margin-right: 10px; /* Ajusta según sea necesario */
-  font-size: 22px;
+  font-size: 16px;
   width: 100%;
 }
 
 .btnoption{
-  font-size: 23px;
+  height: 50px;
+  width: 50px;
+}
+
+.list-form{
+  border-bottom: 1px solid gray;
+  width: 90%;
 }
 
 .btnoption ion-icon{
   font-size: 23px;
+}
+
+button.alert-button.alert-button-confirm {
+  background-color: red;
 }
 
 ion-card-title{
@@ -69,6 +78,21 @@ ion-card-title{
 
 .btns2 ion-icon{
   color: #ff8a08;
+}
+
+.ver{
+  float: right;
+  text-align: right;
+}
+
+.valor{
+  float: left;
+}
+
+.btnVer{
+  font-size: 22px;
+  margin-top: -20px;
+  margin-right: -12px;
 }
 
 ion-segment-button{
