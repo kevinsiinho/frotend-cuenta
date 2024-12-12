@@ -34,7 +34,7 @@ export class ItemsService {
       data: item
       };
     const response: HttpResponse = await CapacitorHttp.post(options);
-    return response.status
+    return response
   };
 
   async allitems(id:string){

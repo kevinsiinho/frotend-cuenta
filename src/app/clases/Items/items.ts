@@ -11,7 +11,9 @@ export class Items {
     tarjetas:Tarjetas[]=[];
     compartir:Compartir[]=[]
     userId!: string
-
+    fecha?:string
+    create?:Date
+    updated?:Date
     setValues(item:any){
       this.id=item.id;
       this.itemname=item.itemname;
@@ -22,5 +24,8 @@ export class Items {
       this.tarjetas=item.tarjetas;
       this.compartir=item.compartir;
       this.userId= item.userId;
+      this.fecha=item.fecha
+      this.create=item.create
+      this.updated=item.updated
     }
 }

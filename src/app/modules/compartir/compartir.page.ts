@@ -5,6 +5,7 @@ import { AlertController, LoadingController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Items } from 'src/app/clases/Items/items';
 import { Compartir } from 'src/app/clases/compartir/compartir';
+import { Mensajes } from 'src/app/clases/mensajes/mensajes';
 import { User } from 'src/app/clases/user/user';
 import { ItemsService } from 'src/app/servicios/items/items.service';
 import { UserService } from 'src/app/servicios/user/user.service';
@@ -22,12 +23,15 @@ export class CompartirPage implements OnInit {
   public resultados:any[]=[];
   public compartir=new Compartir()
   public compartirUno=new Compartir()
+  public mensaje= new Mensajes()
   public isLoading = true;
   public loading:any;
   public creador!:boolean
   public EstadoEditar!:string
   public itemsSubscription= new Subscription()
   public id:string=""
+  public hoy:string=""
+  public letra:string=""
 
   constructor(
     private alertController: AlertController,
@@ -56,21 +60,22 @@ export class CompartirPage implements OnInit {
     await this.loading.present();
 
     if(await this.userService.Verificar()){
-      const { value } = await Preferences.get({ key: 'token' });
 
-        this.userService.Quien(value!).then((data)=>{
-
-          this.userService.InfoUser(data.data).then((res)=>{
+      const fecha= new Date();
+      const dia = fecha.getDate();
+      const mes = fecha.getMonth() + 1;
+      const ano = fecha.getFullYear();
+      this.hoy = dia+"/"+mes+"/"+ano;
+      this.id=this.router.snapshot.paramMap.get('id')!
+        this.itemService.GetItem(this.id).then(async (res)=>{
+          this.item=res;
+          this.CompartidoUNO()
+          this.userService.InfoUser(this.item.userId).then((res)=>{
             this.user=res
+            this.letra=this.user.name.charAt(0)
           })
         })
 
-    this.id=this.router.snapshot.paramMap.get('id')!
-    this.itemService.GetItem(this.id).then(async (res)=>{
-      this.item=res;
-      this.CompartidoUNO()
-
-    })
   }
       this.loading.dismiss();
       this.isLoading = false;
@@ -116,34 +121,13 @@ async CompartidoUNO(){
   })
 }
 
-permisos(event:any,id:string,z:number) {
-  const valorSeleccionado = event.detail.value;
-console.log(valorSeleccionado)
-if(valorSeleccionado==="editar"){
-  this.Estado(true,z)
-}else if(valorSeleccionado==="ver"){
-  this.Estado(false,z)
-}else if(valorSeleccionado==="eliminar"){
-  this.EliminarCompartido(id,z)
-}
-  this.Update()
-}
-
-Estado(estado:boolean, x:number){
-  this.item.compartir.forEach((element,index) => {
-  if(index===x){
-    element.estado=estado
-    return;
-  }
-  });
-}
-
 async add(id:string, email:string,nombre:string,apellido:string){
 
   this.compartir.iduser=id
   this.compartir.email=email
   this.compartir.estado=false
   this.compartir.nombre=nombre+" "+apellido
+  this.compartir.Estadonotifacion=true
 
   const { value } = await Preferences.get({ key: 'token' });
   if(value){
@@ -176,16 +160,6 @@ async add(id:string, email:string,nombre:string,apellido:string){
       }
     })
   }
-}
-
-EliminarCompartido(id:string, z:number){
-
-  this.item.compartir.forEach((element) => {
-    if(id===element.iduser){
-       this.item.compartir.splice(z,1)
-      return;
-    }
-  });
 }
 
 Regresar(){

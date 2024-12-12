@@ -13,7 +13,7 @@ import { CompartirPage } from './compartir.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    CompartirPageRoutingModule
+    CompartirPageRoutingModule,
   ],
   declarations: [CompartirPage]
 })

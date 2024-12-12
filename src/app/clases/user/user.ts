@@ -7,6 +7,9 @@ export class User {
   public estado!:string
   public cel!:number
   public codigo?:number
+  public ultimaVez?:string
+  create?:Date
+  updated?:Date
   SetValues(item:any){
     this.id=item.id
     this.name=item.nombre
@@ -16,5 +19,8 @@ export class User {
     this.cel=item.cel
     this.estado=item.estado
     this.codigo=item.codigo
+    this.ultimaVez=item.ultimaVez
+    this.create=item.create
+    this.updated=item.updated
   }
 }

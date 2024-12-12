@@ -1,0 +1,42 @@
+ion-content{
+  text-align: center;
+}
+
+div{
+  margin-top: 20px;
+}
+
+.titulo{
+  margin: auto;
+  width: 70%;
+  color: #ff8a08;
+}
+
+.texto{
+  margin: auto;
+  margin-top: 20px;
+  width: 80%;
+}
+
+.texto span{
+  color: #ff8a08;
+}
+
+img{
+  margin-top: 30%;
+  margin-left: 25px;
+  width: 80px;
+  height: 80px;
+}
+
+ion-button{
+  margin: auto;
+  width: 80%;
+  margin-top: 50px;
+}
+
+@media screen and (min-width: 800px){
+  img{
+    margin-top: 10%;
+  }
+}

@@ -1,0 +1,51 @@
+<ion-content [fullscreen]="true">
+  <div class="header ion-padding">
+    <div class="info">
+      <ion-icon (click)="Regresar()" class="return" name="chevron-back-outline"></ion-icon>
+      <span class="name">Información</span>
+    </div>
+    <ion-avatar>{{this.nombre}}</ion-avatar>
+  </div>
+
+<!--información de usuario-->
+<div class="informacion ion-padding">
+  <ion-list lines="none">
+    <ion-item *ngFor="let dato of this.datos">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title><ion-icon name={{dato.icono}}></ion-icon>  {{dato.name}} </ion-card-title>
+        </ion-card-header>
+      </ion-card>
+    </ion-item>
+
+    <ion-item>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title><ion-icon name="send-outline"></ion-icon> Participaciones: {{this.contador}}</ion-card-title>
+        </ion-card-header>
+      </ion-card>
+    </ion-item>
+    <ion-item *ngIf="this.yo.iduser===this.id1">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title><ion-toggle (click)="this.EstadoNotificacion()" [enableOnOffLabels]="this.compartir.Estadonotifacion"><ion-icon name="notifications-outline"></ion-icon> Notificaciones</ion-toggle></ion-card-title>
+        </ion-card-header>
+      </ion-card>
+    </ion-item>
+    <ion-item *ngIf="this.yo.estado || this.creador">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title (click)="Permiso()"><ion-icon name="pause-outline"></ion-icon> Permiso:  {{this.estado}}</ion-card-title>
+        </ion-card-header>
+      </ion-card>
+    </ion-item>
+    <ion-item *ngIf="this.creador">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title (click)="Eliminar()"><ion-icon name="close-outline"></ion-icon> Eliminar</ion-card-title>
+        </ion-card-header>
+      </ion-card>
+    </ion-item>
+  </ion-list>
+</div>
+</ion-content>

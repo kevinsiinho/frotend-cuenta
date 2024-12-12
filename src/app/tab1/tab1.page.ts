@@ -5,7 +5,9 @@ import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Preferences } from '@capacitor/preferences';
 import { UserService } from '../servicios/user/user.service';
-import { ColoresComponent } from '../componentes/colores/colores.component';
+import { User } from '../clases/user/user';
+import { Compartir } from '../clases/compartir/compartir';
+import { Mensajes } from '../clases/mensajes/mensajes';
 
 @Component({
   selector: 'app-tab1',
@@ -15,15 +17,18 @@ import { ColoresComponent } from '../componentes/colores/colores.component';
 export class Tab1Page implements OnInit{
     public item = new Items();
     public items:Items[]=[];
+    public user= new User()
+    public mensaje= new Mensajes()
     public isLoading = false;
     public loading:any;
     public iduser!:string
+    public hoy:string=""
   constructor(
     public itemService:ItemsService,
     public link:Router,
     private alertController: AlertController,
     public userService:UserService,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
   ) {}
 
   async presentAlert(msn:String) {
@@ -40,10 +45,19 @@ async ngOnInit(){
 
   if(await this.userService.Verificar()){
 
+    const fecha= new Date();
+    const dia = fecha.getDate();
+    const mes = fecha.getMonth() + 1; // Los meses empiezan desde 0, por lo que sumamos 1
+    const ano = fecha.getFullYear();
+    this.hoy = dia+"/"+mes+"/"+ano;
+
     const { value } = await Preferences.get({ key: 'token' });
     if(value){
       this.userService.Quien(value).then((data)=>{
         this.iduser=data.data
+        this.userService.InfoUser(this.iduser).then((res:User)=>{
+          this.user=res
+        })
         this.itemService.allitems(data.data).then(async (res)=>{
           this.items=res
         })
@@ -65,6 +79,8 @@ async Guardar(){
     this.item.favorito=false;
     this.item.total=0;
     this.item.userId=this.iduser
+    this.item.fecha=this.hoy
+    console.log(this.item.fecha)
     if(this.item.color!=null && this.item.itemname!=""){
 
       if(this.Duplicado()){
@@ -73,7 +89,7 @@ async Guardar(){
             this.isLoading = false;
       }else{
         this.itemService.Create(this.item).then((res)=>{
-          if(res===200){
+          if(res.status===200){
             this.loading.dismiss();
             this.isLoading = false;
             this.presentAlert("Guardado correctamente");
@@ -104,5 +120,6 @@ Duplicado(){
 
   return duplicado;
 }
+
 
 }

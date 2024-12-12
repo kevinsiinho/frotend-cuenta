@@ -12,7 +12,7 @@ import html2canvas from 'html2canvas';
 import { Preferences } from '@capacitor/preferences';
 import { Compartir } from 'src/app/clases/compartir/compartir';
 import { User } from 'src/app/clases/user/user';
-
+import { ItemReorderEventDetail } from '@ionic/angular';
 
 @Component({
   selector: 'app-tarjeta',
@@ -43,6 +43,7 @@ export class TarjetaPage implements OnInit {
   public colorFav!:string;
   public creador!:boolean
   public EstadoEditar!:string
+  public idchat:string=""
   openModal = false;
   openModal2 = false;
   isModalOpen = false;
@@ -50,18 +51,35 @@ export class TarjetaPage implements OnInit {
 
   setOpen(isOpen: boolean) {
     this.isModalOpen = isOpen;
+    this.Compartir()
+  }
+
+  regresar(){
+    this.link.navigate(['tabs/tab2'])
   }
 
   @ViewChild('capturableArea') capturableArea!: ElementRef;
 
-  constructor(private router:ActivatedRoute,
+  constructor(
+    private router:ActivatedRoute,
     public itemService:ItemsService,
     private alertController: AlertController,
     public userService:UserService,
     public link:Router,
     private loadingController: LoadingController,
-    private actionSheetController: ActionSheetController
+    private actionSheetController: ActionSheetController,
   ) { }
+
+  handleReorder(ev: CustomEvent<ItemReorderEventDetail>) {
+    // The `from` and `to` properties contain the index of the item
+    // when the drag started and ended, respectively
+    console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
+
+    // Finish the reorder and position the item in the DOM based on
+    // where the gesture ended. This method can also be called directly
+    // by the reorder group
+    ev.detail.complete();
+  }
 
   public async presentActionSheetEliminar(x:number,z:number) {
     let datos = new Depositos()
@@ -83,7 +101,7 @@ export class TarjetaPage implements OnInit {
           text: 'Creado por: '+datos.email,
         },
         {
-          text: 'Fecha: $'+datos.fecha,
+          text: 'Fecha: '+datos.fecha,
         },
         {
           text: 'Valor: $'+datos.valor,
@@ -110,23 +128,6 @@ export class TarjetaPage implements OnInit {
 
     await actionSheet.present();
   }
-
-  public alertButtons3 = [
-    {
-      text: 'No',
-      cssClass: 'alert-button-cancel',
-    },
-    {
-      text: 'Yes',
-      cssClass: 'alert-button-confirm',
-      handler: () => {
-        this.itemService.Delete(this.id).then((res)=>{
-          console.log(res)
-          this.link.navigate(['tabs/tab2'])
-        })
-      }
-    },
-  ];
 
   public getBtnEliminar(x: number, z: number) {
     return [
@@ -171,7 +172,6 @@ export class TarjetaPage implements OnInit {
   }
 
 async ngOnInit() {
-
   this.loading = await this.loadingController.create({
     message: '',
   });
@@ -222,6 +222,7 @@ async ngOnInit() {
         this.item.compartir.forEach(element => {
           if(res.data===element.iduser){
             this.compartirUno=element
+            console.log(this.compartirUno)
           }
         });
        }
@@ -231,15 +232,66 @@ async ngOnInit() {
 
 formatNumberMil(value: number): string {
     return value.toLocaleString();
-  }
+}
+
+Resultado(x:number): string {
+  let Tvalor=0
+  let Result=0
+  let positivos=0
+  let negativos=0
+  this.tarjetas.forEach((tarjeta,index) =>{
+    if(x===index){
+      if(tarjeta.Vinicial){
+        tarjeta.depositos!.forEach(depositos => {
+          Tvalor=Tvalor+depositos.valor
+        });
+        Result=tarjeta.Valor!+Tvalor
+      }else{
+        tarjeta.depositos!.forEach(depositos => {
+          if(depositos.valor>0){
+            positivos=positivos+depositos.valor
+          }else{
+            negativos=negativos+depositos.valor
+          }
+        });
+        Result=positivos+negativos
+      }
+    }
+  });
+  return String(Result)
+}
+
+Positivo(x:number): string {
+  let positivos=0
+  this.item.tarjetas.forEach((tarjeta,index) =>{
+    if(x===index){
+        tarjeta.depositos!.forEach(depositos => {
+          if(depositos.valor>0){
+            positivos=positivos+depositos.valor
+          }
+        });
+      }
+  });
+  return this.formatNumberMil(positivos)
+}
+
+Negativo(x:number): string {
+  let negativos=0
+  this.item.tarjetas.forEach((tarjeta,index) =>{
+    if(x===index){
+        tarjeta.depositos!.forEach(depositos => {
+          if(depositos.valor<0){
+            negativos=negativos+depositos.valor
+          }
+        });
+      }
+  });
+  return this.formatNumberMil(negativos)
+}
 
 total(){
   this.totalTemp=""
-  this.item.total=0
-  this.item.tarjetas.forEach(element => {
-    this.item.total=this.item.total+element.subtotal
     this.totalTemp = this.item.total.toLocaleString();
-  });
 }
 
 Favorito(){
@@ -253,7 +305,7 @@ Favorito(){
   this.Update()
 }
 
-  async presentAlert2() {
+  async EditarNombreTarjeta() {
     const alert = await this.alertController.create({
       header: 'Actualizar nombre',
       inputs: this.alertInputs2,
@@ -290,7 +342,6 @@ Favorito(){
   }
 
 async EliminarItem(x:number){
-
     const alert = await this.alertController.create({
       header: 'Eliminar',
       buttons: [
@@ -356,7 +407,7 @@ async EliminarItem(x:number){
           return;
         }
       });
-
+      //this.NewNotification("ha añadido un nuevo valor de $"+this.deposito.valor)
       this.Update();
       this.deposito= new Depositos();
 
@@ -377,20 +428,33 @@ async EliminarItem(x:number){
     this.Update()
   }
 
+  FingresarValor(){
+    if(!this.tarjeta.Vinicial){
+      this.tarjeta.Vinicial=true
+    }else{
+      this.tarjeta.Vinicial=false
+    }
+  }
+
   confirm() {
     if(this.tarjeta.nombre!="" && this.tarjeta.color!=null){
-      this.tarjeta.subtotal=0;
-      this.tarjeta.depositos=[]
-      this.item.tarjetas.push(this.tarjeta);
-      this.itemService.Update(this.item).then((res)=>{
-        if(res===204){
-          this.modal.dismiss('confirm');
-          this.tarjeta= new Tarjetas();
-        }else{
-          this.presentAlert("Error, intenta nuevamente");
-        }
-      })
+      this.tarjeta.Vinicial=Boolean(this.tarjeta.Vinicial)
+      if(this.tarjeta.Vinicial && this.tarjeta.Valor!<1){
+        this.presentAlert("Ingresa el valor inicial");
+      }else{
+        this.tarjeta.subtotal=0;
+        this.tarjeta.depositos=[]
 
+      this.item.tarjetas.push(this.tarjeta);
+        this.itemService.Update(this.item).then((res)=>{
+          if(res===204){
+            this.modal.dismiss('confirm');
+            this.tarjeta= new Tarjetas();
+          }else{
+            this.presentAlert("Error, intenta nuevamente");
+          }
+        })
+      }
     }else{
       this.presentAlert("Error, verifica los datos e intenta nuevamente");
     }

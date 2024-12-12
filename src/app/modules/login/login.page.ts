@@ -21,7 +21,6 @@ export class LoginPage implements OnInit{
   public email:string=""
   public loading:any;
   public emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
   constructor(
     private alertController: AlertController,
     public userService: UserService,
@@ -30,7 +29,6 @@ export class LoginPage implements OnInit{
     ) { }
 
   async presentAlert(msn:String) {
-
     const alert = await this.alertController.create({
       header: 'Mensaje',
       message: ''+msn,
@@ -55,8 +53,11 @@ async ngOnInit() {
 
     this.escucharCambiosConexion();
      const result2 = await Preferences.get({ key: 'select' });
-    this.recordaremail = Boolean(JSON.parse(result2.value!))
-    if(await this.userService.Verificar()){}
+     this.recordaremail = Boolean(JSON.parse(result2.value!))
+    const { value } = await Preferences.get({ key: 'token' });
+    if(value){
+      await Preferences.remove({ key: 'token' });
+    }
 
     if (this.recordaremail) {
       const result = await Preferences.get({ key: 'email' });
@@ -116,6 +117,12 @@ async ngOnInit() {
         //Verificando el estado de la cuenta
         this.userService.Quien(res.data.token).then((res)=>{
           this.userService.InfoUser(res.data).then((info:User)=>{
+            const fecha= new Date();
+            const dia = fecha.getDate();
+            const mes = fecha.getMonth() + 1; // Los meses empiezan desde 0, por lo que sumamos 1
+            const ano = fecha.getFullYear();
+            info.ultimaVez= dia+"/"+mes+"/"+ano;
+            this.userService.Update(info)
             this.loading.dismiss();
             if(info.estado=="Activo"){
               this.link.navigate(['tabs/tab2'])

@@ -16,7 +16,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'tabs',
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {
@@ -46,6 +46,14 @@ const routes: Routes = [
   {
     path: 'compartir/:id',
     loadChildren: () => import('./modules/compartir/compartir.module').then( m => m.CompartirPageModule)
+  },
+  {
+    path: 'sin-internet',
+    loadChildren: () => import('./modules/sin-internet/sin-internet.module').then( m => m.SinInternetPageModule)
+  },
+  {
+    path: 'compartir-info/:id1/:id2',
+    loadChildren: () => import('./modules/compartir-info/compartir-info.module').then( m => m.CompartirInfoPageModule)
   }
 ];
 @NgModule({

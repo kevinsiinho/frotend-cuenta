@@ -1,11 +1,7 @@
-<ion-header [translucent]="true">
+<ion-header class="ion-no-border" mode="android">
   <ion-toolbar>
-    <ion-title>
-      <ion-item class="btnRegresar" [button]="true" [detail]="false" (click)="Regresar()">
-        <ion-icon name="arrow-back-outline"></ion-icon>
-      </ion-item>
-      <span> Compartir</span>
-    </ion-title>
+    <ion-icon class="btnRegresar" (click)="Regresar()" name="chevron-back-outline" slot="start"> </ion-icon>
+      <ion-title>Compartir</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -31,30 +27,17 @@
 
     <ion-list class="list-compartidos">
 
-      <label for="">Personas en el Item</label>
+      <label class="msn">Personas en el Item</label>
+      <ion-item [routerLink]="['/compartir-info/',this.user.id,this.id]" class="personas">
+        <div slot="start" class="avatar">{{ this.letra }}</div>
+        <span slot="start" class="personaNombre"> {{this.user.email}}</span>
+        <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+      </ion-item>
 
-      <ion-item class="personas" *ngFor="let compartir of this.item.compartir; let z=index">
-
-        <div class="avatar">{{ compartir.nombre!.charAt(0) }}</div>
-        <span class="personaNombre"> {{compartir.email}}</span>
-        <ion-list class="permisos">
-          <ion-item>
-            <ion-select  [(ngModel)]="this.EstadoEditar" *ngIf="this.creador===true" (ionChange)="permisos($event,compartir.iduser!,z)" aria-label="Permisos" interface="action-sheet" placeholder="abrir">
-              <ion-select-option value="editar">Editar</ion-select-option>
-              <ion-select-option value="ver">Ver</ion-select-option>
-              <ion-select-option value="eliminar">Eliminar</ion-select-option>
-            </ion-select>
-          </ion-item>
-        </ion-list>
-        <!--  <ion-select [(ngModel)]="this.EstadoEditar" *ngIf="this.compartirUno.estado===true || this.creador===true" class="permisos" (ionChange)="permisos($event,compartir.iduser!)" aria-label="Estados" interface="popover" placeholder='"Editar: " {{compartir.estado}}'>
-            <ion-select-option value="editar" >Editar</ion-select-option>
-            <ion-select-option value="ver" >Solo ver</ion-select-option>
-          </ion-select>
-           <ion-button *ngIf="this.compartirUno.estado===true || this.creador===true" color="danger" class="btn-eliminar-compartido" (click)="EliminarCompartido(compartir.iduser!, z)">
-            <ion-icon name="close-circle-outline"></ion-icon>
-           </ion-button>
-
-        -->
+      <ion-item [routerLink]="['/compartir-info/',compartir.iduser,this.id]" class="personas" *ngFor="let compartir of this.item.compartir; let z=index">
+        <div slot="start" class="avatar">{{ compartir.nombre!.charAt(0) }}</div>
+        <span slot="start" class="personaNombre"> {{compartir.email}}</span>
+        <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
       </ion-item>
     </ion-list>
 

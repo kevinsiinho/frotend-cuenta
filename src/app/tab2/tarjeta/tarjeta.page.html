@@ -1,6 +1,10 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>{{this.item.itemname}}
+    <ion-title>
+      {{this.item.itemname}}
+    <ion-button fill="clear" class="btns2 regresar"  (click)="regresar()">
+       <ion-icon name="chevron-back-outline"> </ion-icon>
+    </ion-button>
     <ion-button fill="clear" class="btns2" id="popover-button2">
       <ion-icon name="ellipsis-vertical-outline"   slot="end"></ion-icon>
     </ion-button>
@@ -39,7 +43,18 @@
         <ion-card-header>
           <ion-card-title>{{res.nombre}}
              <ion-button *ngIf="this.compartirUno.estado===true || this.creador===true" class="estado" id="present-alert4" (click)="EliminarItem(x)" fill="clear" color={{res.color}}><ion-icon class="estado-icono" name="close-outline"></ion-icon></ion-button></ion-card-title>
-          <ion-card-subtitle>$ <span>{{formatNumberMil(res.subtotal) }}</span></ion-card-subtitle>
+         <!--Titulos de las cantidades-->
+         <ion-card-subtitle class="subvalores" *ngIf="res.Vinicial">
+            <span class="left">${{formatNumberMil(res.Valor!)}}</span>
+            <span class="center">${{formatNumberMil(res.subtotal)}}</span>
+            <span class="right">${{formatNumberMil(res.Valor!+res.subtotal) }}</span>
+         </ion-card-subtitle>
+         <ion-card-subtitle class="subvalores" *ngIf="!res.Vinicial">
+          <span class="left">${{Positivo(x)}}</span>
+          <span class="center">${{Negativo(x)}}</span>
+          <span class="right">${{formatNumberMil(res.subtotal) }}</span>
+       </ion-card-subtitle>
+
           <ion-button  expand="full" color={{res.color}}  (click)="show(x)"><ion-icon name="eye-outline"></ion-icon></ion-button>
         </ion-card-header>
       <ion-card-content *ngIf="cardStates[x]===true">
@@ -89,9 +104,6 @@
     <ion-item>Total: $ <span>{{this.totalTemp}}</span> </ion-item>
   </ion-list>
 
-
-<ion-alert  [isOpen]="openModal2" class="custom-alert" header="Estas seguro?" [buttons]="alertButtons3"></ion-alert>
-
   <ion-content class="ion-padding">
     <ion-modal  [isOpen]="openModal" (willDismiss)="onWillDismiss($event)">
       <ng-template>
@@ -114,6 +126,18 @@
               type="text"
               placeholder="Escribe aquí"
               [(ngModel)]="this.tarjeta.nombre"
+            ></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-toggle [enableOnOffLabels]="false" (click)="this.FingresarValor()">Valor Inicial</ion-toggle>
+          </ion-item>
+          <ion-item *ngIf="this.tarjeta.Vinicial===true">
+            <ion-input
+              label="Valor"
+              labelPlacement="stacked"
+              type="number"
+              placeholder="Ingresa el valor"
+              [(ngModel)]="this.tarjeta.Valor"
             ></ion-input>
           </ion-item>
           <ion-item>
@@ -145,7 +169,7 @@
         <ion-list *ngIf="this.compartirUno.estado===true || this.creador===true">
           <ion-item [button]="true" id="nested-trigger">Ordenar Por</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="openModal = !openModal">Nuevo</ion-item>
-          <ion-item *ngIf="this.creador===true" [button]="true" [detail]="false" (click)="presentAlert2()">Editar</ion-item>
+          <ion-item *ngIf="this.creador===true" [button]="true" [detail]="false" (click)="EditarNombreTarjeta()">Editar</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="Compartir()">Compartir</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="openModal2 = !openModal2">Eliminar</ion-item>
 
@@ -169,4 +193,5 @@
       </ion-content>
     </ng-template>
   </ion-popover>
+
 </ion-content>
