@@ -48,6 +48,15 @@ export class TarjetaPage implements OnInit {
   openModal2 = false;
   isModalOpen = false;
   public btnEliminar=true;
+  public isDisabled = true;
+
+  public alertInputs3:any[]= [
+    {
+      name: 'name',
+      type: 'text',
+      placeholder: 'Ingrese el nuevo nombre',
+    },
+  ];
 
   setOpen(isOpen: boolean) {
     this.isModalOpen = isOpen;
@@ -71,14 +80,21 @@ export class TarjetaPage implements OnInit {
   ) { }
 
   handleReorder(ev: CustomEvent<ItemReorderEventDetail>) {
-    // The `from` and `to` properties contain the index of the item
-    // when the drag started and ended, respectively
-    console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
+      const DeIndex = ev.detail.from; // Índice original
+      const AIndex = ev.detail.to;    // Índice nuevo
 
-    // Finish the reorder and position the item in the DOM based on
-    // where the gesture ended. This method can also be called directly
-    // by the reorder group
-    ev.detail.complete();
+      // Mover el elemento dentro de this.item.tarjetas
+      const movedItem = this.item.tarjetas.splice(DeIndex, 1)[0]; // Sacar el elemento
+      this.item.tarjetas.splice(AIndex, 0, movedItem);// Insertarlo en la nueva posición
+
+      // Marcar el reordenamiento como completado
+      ev.detail.complete();
+      this.Update()
+      console.log('Nuevo orden:', this.item.tarjetas);
+  }
+
+  toggleReorder() {
+    this.isDisabled = !this.isDisabled;
   }
 
   public async presentActionSheetEliminar(x:number,z:number) {
@@ -172,6 +188,7 @@ export class TarjetaPage implements OnInit {
   }
 
 async ngOnInit() {
+  let temporal=false
   this.loading = await this.loadingController.create({
     message: '',
   });
@@ -181,7 +198,6 @@ async ngOnInit() {
     const { value } = await Preferences.get({ key: 'token' });
     if(value){
       this.userService.Quien(value).then((data)=>{
-
         this.userService.InfoUser(data.data).then((res)=>{
           this.user=res
         })
@@ -191,6 +207,17 @@ async ngOnInit() {
     this.id=this.router.snapshot.paramMap.get('id')!
     this.itemService.GetItem(this.id).then(async (res)=>{
       this.item=res;
+      this.item.tarjetas.forEach((tarjeta,x) => {
+        if(tarjeta.posicion==undefined){
+          temporal=true
+           tarjeta.posicion=x
+        }
+      });
+
+      if(temporal){
+        console.log("Debe actualizar")
+        this.Update()
+      }
       this.CompartidoUNO()
       const { value } = await Preferences.get({ key: 'TarjetaOrden' });
       if(value){
@@ -289,9 +316,22 @@ Negativo(x:number): string {
   return this.formatNumberMil(negativos)
 }
 
-total(){
-  this.totalTemp=""
-    this.totalTemp = this.item.total.toLocaleString();
+total():string{
+  let Tvalor=0
+  let Result=0
+  this.item.tarjetas.forEach((tarjeta) =>{
+      if(tarjeta.Vinicial){
+        tarjeta.depositos!.forEach(depositos => {
+          Tvalor=Tvalor+depositos.valor
+        });
+        Result=tarjeta.Valor!+Tvalor
+      }else{
+        tarjeta.depositos!.forEach(depositos => {
+          Result+=depositos.valor
+        });
+      }
+  });
+  return this.formatNumberMil(Result)
 }
 
 Favorito(){
@@ -325,6 +365,34 @@ Favorito(){
     });
 
     await alert.present();
+  }
+
+  async EditarNombreBolsillo(x:number) {
+    this.item.tarjetas.forEach(async (tarjeta,index) => {
+      if(x===index){
+        console.log(tarjeta.nombre)
+        const alert = await this.alertController.create({
+          header: 'Editar Nombre Bolsillo',
+          inputs: this.alertInputs3,
+          buttons: [
+            {
+              text: 'Cancelar',
+              role: 'cancel',
+            },
+            {
+              text: 'Actualizar',
+              handler: (data) => {
+                this.item.tarjetas[x].nombre=data.name;
+                this.Update()
+              },
+            },
+          ],
+        });
+        await alert.present();
+      }
+
+      return
+    });
   }
 
   show(x:number):void{
@@ -444,7 +512,7 @@ async EliminarItem(x:number){
       }else{
         this.tarjeta.subtotal=0;
         this.tarjeta.depositos=[]
-
+        this.tarjeta.posicion=this.item.tarjetas.length+1
       this.item.tarjetas.push(this.tarjeta);
         this.itemService.Update(this.item).then((res)=>{
           if(res===204){

@@ -26,13 +26,7 @@ ion-card-content[style='true'] {
 a{
  text-decoration: none;
 }
-/*
-.btns{
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-*/
+
 .itemInput {
   margin-right: 10px; /* Ajusta según sea necesario */
   font-size: 16px;
@@ -137,6 +131,11 @@ ion-segment-button{
 .right {
   text-align: right;
 }
+/*-----------------------------Mover los bolsillos------------------------*/
+ion-reorder-group{
+  width: 100%;
+}
+
 /*-----------------------------------------------------------------------*/
 ion-alert.custom-alert {
   --backdrop-opacity: 0.7;
