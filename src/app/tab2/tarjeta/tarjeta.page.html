@@ -40,12 +40,12 @@
   <ion-list lines="none" >
     <ion-item [disabled]="this.item.estado">
       <ion-reorder-group [disabled]="isDisabled" (ionItemReorder)="handleReorder($any($event))">
-        <ion-item #capturableArea [id]="'item-' + x" *ngFor="let res of this.item.tarjetas; let x=index;">
-        <ion-card >
+        <ion-item class="item-card-principal" #capturableArea [id]="'item-' + x" *ngFor="let res of this.item.tarjetas; let x=index;">
+        <ion-card>
             <ion-card-header>
               <ion-card-title>{{res.nombre}}
-                <ion-item [button]="true" [detail]="false" [id]="'popover-' + x" *ngIf="this.compartirUno.estado===true || this.creador===true" class="estado" fill="clear">
-                  <ion-icon  color={{res.color}} name="ellipsis-vertical-outline" slot="end"></ion-icon>
+                <ion-item [button]="true" class="btn-bolsillos-opc" [detail]="false" [id]="'popover-' + x" *ngIf="this.compartirUno.estado===true || this.creador===true" class="estado" fill="clear">
+                  <ion-icon name="settings" color={{res.color}}></ion-icon>
                 </ion-item>
                 <ion-popover [trigger]="'popover-' + x" [dismissOnSelect]="true">
                   <ng-template>
