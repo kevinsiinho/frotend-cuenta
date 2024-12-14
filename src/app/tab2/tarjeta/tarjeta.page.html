@@ -46,17 +46,18 @@
               <ion-card-title>{{res.nombre}}
                 <ion-item [button]="true" class="btn-bolsillos-opc" [detail]="false" [id]="'popover-' + x" *ngIf="this.compartirUno.estado===true || this.creador===true" class="estado" fill="clear">
                   <ion-icon name="settings" color={{res.color}}></ion-icon>
+
+                  <ion-popover [trigger]="'popover-' + x" [dismissOnSelect]="true" alignment="start" size="auto">
+                    <ng-template>
+                      <ion-content>
+                        <ion-list>
+                          <ion-item [button]="true" [detail]="false" (click)="EditarNombreBolsillo(x)">Editar</ion-item>
+                          <ion-item [button]="true" [detail]="false" (click)="EliminarItem(x)">Eliminar</ion-item>
+                        </ion-list>
+                      </ion-content>
+                    </ng-template>
+                  </ion-popover>
                 </ion-item>
-                <ion-popover [trigger]="'popover-' + x" [dismissOnSelect]="true">
-                  <ng-template>
-                    <ion-content>
-                      <ion-list>
-                        <ion-item [button]="true" [detail]="false" (click)="EditarNombreBolsillo(x)">Editar</ion-item>
-                        <ion-item [button]="true" [detail]="false" (click)="EliminarItem(x)">Eliminar</ion-item>
-                      </ion-list>
-                    </ion-content>
-                  </ng-template>
-                </ion-popover>
               </ion-card-title>
             <!--Titulos de las cantidades-->
             <ion-card-subtitle class="subvalores" *ngIf="res.Vinicial">

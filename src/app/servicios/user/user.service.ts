@@ -19,7 +19,6 @@ export class UserService {
   constructor(
     public link:Router,
     private alertController: AlertController,
-    private loadingController: LoadingController
     ) { }
 
     async presentAlert(msn:String) {
@@ -60,7 +59,6 @@ async Login(login:Login){
   const response: HttpResponse = await CapacitorHttp.post(options);
    return response
   }
-
 
   async Quien(token:string){
     const options = {

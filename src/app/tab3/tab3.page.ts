@@ -5,7 +5,6 @@ import { User } from '../clases/user/user';
 import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 
-
 @Component({
   selector: 'app-tab3',
   templateUrl: 'tab3.page.html',
@@ -19,12 +18,14 @@ export class Tab3Page implements OnInit {
   constructor(
     public userService: UserService,
     public link:Router,
-    private loadingController: LoadingController) {}
+    private loadingController: LoadingController,
+   ) {}
 
 
     public menu=[
       {name:"Modificar datos", icono:"", link:"/update-user", estado:true},
       {name:"Modificar Contraseña", icono:"", link:"/modificar-password", estado:true},
+      {name:"Dispositivos", icono:"", link:"/dispositivos", estado:true},
       {name:"Eliminar cuenta", icono:"", link:"/delete-user", estado:true}
 
     ]

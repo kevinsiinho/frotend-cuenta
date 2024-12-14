@@ -54,6 +54,10 @@ const routes: Routes = [
   {
     path: 'compartir-info/:id1/:id2',
     loadChildren: () => import('./modules/compartir-info/compartir-info.module').then( m => m.CompartirInfoPageModule)
+  },
+  {
+    path: 'dispositivos',
+    loadChildren: () => import('./modules/dispositivos/dispositivos.module').then( m => m.DispositivosPageModule)
   }
 ];
 @NgModule({

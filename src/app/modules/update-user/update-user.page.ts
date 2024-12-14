@@ -99,7 +99,6 @@ async actualizar(){
     }
   }
 
-
   regresar(){
     this.link.navigate(['tabs/tab3'])
   }

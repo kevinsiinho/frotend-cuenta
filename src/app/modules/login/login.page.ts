@@ -6,6 +6,8 @@ import { Login } from 'src/app/clases/login/login';
 import { UserService } from 'src/app/servicios/user/user.service';
 import { Network } from '@capacitor/network';
 import { User } from 'src/app/clases/user/user';
+import { ConfiguracionesService } from 'src/app/servicios/configuraciones/configuraciones.service';
+import { InfoDevice } from 'src/app/clases/device/device';
 
 
 @Component({
@@ -21,11 +23,15 @@ export class LoginPage implements OnInit{
   public email:string=""
   public loading:any;
   public emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  public InfoCel:InfoDevice = new InfoDevice()
+  public InfoCel2:InfoDevice = new InfoDevice()
+
   constructor(
     private alertController: AlertController,
     public userService: UserService,
     public link:Router,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+     private ConfigService:ConfiguracionesService
     ) { }
 
   async presentAlert(msn:String) {
@@ -49,6 +55,7 @@ export class LoginPage implements OnInit{
   }
 
 async ngOnInit() {
+    this.InfoCel= await this.ConfigService.getDeviceInfo()
     await this.verificarConexion();
 
     this.escucharCambiosConexion();
@@ -91,6 +98,8 @@ async ngOnInit() {
 
  async ingresar(){
  var isValidEmail=false
+ var newDevice=false
+
   await this.loading.present();
 
   //verifica si el correo es valido
@@ -122,9 +131,30 @@ async ngOnInit() {
             const mes = fecha.getMonth() + 1; // Los meses empiezan desde 0, por lo que sumamos 1
             const ano = fecha.getFullYear();
             info.ultimaVez= dia+"/"+mes+"/"+ano;
+            this.InfoCel.IdUser=info.id
+            this.InfoCel.fecha=info.ultimaVez
             this.userService.Update(info)
             this.loading.dismiss();
-            if(info.estado=="Activo"){
+            this.ConfigService.Get(this.InfoCel.id!).then((res)=>{
+              if(res===0){
+                newDevice=true
+              }else{
+                this.InfoCel2 = res
+              }
+              //sino el dispositivo no esta registrado
+            if(newDevice){
+              this.presentAlert(info.name+", estas ingresando desde un Dispositivo no registrado previamente")
+              this.ConfigService.Create(this.InfoCel).then((res)=>{
+                console.log("Creado"+res)
+                if(res.status===200){
+                  console.log("Registrado")
+                  this.link.navigate(['tabs/tab2'])
+                }else{
+                  console.log(res)
+                }
+              })
+            }else if(info.estado=="Activo"){
+              //Verificando que el dispositivo alla sido agregado
               this.link.navigate(['tabs/tab2'])
             }else if(info.estado=="pendiente"){
               //para recuperar la contraseña
@@ -135,6 +165,9 @@ async ngOnInit() {
             }else if(info.estado=="desactivada"){
               this.presentAlert("Tu cuenta ha sido bloqueado por uso inadecuado, si consideras que hay un error por favor comunicate con atención al usuario.")
             }
+
+            })
+
           })
         })
         }
@@ -148,5 +181,6 @@ async ngOnInit() {
     this.presentAlert("Verifica los campos e intenta nuevamente.")
   }
 }
+
 
 }
