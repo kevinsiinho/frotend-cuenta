@@ -23,7 +23,7 @@ ion-title{
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 13%; /* Ajusta la altura al 100% de la ventana */
+  height: 10%; /* Ajusta la altura al 100% de la ventana */
   background: linear-gradient(to bottom left,  #eab862, #f2974d, #fb7952);
   clip-path: polygon(0 100%, 100% 100%, 0 0);
 }
@@ -33,7 +33,7 @@ ion-title{
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 13%;
+  height: 10%;
   background: linear-gradient(to bottom right,  #eab862, #f2974d, #fb7952);
   clip-path: polygon(100% 100%, 0 100%, 100% 0);
 }

@@ -145,13 +145,13 @@ async ngOnInit() {
             if(newDevice){
               this.presentAlert(info.name+", estas ingresando desde un Dispositivo no registrado previamente")
               this.ConfigService.Create(this.InfoCel).then((res)=>{
-                console.log("Creado"+res)
-                if(res.status===200){
+                this.link.navigate(['tabs/tab2'])
+               /* if(res.status===200){
                   console.log("Registrado")
                   this.link.navigate(['tabs/tab2'])
                 }else{
                   console.log(res)
-                }
+                }*/
               })
             }else if(info.estado=="Activo"){
               //Verificando que el dispositivo alla sido agregado
