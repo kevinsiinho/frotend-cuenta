@@ -320,6 +320,9 @@ Negativo(x:number): string {
 }
 
 total(){
+  this.positivo=0
+  this.negativo=0
+  this.Totalresultado=0
   this.item.tarjetas.forEach((tarjeta) =>{
       if(tarjeta.Vinicial){
         tarjeta.depositos!.forEach(depositos => {
