@@ -61,9 +61,9 @@
               </ion-card-title>
             <!--Titulos de las cantidades-->
             <ion-card-subtitle class="subvalores" *ngIf="res.Vinicial">
-                <span class="left">${{formatNumberMil(res.Valor!)}}</span>
-                <span class="center">${{formatNumberMil(res.subtotal)}}</span>
-                <span class="right">${{formatNumberMil(res.Valor!+res.subtotal) }}</span>
+              <span class="left">${{formatNumberMil(res.Valor!)}}</span>
+              <span class="center">${{formatNumberMil(res.subtotal)}}</span>
+              <span class="right">${{formatNumberMil(res.Valor!+res.subtotal) }}</span>
             </ion-card-subtitle>
             <ion-card-subtitle class="subvalores" *ngIf="!res.Vinicial">
               <span class="left">${{Positivo(x)}}</span>
@@ -120,7 +120,12 @@
       </ion-item>
     </ion-reorder-group>
     </ion-item>
-    <ion-item>Total: $ {{total()}}</ion-item>
+    <ion-item class="msn-totales">Totales</ion-item>
+    <ion-item class="totales">
+      <span class="left">${{formatNumberMil(this.positivo)}}</span>
+      <span class="center">${{formatNumberMil(this.negativo)}}</span>
+      <span class="right">${{formatNumberMil(this.Totalresultado)}}</span>
+    </ion-item>
   </ion-list>
 
   <ion-content class="ion-padding">

@@ -49,6 +49,9 @@ export class TarjetaPage implements OnInit {
   isModalOpen = false;
   public btnEliminar=true;
   public isDisabled = true;
+  public positivo:number=0
+  public negativo:number=0
+  public Totalresultado:number=0
 
   public alertInputs3:any[]= [
     {
@@ -316,22 +319,28 @@ Negativo(x:number): string {
   return this.formatNumberMil(negativos)
 }
 
-total():string{
-  let Tvalor=0
-  let Result=0
+total(){
   this.item.tarjetas.forEach((tarjeta) =>{
       if(tarjeta.Vinicial){
         tarjeta.depositos!.forEach(depositos => {
-          Tvalor=Tvalor+depositos.valor
+          if(depositos.valor<0){
+            this.negativo=this.negativo+depositos.valor
+          }else{
+            this.positivo=this.positivo+depositos.valor
+          }
         });
-        Result=tarjeta.Valor!+Tvalor
+        this.positivo=this.positivo+tarjeta.Valor!
       }else{
         tarjeta.depositos!.forEach(depositos => {
-          Result+=depositos.valor
+          if(depositos.valor<0){
+            this.negativo=this.negativo+depositos.valor
+          }else{
+            this.positivo=this.positivo+depositos.valor
+          }
         });
       }
   });
-  return this.formatNumberMil(Result)
+  this.Totalresultado=this.positivo+(this.negativo)
 }
 
 Favorito(){

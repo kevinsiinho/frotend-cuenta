@@ -115,7 +115,7 @@ ion-segment-button{
   margin-left: 12px;
 }
 
-.subvalores{
+.subvalores, .totales{
   display: flex;
   justify-content: space-between;
 }
@@ -130,6 +130,34 @@ ion-segment-button{
 
 .right {
   text-align: right;
+}
+
+.msn-totales{
+  width: 90%;
+  font-size: 12px;
+}
+
+.totales{
+  margin: 0 auto;
+  width: 90%;
+}
+
+.totales .left {
+  text-align: left;
+  border-bottom: 1px solid green;
+  flex: 1;
+}
+
+.totales .center {
+  text-align: center;
+  border-bottom: 1px solid blue;
+  flex: 1;
+}
+
+.totales .right {
+  text-align: right;
+  border-bottom: 1px solid yellow;
+  flex: 1;
 }
 
 ion-list{
