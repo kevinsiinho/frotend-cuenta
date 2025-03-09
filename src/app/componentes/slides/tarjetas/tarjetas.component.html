@@ -1,0 +1,21 @@
+<ion-card *ngFor="let item of this.items" [style.color]="item.colorLetra" class="custom-card" [ngClass]="item.NombreTarjeta"  [ngStyle]="getCssVariables(item.ColorFondo!)" (click)="this.Ruta(item.id!)">
+  <div class="card-header">
+    <ion-icon [style.color]="item.colorLetra" name={{item.icono}} class="chip-icon"></ion-icon>
+    <span class="card-type">{{ this.item.itemname }}</span>
+  </div>
+
+  <div class="card-balance">Saldo: {{item.total}}</div>
+
+  <div class="card-number">**** **** **** {{ item.id!.slice(-4) }}</div>
+
+  <div class="card-footer">
+    <div *ngIf="this.user.id===item.userId" class="shared-info">
+      <ion-icon name="people"></ion-icon>
+      <span>{{ item.compartir.length }} Compartidas</span>
+      <span class="owner-name">Creada por: {{ this.user.nickname.slice(8) }}</span>
+    </div>
+    <span class="creation-date">{{ this.item.fecha }}</span>
+  </div>
+
+  <div class="softk-brand">SoftK</div>
+</ion-card>

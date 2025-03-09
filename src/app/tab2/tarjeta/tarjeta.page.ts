@@ -29,6 +29,7 @@ export class TarjetaPage implements OnInit {
   public item= new Items();
   public items:Items[]=[];
   public tarjeta=new Tarjetas();
+  public tarjetaEditar=new Tarjetas();
   public tarjetas:Tarjetas[]=[];
   public user = new User()
   public deposito= new Depositos()
@@ -45,6 +46,7 @@ export class TarjetaPage implements OnInit {
   public EstadoEditar!:string
   public idchat:string=""
   openModal = false;
+  openModalEditar = false;
   openModal2 = false;
   isModalOpen = false;
   public btnEliminar=true;
@@ -52,6 +54,7 @@ export class TarjetaPage implements OnInit {
   public positivo:number=0
   public negativo:number=0
   public Totalresultado:number=0
+  public posicion!:Number
 
   public alertInputs3:any[]= [
     {
@@ -357,61 +360,77 @@ Favorito(){
   this.Update()
 }
 
-  async EditarNombreTarjeta() {
-    const alert = await this.alertController.create({
-      header: 'Actualizar nombre',
-      inputs: this.alertInputs2,
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-        },
-        {
-          text: 'Actualizar',
-          handler: (data) => {
-            this.item.itemname=data.itemname;
-            this.Update()
-          },
-        },
-      ],
-    });
+EditarNombreTarjeta() {
+this.link.navigate(['/editar-tarjeta/',this.id])
 
-    await alert.present();
+}
+
+async EditarBolsillo(x:number) {
+  this.item.tarjetas.forEach(async (tarjeta,index) => {
+    if(x===index){
+      this.posicion=index
+      this.tarjetaEditar=tarjeta
+    }
+    return
+  });
+}
+
+confirmEditar() {
+  if(this.tarjetaEditar.nombre!="" && this.tarjetaEditar.color!=null){
+    this.tarjetaEditar.Vinicial=Boolean(this.tarjetaEditar.Vinicial)
+    if(this.tarjetaEditar.Vinicial && this.tarjetaEditar.Valor!<1){
+      this.presentAlert("Ingresa el valor inicial");
+    }else{
+      this.itemService.Update(this.item).then((res)=>{
+        if(res===204){
+          this.modalEditar.dismiss('confirm');
+          this.tarjetaEditar= new Tarjetas();
+        }else{
+          this.presentAlert("Error, intenta nuevamente");
+        }
+      })
+    }
+  }else{
+    this.presentAlert("Error, verifica los datos e intenta nuevamente");
   }
+}
 
-  async EditarNombreBolsillo(x:number) {
-    this.item.tarjetas.forEach(async (tarjeta,index) => {
-      if(x===index){
-        console.log(tarjeta.nombre)
-        const alert = await this.alertController.create({
-          header: 'Editar Nombre Bolsillo',
-          inputs: this.alertInputs3,
-          buttons: [
-            {
-              text: 'Cancelar',
-              role: 'cancel',
-            },
-            {
-              text: 'Actualizar',
-              handler: (data) => {
-                this.item.tarjetas[x].nombre=data.name;
-                this.Update()
-              },
-            },
-          ],
-        });
-        await alert.present();
-      }
+async EliminarDepositos(x:number){
+  if(this.item.tarjetas[x].depositos!.length>0){
+  const alert = await this.alertController.create({
+    header: 'Vaciar depositos',
+    buttons: [
+      {
+        text: 'Cancelar',
+        role: 'cancel',
+      },
+      {
+        text: 'Sí',
+        handler: () => {
+          this.item.tarjetas.forEach((bolsillos:Tarjetas, posicion) => {
+            if(x===posicion){
+              console.log(this.item.tarjetas[x].depositos=[])
+              this.item.tarjetas[x].subtotal=0
+            }
+          });
+          this.Update()
+          this.total()
+        },
+      },
+    ],
+  });
 
-      return
-    });
-  }
+  await alert.present();
+}else{
+  this.presentAlert("No hay depositos")
+}
+}
 
-  show(x:number):void{
+show(x:number):void{
     this.cardStates[x] = !this.cardStates[x];
   }
 
-  Update(){
+ Update(){
      this.itemService.Update(this.item).then((res)=>{
       if(res===204){
         this.itemsSubscription=this.itemService.getItems$().subscribe()
@@ -430,7 +449,7 @@ async EliminarItem(x:number){
           role: 'cancel',
         },
         {
-          text: 'Eliminar',
+          text: 'Sí',
           handler: () => {
             this.item.tarjetas.splice(x,1)
             this.Update()
@@ -440,7 +459,33 @@ async EliminarItem(x:number){
       ],
     });
     await alert.present();
-  }
+}
+
+async EliminarTarjeta(){
+  const alert = await this.alertController.create({
+    header: 'Eliminar tarjeta',
+    buttons: [
+      {
+        text: 'Cancelar',
+        role: 'cancel',
+      },
+      {
+        text: 'Confirmar',
+        handler: () => {
+          this.itemService.Delete(this.id).then((data)=>{
+           if(data==204){
+            this.regresar()
+           }else{
+            this.presentAlert("Error, intenta nuevamente");
+           }
+
+          })
+        },
+      },
+    ],
+  });
+  await alert.present();
+}
 
   EliminarDeposito(x:number,z:number){
 
@@ -497,11 +542,17 @@ async EliminarItem(x:number){
   }
 
 /*Modal añadir tarjeta*/
-  @ViewChild(IonModal) modal!: IonModal;
+@ViewChild('modal', { static: false }) modal!: IonModal;
+@ViewChild('modalEditar', { static: false }) modalEditar!: IonModal;
 
-  cancel() {
-    this.modal.dismiss(null, 'cancel');
-  }
+cancel() {
+  this.modal.dismiss(null, 'cancel');
+}
+
+cancel2() {
+  this.modalEditar.dismiss(null, 'cancel');
+}
+
 
   Festado(tipo:string){
     tipo=="activar" ?   this.item.estado=false:  this.item.estado=true
@@ -541,6 +592,12 @@ async EliminarItem(x:number){
   }
 
   onWillDismiss(event: Event) {
+    const ev = event as CustomEvent<OverlayEventDetail<string>>;
+    if (ev.detail.role === 'confirm') {
+    }
+  }
+
+  onWillDismissE(event: Event) {
     const ev = event as CustomEvent<OverlayEventDetail<string>>;
     if (ev.detail.role === 'confirm') {
     }

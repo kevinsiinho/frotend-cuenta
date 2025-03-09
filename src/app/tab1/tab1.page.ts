@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ItemsService } from '../servicios/items/items.service';
 import { Items } from '../clases/Items/items';
 import { Router } from '@angular/router';
@@ -6,9 +6,12 @@ import { AlertController, LoadingController } from '@ionic/angular';
 import { Preferences } from '@capacitor/preferences';
 import { UserService } from '../servicios/user/user.service';
 import { User } from '../clases/user/user';
-import { Compartir } from '../clases/compartir/compartir';
 import { Mensajes } from '../clases/mensajes/mensajes';
+import { register } from 'swiper/element/bundle';
+import tinycolor from 'tinycolor2';
+import { Tarjetas } from '../clases/tarjetas/tarjetas';
 
+register();
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -23,6 +26,9 @@ export class Tab1Page implements OnInit{
     public loading:any;
     public iduser!:string
     public hoy:string=""
+    public colorletra:boolean=false
+    public tarjeta=new Tarjetas()
+
   constructor(
     public itemService:ItemsService,
     public link:Router,
@@ -30,6 +36,29 @@ export class Tab1Page implements OnInit{
     public userService:UserService,
     private loadingController: LoadingController,
   ) {}
+
+  idTarjeta = '1234567812345678';
+  esCompartida = true;
+
+ //lista de opciones y opción selecionada
+ public listopciones:string[] = ['TARJETA','LISTA'];
+ public listaIconos: string[] = [
+  'card', 'cash', 'wallet', 'stats-chart', 'business', 'money', 'pin', 'search',
+  'add-circle', 'remove-circle', 'add', 'remove', 'checkmark-circle', 'close-circle',
+  'arrow-up-circle', 'arrow-down-circle', 'person', 'build', 'home', 'gift'
+];
+
+ opcionselecionada: string = this.listopciones[0];
+
+ColorDeLetra(){
+  this.item.colorLetra==="white"? this.item.colorLetra="black":this.item.colorLetra="white"
+}
+
+ getGradientColor(){
+  const lighterColor = tinycolor(this.item.ColorFondo).lighten(30).toString(); // 20% más claro
+  document.documentElement.style.setProperty('--color1',this.item.ColorFondo!);
+  document.documentElement.style.setProperty('--color2', lighterColor);
+}
 
   async presentAlert(msn:String) {
 
@@ -44,7 +73,10 @@ export class Tab1Page implements OnInit{
 async ngOnInit(){
 
   if(await this.userService.Verificar()){
-
+    this.item.colorLetra="white"
+    this.item.ColorFondo="#1E88E5"
+    this.item.icono="card"
+    this.getGradientColor()
     const fecha= new Date();
     const dia = fecha.getDate();
     const mes = fecha.getMonth() + 1; // Los meses empiezan desde 0, por lo que sumamos 1
@@ -64,7 +96,10 @@ async ngOnInit(){
       })
     }
   }
+}
 
+RecibirTarjeta(x:Tarjetas){
+  this.tarjeta=x
 }
 
 async Guardar(){
@@ -80,9 +115,10 @@ async Guardar(){
     this.item.total=0;
     this.item.userId=this.iduser
     this.item.fecha=this.hoy
-    console.log(this.item.fecha)
-    if(this.item.color!=null && this.item.itemname!=""){
-
+    this.item.Idtarjeta=this.tarjeta.id!
+    this.item.NombreTarjeta=this.tarjeta.nombreCSS!
+    console.log(this.item)
+    if(this.item.icono && this.item.itemname!="" || this.item.itemname!=null){
       if(this.Duplicado()){
             this.presentAlert("Ese nombre ya existe, intenta con uno diferente.");
             this.loading.dismiss();
@@ -94,6 +130,7 @@ async Guardar(){
             this.isLoading = false;
             this.presentAlert("Guardado correctamente");
             this.item = new Items()
+            this.ngOnInit()
           }else{
             this.loading.dismiss();
             this.isLoading = false;
@@ -120,6 +157,5 @@ Duplicado(){
 
   return duplicado;
 }
-
 
 }

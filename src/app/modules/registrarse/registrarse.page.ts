@@ -17,6 +17,8 @@ export class RegistrarsePage implements OnInit{
   public showBTN:boolean=false
   public email=""
   public emailvalido = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  public password2:string=""
+
   constructor(
     private alertController: AlertController,
     public userService: UserService,
@@ -27,13 +29,14 @@ export class RegistrarsePage implements OnInit{
 
 
   async ngOnInit() {
+    this.user=new User()
+    this.password2=""
       this.loading = await this.loadingController.create({
         message: 'Verificando...',
       });
   }
 
     async presentAlert(msn:String) {
-
       const alert = await this.alertController.create({
         header: 'Mensaje',
         message: ''+msn,
@@ -94,25 +97,28 @@ async Datos(){
   await this.loading.present();
 
   if(this.user.name!="" && this.user.nickname!="" && this.user.password!=""){
-    if(this.user.password.length>5){
-      if(this.user.password==="123456"){
-        this.loading.dismiss();
-        this.presentAlert("Contraseña insegura")
+    if(this.user.password===this.password2){
+      if(this.user.password.length>5){
+        if(this.user.password=="123456" || this.user.password=="asdfghj"){
+          this.loading.dismiss();
+          this.presentAlert("Contraseña insegura")
+        }/*else{
+          if(this.user.cel>2999999999 && this.user.cel<4000000000){
+            this.showBTN=true
+            this.loading.dismiss();
+          }else{
+            this.loading.dismiss();
+          this.presentAlert("Ingresa un número de celular valido")
+          }
+        }*/
       }else{
-        if(this.user.cel>2999999999 && this.user.cel<4000000000){
-          this.showBTN=true
-          this.loading.dismiss();
-        }else{
-          this.loading.dismiss();
-        this.presentAlert("Ingresa un número de celular valido")
-        }
+        this.loading.dismiss();
+        this.presentAlert("La contraseña debe tener más de 5 caracteres")
       }
-
     }else{
       this.loading.dismiss();
-      this.presentAlert("La contraseña debe tener más de 5 caracteres")
+      this.presentAlert("La contraseña no coinciden")
     }
-
   }else{
     this.loading.dismiss();
     this.presentAlert("Faltan campos por llenar")

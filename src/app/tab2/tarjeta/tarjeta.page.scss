@@ -1,3 +1,5 @@
+@import '../../../global.scss';
+
 ion-app {
   display: flex;
   flex-direction: column;
@@ -9,14 +11,28 @@ ion-router-outlet {
   overflow-y: auto;
 }
 
-ion-title{
-  margin-top: 20px;
-  font-size: 20px;
-  color: #ff8a08;
-}
-
 ion-card,ion-card-content{
   width: 100%;
+}
+
+ion-segment-button{
+  color:$cuarto-color;
+  --color-checked: #ec953f;
+}
+
+ion-header ion-toolbar ion-title{
+  color:$cuarto-color;
+  font-size: 20px;
+}
+
+.btnModals{
+  color:$cuarto-color;
+  font-size: 15px;
+}
+
+.color{
+  width: 100%;
+  margin-left: 10px;
 }
 
 ion-card-content[style='true'] {
@@ -70,16 +86,12 @@ ion-card-title{
 }
 
 .btns2 ion-icon{
-  color: #ff8a08;
+  color:$cuarto-color;
 }
 
 .regresar{
   float: left;
-  margin-left: -30px;;
-}
-
-.regresar ion-icon{
-  color: gray;
+  margin-left: -30px;
 }
 
 .ver{

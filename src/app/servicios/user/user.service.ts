@@ -145,7 +145,7 @@ async Login(login:Login){
 
   //mejorar esto
   async Verificar(){
-    const { value } = await Preferences.get({ key: 'token' });
+ const { value } = await Preferences.get({ key: 'token' });
 
    try {
     const options = {
@@ -173,8 +173,6 @@ async Login(login:Login){
       }
       return valor
     })
-
-
   }
 
    } catch (error) {
@@ -182,7 +180,7 @@ async Login(login:Login){
     this.presentAlert("Error en el servidor intenta más tarde")
     return false
    }
-
+return true
 };
 
     async buscar(event:string){

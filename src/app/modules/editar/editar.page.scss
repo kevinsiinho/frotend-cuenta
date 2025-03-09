@@ -1,0 +1,130 @@
+@import '../../../global.scss';
+
+.tarjeta{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+
+ion-header ion-toolbar ion-title{
+  color:$cuarto-color;
+  font-size: 20px;
+}
+
+.btns2{
+  font-size: 20px;
+  float: right;
+  margin-left: auto;
+  margin-top: -10px;
+}
+
+.btns2 ion-icon{
+  color:$cuarto-color;
+}
+
+.regresar{
+  float: left;
+  margin-left: -30px;
+}
+
+
+.div-form{
+  width: 90%;
+  margin: 0 auto;
+}
+
+ion-input{
+  margin-top: 20px;
+  border-bottom: 1px solid;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.buttonA{
+  font-size: 18px;
+  height: 45px;
+  --background:#ec953f;
+  width: 100%;
+}
+
+
+/*Diseño para las tarjetas*/
+.custom-card {
+  width: 320px;
+  height: 190px;
+  border-radius: 15px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: 'Arial', sans-serif;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.chip-icon {
+  font-size: 28px;
+  color: white;
+}
+
+.card-type {
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.card-balance {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.card-number {
+  font-size: 20px;
+  letter-spacing: 2px;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.shared-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.owner-name {
+  font-weight: bold;
+}
+
+.softk-brand {
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+  font-weight: bolder;
+  font-size: 16px;
+  text-shadow: 2px 2px 2px rgba(0,0,0,0.1);
+}
+
+.creation-date{
+  margin-bottom: 10px;
+  font-weight: bolder;
+  text-shadow: 2px 2px 2px rgba(0,0,0,0.1);
+}
+
+.picker{
+  width: 100%;
+  border: none;
+}
+

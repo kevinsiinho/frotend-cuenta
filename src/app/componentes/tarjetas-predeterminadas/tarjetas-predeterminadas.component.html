@@ -1,0 +1,26 @@
+<swiper-container
+  [pagination]="{ clickable: true }"
+  >
+
+  <swiper-slide *ngFor="let item of tarjetas" (click)="this.SelectTarjeta(item)">
+    <ion-card class="custom-card" [ngClass]="item.nombreCSS">
+      <div class="card-header">
+        <ion-icon name="apps-outline" class="chip-icon"></ion-icon>
+        <span class="card-type">Prueba</span>
+      </div>
+      <div class="card-balance">Saldo: $12.345</div>
+      <div class="card-number">**** **** **** 1234</div>
+      <div class="card-footer">
+        <div *ngIf="true" class="shared-info">
+          <ion-icon name="people"></ion-icon>
+          <span>2 Compartidas</span>
+          <span class="owner-name">Creada por: -----</span>
+        </div>
+        <span class="creation-date">D/M/A</span>
+      </div>
+      <div class="softk-brand">SoftK</div>
+    </ion-card>
+  </swiper-slide>
+
+</swiper-container>
+

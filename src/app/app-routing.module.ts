@@ -58,6 +58,10 @@ const routes: Routes = [
   {
     path: 'dispositivos',
     loadChildren: () => import('./modules/dispositivos/dispositivos.module').then( m => m.DispositivosPageModule)
+  },
+  {
+    path: 'editar-tarjeta/:id',
+    loadChildren: () => import('./modules/editar/editar.module').then( m => m.EditarPageModule)
   }
 ];
 @NgModule({

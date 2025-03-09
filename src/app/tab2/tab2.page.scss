@@ -1,46 +1,33 @@
-ion-toolbar{
-  width: 100%;
-  color: #ff8a08;
-}
+@import '../../global.scss';
 
-ion-title{
-  margin-top: 15px;
-
-}
-
-
-ion-card{
-  width: 100%;
-  color: white;
-}
-
-.btn{
-  text-decoration: none;
-  font-size: 20px;
-  width: 100%;
-  height: 100%;
-}
-
-.icons{
-  font-size: 25px;
-  font-weight: bolder;
-  margin-left: auto;
-}
-
-.btns2{
+.button-icon {
   float: right;
-  margin-top: -15px;
+  cursor: pointer;
 }
 
-.btns2 ion-icon{
-  color: #ff8a08;
-  font-size: 20px;
+.button{
+  font-size: 18px;
+  height: 45px;
+  --background:#ec953f;
+  width: 100%;
 }
 
-.nameSpan{
-  text-align: right;
+ion-segment-button{
+  color:$cuarto-color;
+  --color-checked: #ec953f;
 }
 
-.label-msn{
-  margin-left: 30px;
+ion-header ion-toolbar ion-title{
+  color:$cuarto-color;
+}
+
+ion-segment-content{
+  display: flex;
+  justify-content: center;
+}
+
+.slide-tarjetas{
+  margin: auto;
+  display: flex;
+  justify-content: center;
 }

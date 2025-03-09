@@ -3,6 +3,7 @@ import { CapacitorHttp, HttpResponse } from '@capacitor/core';
 import { Preferences } from '@capacitor/preferences';
 import { Observable, Subject } from 'rxjs';
 import { Items } from 'src/app/clases/Items/items';
+import { Tarjetas } from 'src/app/clases/Items/tarjetas';
 import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
@@ -55,6 +56,37 @@ export class ItemsService {
         });
         this.items$.next(this.items)
         return this.items;
+  }
+
+
+//Codigo temporal borrar luego de una vez
+  async all(){
+    const { value } = await Preferences.get({ key: 'token' });
+    this.items=[]
+    const options = {
+      url: this.url+'/items',
+      headers: { "Content-Type": "application/json",
+      "Authorization": 'Bearer ' + value
+      },
+    };
+
+  const response: HttpResponse = await CapacitorHttp.get(options);
+  response.data.forEach((element:Items) => {
+    element.tarjetas.forEach((tarjeta:Tarjetas) => {
+      tarjeta.color="#1E88E5"
+      this.Update(element)
+    });
+    if(element.NombreTarjeta=="" || element.NombreTarjeta==null || element.NombreTarjeta==undefined){
+
+      element.colorLetra="white"
+      element.ColorFondo="#1E88E5"
+      element.icono="card"
+      element.NombreTarjeta="principal-dinamica"
+      element.Idtarjeta="67bfd3c2f9827620d8f22395"
+      console.log(element)
+      this.Update(element)
+    }
+  });
   }
 
   async compartidos(id:string){

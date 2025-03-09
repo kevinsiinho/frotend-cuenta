@@ -1,37 +1,43 @@
 
 <ion-content [fullscreen]="true" class="codigo-principal">
-  <div class="arriba"></div>
-  <div class="segundario">
-    <div class="title">SoftK</div>
+  <div class="arriba">
+    <div class="rayitas">
+      <ion-icon name="ellipse"></ion-icon>
+      <ion-icon name="ellipse"></ion-icon>
+      <ion-icon name="ellipse"></ion-icon>
+      <ion-icon name="ellipse"></ion-icon>
 
-    <div class="msn">
-       Ya casi puedes actualizar tu contraseña
+      <div class="title">Tarjeta Virutal</div>
     </div>
 
     <ion-list class="form">
-      <div class="title2">Verificar Cuenta</div>
-      <ion-item>
-       <p>
-        Hemos enviado un codigo de 4 digitos ingresalo en las casillas,
-        para poder actualizar tu contraseña.
-      </p>
-      <p>
-       Recuerda que tienes un máximo de 3 intentos,
-       al pasar estos 3 intentos se bloqueará tu cuenta temporalmente.
-      </p>
-      </ion-item>
+      <div class="title2">
+        <span>Verificar cuenta</span>
+      </div>
 
-      <ion-item>
-        <ion-label>Intentó número: <span>{{this.intentos}}</span></ion-label>
-      </ion-item>
-      <ion-item class="inputs">
-        <ion-input class="input" [(ngModel)]="c1" type="number" labelPlacement="floating" maxlength="1" (input)="c1 = c1.toString().substring(0, 1)"></ion-input>
-        <ion-input class="input" [(ngModel)]="c2" type="number" labelPlacement="floating" maxlength="1" (input)="c2 = c2.toString().substring(0, 1)"></ion-input>
-        <ion-input class="input" [(ngModel)]="c3" type="number" labelPlacement="floating" maxlength="1" (input)="c3 = c3.toString().substring(0, 1)"></ion-input>
-        <ion-input class="input" [(ngModel)]="c4" type="number" labelPlacement="floating" maxlength="1" (input)="c4 = c4.toString().substring(0, 1)"></ion-input>
-      </ion-item>
+      <div class="parrafo">
+        <p>
+          Hemos enviado un código de 4 dígitos, ingresalo
+          para poder actualizar tu contraseña.
+        </p>
+        <p>
+        Recuerda que tienes un máximo de 3 intentos.
+        </p>
+        <p>
+          Al pasar los 3 intentos se bloqueará tu cuenta temporalmente y deberás comunicarte  con nosotros.
+          </p>
+      </div>
 
-      <ion-button  color="medium" expand="block" (click)="this.verificar()">Verificar</ion-button>
+      <div class="intento">
+        <ion-label class="intento" >Intento número: <span>{{this.intentos}}</span></ion-label>
+      </div>
+
+      <div class="inputs">
+        <ion-input class="input" [(ngModel)]="codigo" type="number" labelPlacement="floating" maxlength="4" (input)="codigo = codigo.toString().substring(0, 4)"></ion-input>
+      </div>
+
+      <ion-button expand="block" (click)="this.verificar()">Verificar</ion-button>
+      <ion-button expand="block" (click)="salir()">Salir</ion-button>
        </ion-list>
   </div>
   <div class="abajo"></div>

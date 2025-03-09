@@ -1,11 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
 import { UserService } from '../servicios/user/user.service';
 import { Items } from '../clases/Items/items';
 import { ItemsService } from '../servicios/items/items.service';
 import { LoadingController } from '@ionic/angular';
 import { User } from '../clases/user/user';
+import Swiper from 'swiper';
+import { register } from 'swiper/element/bundle';
+import { IonPopover } from '@ionic/angular';
 
+register();
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
@@ -19,13 +23,24 @@ export class Tab2Page implements OnInit{
   public isLoading = true;
   public loading:any;
   public user = new User()
+  @ViewChild('popover') popover!: IonPopover;
+  @ViewChild('swiper', { static: false }) swiperRef: ElementRef | undefined;
+  swiper?: Swiper;
 
-  constructor(
+ //lista de opciones y opción selecionada
+ public listopciones:string[] = ['ALL','TARJETAS','LISTAS','COMPARTIDOS'];
+ public opcionselecionada: string = this.listopciones[0];
+
+constructor(
     public userService:UserService,
     public itemService:ItemsService,
     private loadingController: LoadingController
   ) {}
 
+  openPopover(event: Event) {
+    this.popover.event = event;
+    this.popover.present();
+  }
 
   async ionViewWillEnter() {
       await this.Principal()
@@ -39,12 +54,14 @@ export class Tab2Page implements OnInit{
   }
 
 async ngOnInit() {
-    this.loading = await this.loadingController.create({
-      message: '',
-    });
+  this.itemService.all()
   }
 
 async Principal(){
+
+  this.loading = await this.loadingController.create({
+    message: '',
+  });
 
     await this.loading.present();
 
@@ -78,7 +95,7 @@ async Principal(){
       }
     }
     this.loading.dismiss();
-      this.isLoading = false;
+    this.isLoading = false;
   }
 
  async Ordenar(ordenar:string){
@@ -99,4 +116,8 @@ async Principal(){
     }
   }
 
+
+  tempo(x:any){
+    console.log(x)
+  }
 }

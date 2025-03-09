@@ -45,14 +45,15 @@
             <ion-card-header>
               <ion-card-title>{{res.nombre}}
                 <ion-item [button]="true" class="btn-bolsillos-opc" [detail]="false" [id]="'popover-' + x" *ngIf="this.compartirUno.estado===true || this.creador===true" class="estado" fill="clear">
-                  <ion-icon name="settings" color={{res.color}}></ion-icon>
+                  <ion-icon name="settings" [style.color]="res.color" ></ion-icon>
 
                   <ion-popover [trigger]="'popover-' + x" [dismissOnSelect]="true" alignment="start" size="auto">
                     <ng-template>
                       <ion-content>
                         <ion-list>
-                          <ion-item [button]="true" [detail]="false" (click)="EditarNombreBolsillo(x)">Editar</ion-item>
-                          <ion-item [button]="true" [detail]="false" (click)="EliminarItem(x)">Eliminar</ion-item>
+                          <ion-item [button]="true" [detail]="false" (click)="openModalEditar = !openModalEditar; this.EditarBolsillo(x)">Editar bolsillo</ion-item>
+                          <ion-item [button]="true" [detail]="false" (click)="EliminarItem(x)">Eliminar bolsillo</ion-item>
+                          <ion-item [button]="true" [detail]="false" (click)="EliminarDepositos(x)">Eliminar depositos</ion-item>
                         </ion-list>
                       </ion-content>
                     </ng-template>
@@ -70,8 +71,7 @@
               <span class="center">${{Negativo(x)}}</span>
               <span class="right">${{formatNumberMil(res.subtotal) }}</span>
           </ion-card-subtitle>
-
-              <ion-button expand="full" color={{res.color}}  (click)="show(x)"><ion-icon name="eye-outline"></ion-icon></ion-button>
+              <ion-button expand="full" [style.--background]="res.color" (click)="show(x)"><ion-icon name="eye-outline"></ion-icon></ion-button>
             </ion-card-header>
           <ion-card-content *ngIf="cardStates[x]===true">
             <ion-item>
@@ -90,7 +90,7 @@
                   <ion-col *ngIf="this.compartirUno.estado===true || this.creador===true" class="ver btnVer">
                     <ion-button
                       (click)="this.presentActionSheetEliminar(x,z)"
-                      color={{res.color}}>
+                      [style.--background]="res.color">
                       <ion-icon name="eye-outline"></ion-icon>
                     </ion-button>
                   </ion-col>
@@ -113,7 +113,7 @@
               </ion-item>
 
             </div>
-            <ion-button color={{res.color}} (click)="CapturaPantalla(x)" expand="full"><ion-icon name="camera-outline"></ion-icon></ion-button>
+            <ion-button [style.--background]="res.color" (click)="CapturaPantalla(x)" expand="full"><ion-icon name="camera-outline"></ion-icon></ion-button>
           </ion-card-content>
         </ion-card>
         <ion-reorder slot="end"></ion-reorder>
@@ -129,16 +129,16 @@
   </ion-list>
 
   <ion-content class="ion-padding">
-    <ion-modal  [isOpen]="openModal" (willDismiss)="onWillDismiss($event)">
+    <ion-modal #modal [isOpen]="openModal" (willDismiss)="onWillDismiss($event)">
       <ng-template>
         <ion-header>
           <ion-toolbar>
             <ion-buttons slot="start">
-              <ion-button (click)="cancel()">Cancelar</ion-button>
+              <ion-button class="btnModals" (click)="cancel()">Cancelar</ion-button>
             </ion-buttons>
-            <ion-title>Crear Tarjeta</ion-title>
+            <ion-title>Crear Bolsillo</ion-title>
             <ion-buttons slot="end">
-              <ion-button (click)="confirm()" [strong]="true">Confirmar</ion-button>
+              <ion-button class="btnModals" (click)="confirm()" [strong]="true">Confirmar</ion-button>
             </ion-buttons>
           </ion-toolbar>
         </ion-header>
@@ -150,6 +150,8 @@
               type="text"
               placeholder="Escribe aquí"
               [(ngModel)]="this.tarjeta.nombre"
+              [counter]="true"
+              maxlength="12"
             ></ion-input>
           </ion-item>
           <ion-item>
@@ -164,23 +166,60 @@
               [(ngModel)]="this.tarjeta.Valor"
             ></ion-input>
           </ion-item>
-          <ion-item>
-            <ion-select aria-label="Color" [(ngModel)]="this.tarjeta.color" interface="action-sheet" placeholder="Selecciona el color">
-              <ion-select-option value="primary">Primary</ion-select-option>
-              <ion-select-option value="secondary">Secondary</ion-select-option>
-              <ion-select-option value="tertiary">Tertiary</ion-select-option>
-              <ion-select-option value="success">Success</ion-select-option>
-              <ion-select-option value="warning">Warning</ion-select-option>
-              <ion-select-option value="danger">Danger</ion-select-option>
-              <ion-select-option value="light">Light</ion-select-option>
-              <ion-select-option value="medium">Medium</ion-select-option>
-              <ion-select-option value="dark">Dark</ion-select-option>
-            </ion-select>
+          <ion-item >
+            <ion-label>Color:</ion-label>
+            <input type="color" class="color" [(ngModel)]="this.tarjeta.color"/>
           </ion-item>
           <ion-item>
-             <ion-grid class="colores">
-                <app-colores></app-colores>
-             </ion-grid>
+           </ion-item>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+  </ion-content>
+
+  <ion-content class="ion-padding">
+    <ion-modal #modalEditar [isOpen]="openModalEditar" (willDismiss)="onWillDismissE($event)">
+      <ng-template>
+        <ion-header>
+          <ion-toolbar>
+            <ion-buttons slot="start">
+              <ion-button class="btnModals" (click)="cancel2()">Cancelar</ion-button>
+            </ion-buttons>
+            <ion-title>Editar Bolsillo</ion-title>
+            <ion-buttons slot="end">
+              <ion-button class="btnModals" (click)="confirmEditar()" [strong]="true">Confirmar</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+          <ion-item>
+            <ion-input
+              label="Nombre"
+              labelPlacement="stacked"
+              type="text"
+              placeholder="Escribe aquí"
+              [(ngModel)]="this.tarjetaEditar.nombre"
+              [counter]="true"
+              maxlength="12"
+            ></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-toggle [enableOnOffLabels]="false" (click)="this.FingresarValor()">Valor Inicial</ion-toggle>
+          </ion-item>
+          <ion-item *ngIf="this.tarjetaEditar.Vinicial===true">
+            <ion-input
+              label="Valor"
+              labelPlacement="stacked"
+              type="number"
+              placeholder="Ingresa el valor"
+              [(ngModel)]="this.tarjetaEditar.Valor"
+            ></ion-input>
+          </ion-item>
+          <ion-item >
+            <ion-label>Color:</ion-label>
+            <input type="color" class="color" [(ngModel)]="this.tarjetaEditar.color"/>
+          </ion-item>
+          <ion-item>
            </ion-item>
         </ion-content>
       </ng-template>
@@ -193,9 +232,9 @@
         <ion-list *ngIf="this.compartirUno.estado===true || this.creador===true">
           <ion-item [button]="true" id="nested-trigger">Ordenar Por</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="openModal = !openModal">Nuevo</ion-item>
-          <ion-item *ngIf="this.creador===true" [button]="true" [detail]="false" (click)="EditarNombreTarjeta()">Editar</ion-item>
+          <ion-item *ngIf="this.creador===true" [button]="true" [detail]="false" (click)="this.EditarNombreTarjeta()">Editar</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="Compartir()">Compartir</ion-item>
-          <ion-item [button]="true" [detail]="false" (click)="openModal2 = !openModal2">Eliminar</ion-item>
+          <ion-item [button]="true" [detail]="false" (click)="this.EliminarTarjeta()">Eliminar Tarjeta</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="toggleReorder()">Mover tarjetas</ion-item>
 
           <ion-popover trigger="nested-trigger" [dismissOnSelect]="true" side="end">

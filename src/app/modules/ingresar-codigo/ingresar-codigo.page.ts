@@ -12,11 +12,8 @@ import { UserService } from 'src/app/servicios/user/user.service';
 })
 export class IngresarCodigoPage implements OnInit {
 
-  public c1: string = '';
-  public c2: string = '';
-  public c3: string = '';
-  public c4: string = '';
-  private codigo!:any
+  public codigo!:string;
+  public codigo2!:Number;
   public loading:any;
   public intentos:number=1
   public user= new User()
@@ -112,14 +109,12 @@ async ngOnInit() {
   }
 
   verificar(){
-
-    this.codigo=this.c1+""+this.c2+""+this.c3+""+this.c4
+    this.codigo2=Number(this.codigo)
     console.log(this.codigo)
     console.log(this.user.codigo)
-    this.codigo=Number(this.codigo)
     if(this.user.codigo!=0){
       if(this.intentos<3){
-        if(this.user.codigo===this.codigo){
+        if(this.user.codigo===this.codigo2){
           this.AlertaNuevoPassword();
         }else{
           this.intentos=this.intentos+1
@@ -131,9 +126,10 @@ async ngOnInit() {
     }else{
       this.presentAlert("En estos momentos no puede actualizar la contraseña, intenta desde cero nuevamente")
     }
-
-
   }
 
+salir(){
+  this.link.navigate(['/login'])
+}
 
 }

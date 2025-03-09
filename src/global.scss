@@ -24,3 +24,60 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+
+$principal-color: #c3683e;
+$segundario-color: #eca686af;
+$tercero-color:#6e2d23;
+$cuarto-color:#ec953f;
+$quinto-color:#ffcb35;
+$fondo-color: #e1e5e7ee;
+$fondoAlerta:#E67E22;
+
+//Estilos de diseños
+
+.principal-dinamica{
+  background: linear-gradient(140deg, var(--color1), var(--color2));
+}
+
+.diseno1{
+ background-image: url(../src/assets/TarjetasFondo/fondo1.jpg);
+ background-size: cover; /* Ajusta la imagen al tamaño del contenedor */
+ background-position: center;
+ background-repeat: no-repeat;
+ color: white !important;
+}
+
+.diseno2{
+ background-image: url(../src/assets/TarjetasFondo/fondo2.jpg);
+ background-size: cover; /* Ajusta la imagen al tamaño del contenedor */
+ background-position: center;
+ background-repeat: no-repeat;
+ color: white !important;
+}
+
+
+.diseno3{
+ background-image: url(../src/assets/TarjetasFondo/fondo3.jpg);
+ background-size: cover; /* Ajusta la imagen al tamaño del contenedor */
+ background-position: center;
+ background-repeat: no-repeat;
+ color:black !important;
+}
+
+
+.diseno4{
+ background-image: url(../src/assets/TarjetasFondo/fondo4.jpg);
+ background-size: cover; /* Ajusta la imagen al tamaño del contenedor */
+ background-position: center;
+ background-repeat: no-repeat;
+ color: black !important;
+}
+
+
+.diseno5{
+ background-image: url(../src/assets/TarjetasFondo/fondo5.jpg);
+ background-size: cover; /* Ajusta la imagen al tamaño del contenedor */
+ background-position: center;
+ background-repeat: no-repeat;
+ color: white !important;
+}

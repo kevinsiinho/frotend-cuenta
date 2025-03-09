@@ -2,20 +2,53 @@
   <ion-toolbar>
     <ion-title>
       <span>Incio</span>
-      <ion-item [button]="true" [detail]="false" class="btns2" id="popover-button">
-        <ion-icon name="ellipsis-vertical-outline"  slot="end"></ion-icon>
-      </ion-item>
+      <ion-icon (click)="openPopover($event)" class="button-icon" name="ellipsis-vertical-outline"></ion-icon>
     </ion-title>
     <ion-progress-bar *ngIf="this.isLoading===true" color="warning" type="indeterminate"></ion-progress-bar>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-header class="header2" slot="fixed" [translucent]="true">
+  <ion-segment  [scrollable]="true">
+    <ion-segment-button value="ALL" content-id="ALL">
+      <ion-label>ALL</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="TARJETAS" content-id="TARJETAS">
+      <ion-label>TARJETAS</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="LISTAS" content-id="LISTAS">
+      <ion-label>LISTAS</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="COMPARTIDAS" content-id="COMPARTIDAS">
+      <ion-label>COMPARTIDAS</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+</ion-header>
 
+<ion-content [fullscreen]="true">
   <ion-refresher slot="fixed" [pullFactor]="0.5" [pullMin]="100" [pullMax]="200" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
+  <ion-segment-view>
+ <!-- Slide RECIENTES -->
+  <ion-segment-content id="ALL">
+    <ion-label>No disponible</ion-label>
+  </ion-segment-content>
+<!-- Slide Tarjetas -->
+<ion-segment-content id="TARJETAS">
+  <app-tarjetas></app-tarjetas>
+</ion-segment-content>
+<!-- Slide listas -->
+<ion-segment-content id="LISTAS">
+  <ion-label>No disponible</ion-label>
+</ion-segment-content>
+<!-- Slide COMPARTIDAS -->
+<ion-segment-content id="COMPARTIDAS">
+  <ion-label>No disponible</ion-label>
+</ion-segment-content>
+</ion-segment-view>
 
+  <!--
   <ion-list lines="none">
     <ion-item *ngFor="let item of this.items">
       <ion-card color={{item.color}} >
@@ -38,6 +71,7 @@
     </ion-item>
   </ion-list>
 
+
   <ion-popover trigger="popover-button"  [dismissOnSelect]="true">
     <ng-template>
       <ion-content>
@@ -45,6 +79,19 @@
           <ion-item>Ordenar por </ion-item>
           <ion-item [button]="true" class="nameSpan" (click)="Ordenar('nombre')" [detail]="false">Nombre</ion-item>
           <ion-item [button]="true" class="nameSpan" (click)="Ordenar('favorito')" [detail]="false">Favorito</ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-popover>
+
+  -->
+  <ion-popover #popover [dismissOnSelect]="true">
+    <ng-template>
+      <ion-content>
+        <ion-list>
+          <ion-item>Ordenar por </ion-item>
+          <ion-item [button]="true" (click)="Ordenar('nombre')" [detail]="false">Nombre</ion-item>
+          <ion-item [button]="true" (click)="Ordenar('favorito')" [detail]="false">Favorito</ion-item>
         </ion-list>
       </ion-content>
     </ng-template>

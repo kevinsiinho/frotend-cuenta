@@ -1,0 +1,72 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Editar tarjeta
+     <ion-button fill="clear" class="btns2 regresar"  (click)="regresar()">
+        <ion-icon name="chevron-back-outline"> </ion-icon>
+     </ion-button>
+    </ion-title>
+    <ion-progress-bar *ngIf="this.isLoading===true" color="warning" type="indeterminate"></ion-progress-bar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="div-form">
+        <ion-item>
+         <ion-input
+               label="Nombre de la tarjeta"
+               labelPlacement="floating"
+               [(ngModel)]="this.item.itemname"
+               [counter]="true"
+               maxlength="20"
+               placeholder="Escribe aquí el nombre del Item">
+         </ion-input>
+       </ion-item>
+
+       <ion-item>
+         <ion-select [(ngModel)]="this.item.icono" placeholder="Selecciona un icono">
+           <div slot="label">Iconos</div>
+           <ion-select-option *ngFor="let icon of this.listaIconos" [value]="icon">
+             <ion-icon [name]="icon" slot="start"></ion-icon> {{ icon }}
+           </ion-select-option>
+         </ion-select>
+       </ion-item>
+       <ion-item [disabled]="this.item.NombreTarjeta!=='principal-dinamica'">
+         <ion-toggle aria-label="Color letra"  (click)="this.ColorDeLetra()" [enableOnOffLabels]="true" color="dark" >Color negro de letra</ion-toggle>
+       </ion-item>
+       <ion-item [disabled]="this.item.NombreTarjeta!=='principal-dinamica'">
+         <input type="color" class="picker" [(ngModel)]="this.item.ColorFondo!" [style.background]="getGradientColor()"/>
+       </ion-item>
+       <ion-item>
+        <ion-button class="buttonA" (click)="this.Actualizar()">ACTUALIZAR</ion-button>
+      </ion-item>
+       </div>
+
+       <div class="tarjeta">
+         <ion-card [style.color]="this.item.colorLetra" class="custom-card" [ngClass]="this.item.NombreTarjeta">
+             <div class="card-header">
+               <ion-icon [style.color]="this.item.colorLetra" name={{this.item.icono}} class="chip-icon"></ion-icon>
+               <span class="card-type">{{ this.item.itemname }}</span>
+             </div>
+
+             <div class="card-balance">Saldo: $00000</div>
+
+             <div class="card-number">**** **** **** {{ this.item.id?.slice(-4) }}</div>
+
+             <div class="card-footer">
+               <div *ngIf="this.item.compartir" class="shared-info">
+                 <ion-icon name="people"></ion-icon>
+                 <span> 2 Compartidas</span>
+                 <span class="owner-name">Creada por: </span>
+               </div>
+               <span class="creation-date">{{ this.item.fecha }}</span>
+             </div>
+
+             <div class="softk-brand">SoftK</div>
+         </ion-card>
+        </div>
+   <div class="lista-predeterminada">
+    <app-tarjetas-predeterminadas (Tselecionada)="this.RecibirTarjeta($event)"></app-tarjetas-predeterminadas>
+  </div>
+</ion-content>
+
