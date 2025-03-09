@@ -72,11 +72,11 @@ export class ItemsService {
 
   const response: HttpResponse = await CapacitorHttp.get(options);
   response.data.forEach((element:Items) => {
-    element.tarjetas.forEach((tarjeta:Tarjetas) => {
-      tarjeta.color="#1E88E5"
-    });
-    if(element.NombreTarjeta=="" || element.NombreTarjeta==null || element.NombreTarjeta==undefined){
 
+    if(element.NombreTarjeta=="" || element.NombreTarjeta==null || element.NombreTarjeta==undefined){
+      element.tarjetas.forEach((tarjeta:Tarjetas) => {
+        tarjeta.color="#1E88E5"
+      });
       element.colorLetra="white"
       element.ColorFondo="#1E88E5"
       element.icono="card"
