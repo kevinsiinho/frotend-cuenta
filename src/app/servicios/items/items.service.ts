@@ -74,7 +74,6 @@ export class ItemsService {
   response.data.forEach((element:Items) => {
     element.tarjetas.forEach((tarjeta:Tarjetas) => {
       tarjeta.color="#1E88E5"
-      this.Update(element)
     });
     if(element.NombreTarjeta=="" || element.NombreTarjeta==null || element.NombreTarjeta==undefined){
 
@@ -84,9 +83,11 @@ export class ItemsService {
       element.NombreTarjeta="principal-dinamica"
       element.Idtarjeta="67bfd3c2f9827620d8f22395"
       console.log(element)
-      this.Update(element)
+
     }
+    this.Update(element)
   });
+
   }
 
   async compartidos(id:string){
