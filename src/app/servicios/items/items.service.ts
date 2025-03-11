@@ -59,7 +59,7 @@ export class ItemsService {
   }
 
 
-//Codigo temporal borrar luego de una vez
+/*Codigo temporal borrar luego de una vez*/
   async all(){
     const { value } = await Preferences.get({ key: 'token' });
     this.items=[]
@@ -89,7 +89,6 @@ export class ItemsService {
   });
 
   }
-
   async compartidos(id:string){
     const { value } = await Preferences.get({ key: 'token' });
     this.items=[]
