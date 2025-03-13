@@ -8,15 +8,16 @@
   z-index: 10;
   border-radius: 30px;
   background-color: $principal-color;
-  width: 95%;
-  height: 80%;
+  width: 85%;
+  height: auto;
   padding: 10px;
+  margin-top: 1px;
 }
 
 .title{
-  margin-top: 5%;
+  margin-top: 8px;
   width: 100%;
-  font-size: 40px;
+  font-size: 35px;
   font-weight: bolder;
   color: $principal-color;
   text-align: center;
@@ -26,11 +27,11 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 1%;
   color: $fondo-color;
   font-weight: bold;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-  font-size: 30px;
+  font-size: 25px;
 }
 
 .msn{
@@ -41,11 +42,11 @@
 }
 
 img {
-  width: 55%;
+  width: 40%;
   height: 20%;
   display: flex;
   margin: auto;
-  margin-bottom: 6%;
+  margin-bottom: 3%;
 }
 
 .rayitas{
@@ -66,7 +67,6 @@ ion-list{
 
 .inputs{
   color: $fondo-color;
-  font-size: 23px;
 }
 
 ion-input{
@@ -81,27 +81,15 @@ ion-input{
   text-align: center;
 }
 
-
-a{
-  color: #ff8a08;
-  font-weight: bold;
-  text-decoration: none;
-  float: right;
-}
-
 ion-button {
   margin-top: 20px;
-  font-size: 20px;
   --background: $segundario-color;
   --background-hover: $segundario-color;
-
   --border-radius: 30px;
   --border-color: $fondo-color;
   --border-style: solid;
   --border-width: 1px;
-
   --box-shadow: 0 2px 6px 0 rgb(0, 0, 0, 0.25);
-
   --ripple-color: $fondo-color;
 
 }

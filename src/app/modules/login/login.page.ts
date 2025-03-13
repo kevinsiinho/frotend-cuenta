@@ -55,16 +55,18 @@ export class LoginPage implements OnInit{
   }
 
 async ngOnInit() {
+
+  const { value } = await Preferences.get({ key: 'token' });
+    if(value){
+      await Preferences.remove({ key: 'token' });
+    }
+
     this.InfoCel= await this.ConfigService.getDeviceInfo()
     await this.verificarConexion();
 
     this.escucharCambiosConexion();
      const result2 = await Preferences.get({ key: 'select' });
      this.recordaremail = Boolean(JSON.parse(result2.value!))
-    const { value } = await Preferences.get({ key: 'token' });
-    if(value){
-      await Preferences.remove({ key: 'token' });
-    }
 
     if (this.recordaremail) {
       const result = await Preferences.get({ key: 'email' });
