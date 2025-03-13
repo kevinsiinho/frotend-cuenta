@@ -25,6 +25,7 @@ export class LoginPage implements OnInit{
   public emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   public InfoCel:InfoDevice = new InfoDevice()
   public InfoCel2:InfoDevice = new InfoDevice()
+  private tiempoMaximo = 30 * 60 * 1000; // 30 minutos en milisegundos
 
   constructor(
     private alertController: AlertController,
@@ -55,11 +56,11 @@ export class LoginPage implements OnInit{
   }
 
 async ngOnInit() {
-
   const { value } = await Preferences.get({ key: 'token' });
-    if(value){
-      await Preferences.remove({ key: 'token' });
-    }
+
+  if(value){
+ this.VerificacionSesion()
+}
 
     this.InfoCel= await this.ConfigService.getDeviceInfo()
     await this.verificarConexion();
@@ -98,9 +99,23 @@ async ngOnInit() {
     }
   }
 
+async VerificacionSesion(){
+  const ultima = await Preferences.get({ key: 'ultimaActividad' });
+  const ultimaActividad = parseInt(ultima.value!, 10);
+  const ahora = new Date().getTime();
+  if (ahora - ultimaActividad > this.tiempoMaximo) {
+    this.presentAlert("Tu sesión ha caducado")
+    await Preferences.remove({ key: 'token' });
+  }else{
+    await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
+    this.link.navigate(['tabs/tab2'])
+  }
+}
+
  async ingresar(){
  var isValidEmail=false
  var newDevice=false
+ const ahora = new Date().getTime();
 
   await this.loading.present();
 
@@ -137,7 +152,7 @@ async ngOnInit() {
             this.InfoCel.fecha=info.ultimaVez
             this.userService.Update(info)
             this.loading.dismiss();
-            this.ConfigService.Get(this.InfoCel.id!).then((res)=>{
+            this.ConfigService.Get(this.InfoCel.id!).then(async (res)=>{
               if(res===0){
                 newDevice=true
               }else{
@@ -146,7 +161,9 @@ async ngOnInit() {
               //sino el dispositivo no esta registrado
             if(newDevice){
               this.presentAlert(info.name+", estas ingresando desde un Dispositivo no registrado previamente")
-              this.ConfigService.Create(this.InfoCel).then((res)=>{
+              this.ConfigService.Create(this.InfoCel).then(async (res)=>{
+                await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
+
                 this.link.navigate(['tabs/tab2'])
                /* if(res.status===200){
                   console.log("Registrado")
@@ -157,6 +174,7 @@ async ngOnInit() {
               })
             }else if(info.estado=="Activo"){
               //Verificando que el dispositivo alla sido agregado
+              await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
               this.link.navigate(['tabs/tab2'])
             }else if(info.estado=="pendiente"){
               //para recuperar la contraseña

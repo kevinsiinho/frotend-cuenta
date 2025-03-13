@@ -58,6 +58,7 @@ export class Tab3Page implements OnInit {
 
     async salir(){
       await Preferences.remove({ key: 'token' });
+      await Preferences.remove({ key: 'ultimaActividad' });
       this.link.navigate(['/login'])
     }
 
