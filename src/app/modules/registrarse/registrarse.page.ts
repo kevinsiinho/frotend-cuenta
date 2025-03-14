@@ -102,15 +102,16 @@ async Datos(){
         if(this.user.password=="123456" || this.user.password=="asdfghj"){
           this.loading.dismiss();
           this.presentAlert("Contraseña insegura")
-        }/*else{
-          if(this.user.cel>2999999999 && this.user.cel<4000000000){
-            this.showBTN=true
-            this.loading.dismiss();
+        }else{
+          this.showBTN=true
+          this.loading.dismiss();
+         /* if(this.user.cel>2999999999 && this.user.cel<4000000000){
+
           }else{
             this.loading.dismiss();
           this.presentAlert("Ingresa un número de celular valido")
-          }
-        }*/
+          }*/
+        }
       }else{
         this.loading.dismiss();
         this.presentAlert("La contraseña debe tener más de 5 caracteres")

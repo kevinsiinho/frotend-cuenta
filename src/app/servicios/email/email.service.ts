@@ -49,6 +49,7 @@ export class EmailService {
       headers: { "Content-Type": "application/json" },
       data: email
       };
+
     const response: HttpResponse = await CapacitorHttp.post(options);
   }
 }

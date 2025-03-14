@@ -1,76 +1,126 @@
-.codigo-principal{
-  margin: 0 auto;
+@import 'src/global.scss';
+
+ion-content {
+  --background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  position: relative;
+  margin: 0;
+  padding: 0;
 }
 
-
-
-.title,.title2{
-  color: #ff8a08;
-  font-weight: bold;
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+.form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  border-radius: 30px;
+  background-color: $principal-color;
+  width: 85%;
+  height: auto;
+  margin-top: -30px;
+  padding: 10px;
 }
 
 .title{
-  font-size: 40px;
-  margin-top: 70px;
-}
-
-.title2{
-  font-size: 27px;
+  margin-top: 5px;
+  width: 100%;
+  font-size: 35px;
+  font-weight: bolder;
+  color: $principal-color;
   text-align: center;
-  padding: 3px;
-  margin-top: 10px;
 }
 
-.msn{
-  font-size: 22px;
-  margin-bottom: 10px;
-  width: 70%;
+.title2 span{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+  color: $fondo-color;
+  font-weight: bold;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-size: 25px;
 }
 
-
-.segundario{
-  margin: 0 auto;
-  padding: 10px;
+.texto{
+  color: $fondo-color;
+  margin-bottom: 20px;
 }
 
-.inputs{
-  padding: 10px;
+.rayitas{
+  margin-top: 5px;
+  margin-left: 5px;
 }
 
-.input{
-  font-size: 50px;
-  width: 60px;
-  background-color: none;
-  border: 2px solid #ff8a08;
-  margin-right: 10px;
-  margin: auto;
+.rayitas ion-icon{
+  color: $principal-color;;
+}
+
+.msn {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
   text-align: center;
+  padding: 10px 0;
+  font-size: 11px;
+  z-index: 10;
 }
 
 ion-list{
   margin-bottom: 10px;
+  background-color: none;
+  color: $fondo-color;
 }
 
-/*fondo*/
-.abajo{
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 20%; /* Ajusta la altura al 100% de la ventana */
-  background: linear-gradient(to bottom left,  #eab862, #f2974d, #fb7952);
-  clip-path: polygon(0 100%, 100% 100%, 0 0);
+.inputs{
+  color: $fondo-color;
 }
 
-.arriba{
-  position: fixed;
-  top: 0;
-  left: 0;
+ion-input{
   width: 100%;
-  height: 20%;
-  background: linear-gradient(to bottom right,  #eab862, #f2974d, #fb7952);
-  clip-path: polygon(100% 0, 0 0, 100% 100%);
+  margin: 0 auto;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  color: white;
+  font-weight: bold;
+  background-color: $segundario-color;
+  border-radius: 50px 50px 50px 50px;
+  text-align: center;
+  font-size: 30px;
+}
+
+ion-button {
+  --background: $segundario-color;
+  --background-hover: $segundario-color;
+  --border-radius: 30px;
+  --border-color: $fondo-color;
+  --border-style: solid;
+  --border-width: 1px;
+
+  --box-shadow: 0 2px 6px 0 rgb(0, 0, 0, 0.25);
+
+  --ripple-color: $fondo-color;
+}
+
+.btn{
+  margin-top: 10px;
+}
+
+.btn2{
+  color: $fondo-color;
+}
+
+.btn2 ion-button{
+  width: 70%;
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+.verificar{
+  margin-top: 40px;
 }
 
 @media screen and (max-height: 600px){

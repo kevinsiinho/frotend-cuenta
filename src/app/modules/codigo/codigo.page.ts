@@ -13,11 +13,7 @@ import { UserService } from 'src/app/servicios/user/user.service';
 })
 export class CodigoPage implements OnInit {
 
-  public c1!:number
-  public c2!:number
-  public c3!:number
-  public c4!:number
-  private codigo!:any
+  public codigo!:number
 
   public user= new User()
   public isLoading = true;
@@ -53,6 +49,7 @@ export class CodigoPage implements OnInit {
               this.userService.Quien(value).then((res)=>{
               this.userService.InfoUser(res.data).then((data)=>{
                 this.user=data
+                console.log(this.user.codigo)
                 loading.dismiss();
                 this.isLoading = false;
               })
@@ -82,8 +79,6 @@ export class CodigoPage implements OnInit {
   }
 
   verificar(){
-    this.codigo=this.c1+""+this.c2+""+this.c3+""+this.c4
-    this.codigo=Number(this.codigo)
     if(this.codigo>0 && this.user.codigo===this.codigo){
       this.user.estado="Activo"
       this.user.codigo=0

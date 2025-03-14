@@ -45,7 +45,7 @@ export class ChangePasswordPage {
           this.email = this.email.toLowerCase();
           //buscando el correo
           this.userService.buscar(this.email).then((data)=>{
-              this.user=data[0]
+            this.user=data[0]
             if(this.user.email===this.email ){
               this.loading.dismiss();
               this.link.navigate(['/ingresar-codigo/'+this.user.id])
@@ -57,6 +57,7 @@ export class ChangePasswordPage {
                     this.presentAlert("hola señor(a) "+nombre+", se ha te ha enviado un codigo a tu correo.")
                   }else{
                     this.presentAlert("En estos momentos estamos teniendo problema con el servidor, intenta más tarde.")
+                    this.link.navigate(['/change-password'])
                   }
                 })
             }else{
@@ -83,5 +84,4 @@ export class ChangePasswordPage {
       }
       return numeroAleatorio
     }
-
 }

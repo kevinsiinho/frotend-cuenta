@@ -1,32 +1,33 @@
-
-<ion-content [fullscreen]="true" class="codigo-principal">
-  <div class="arriba"></div>
-  <div class="segundario">
-    <div class="title">SoftK</div>
-
-    <div class="msn">
-      Ya casi eres parte de nosotros
+<ion-content  [fullscreen]="true">
+  <div class="arriba">
+    <div class="rayitas">
+      <ion-icon name="ellipse"></ion-icon>
     </div>
 
-    <ion-list class="form">
-      <div class="title2">Verificar Cuenta</div>
-      <ion-item>
-      Para comenzar necesitamos que verificar que eres tu, por eso se ha enviando un código de seguridad  a tu correo electrónico, por favor ingresalo.
-      </ion-item>
-
-      <ion-item class="inputs">
-        <ion-input class="input" [(ngModel)]="c1" type="number" labelPlacement="floating"></ion-input>
-        <ion-input class="input" [(ngModel)]="c2" type="number" labelPlacement="floating"></ion-input>
-        <ion-input class="input" [(ngModel)]="c3" type="number" labelPlacement="floating"></ion-input>
-        <ion-input class="input" [(ngModel)]="c4" type="number" labelPlacement="floating"></ion-input>
-      </ion-item>
-
-      <ion-item class="inputs">
-        <ion-button  color="black" expand="block" (click)="this.NuevoCodigo()">No recibí ningún código</ion-button>
-      </ion-item>
-
-      <ion-button  color="medium" expand="block" (click)="this.verificar()">Verificar</ion-button>
-       </ion-list>
+    <div class="title">Tarjeta Virutal</div>
   </div>
-  <div class="abajo"></div>
+
+    <ion-list class="form">
+      <div class="title2">
+        <span>VERIFICAR CUENTA</span>
+      </div>
+
+      <div class="texto">
+        Para comenzar necesitamos que verificar que eres tu, por eso se ha enviando un código de seguridad  a tu correo electrónico, por favor ingresalo.
+      </div>
+
+      <div class="inputs">
+        <ion-input  [(ngModel)]="codigo" type="number" labelPlacement="floating"></ion-input>
+      </div>
+
+      <div class="btn2">
+        <ion-button color="light" expand="block" (click)="this.NuevoCodigo()">No recibí ningún código</ion-button>
+      </div>
+
+      <ion-button class="btn verificar" expand="block" (click)="this.verificar()">Verificar</ion-button>
+      <ion-button color="medium" class="btn" [routerLink]="['/login']" expand="block">CANCELAR</ion-button>
+       </ion-list>
+
+   <!--<ion-label class="lbl-net">No estás conectado a internet</ion-label>-->
 </ion-content>
+

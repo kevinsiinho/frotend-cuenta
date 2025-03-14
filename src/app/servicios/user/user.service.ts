@@ -83,7 +83,6 @@ async Login(login:Login){
   };
 
   async Update(user:User){
-    const { value } = await Preferences.get({ key: 'token' });
     const options = {
       url: this.url+'/user/'+user.id,
       headers: { "Content-Type": "application/json"
@@ -91,7 +90,7 @@ async Login(login:Login){
       data:user
     };
   const response: HttpResponse = await CapacitorHttp.put(options);
-        return response.status;
+  return response.status;
   }
 
   async UpdatePassword(id:string, password:string){
