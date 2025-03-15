@@ -19,14 +19,10 @@ ion-input{
   width: 100%;
 }
 
-ion-segment-button{
-  color:$cuarto-color;
-  --color-checked: #ec953f;
-}
-
 ion-header ion-toolbar ion-title{
   color:$cuarto-color;
 }
+
 
 /*Diseño para las tarjetas*/
 .custom-card {
@@ -106,10 +102,5 @@ ion-header ion-toolbar ion-title{
   flex-direction: column;
   align-items: center;
   margin-top: 10px;
-}
-
-.picker{
-  width: 100%;
-  border: none;
 }
 

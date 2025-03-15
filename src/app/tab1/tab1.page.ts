@@ -82,7 +82,7 @@ async ngOnInit(){
     const ano = fecha.getFullYear();
     this.hoy = dia+"/"+mes+"/"+ano;
 
-    await Preferences.set({ key: 'ultimaActividad', value: fecha.toString() });
+   // await Preferences.set({ key: 'ultimaActividad', value: fecha.toString() });
     const { value } = await Preferences.get({ key: 'token' });
     if(value){
       this.userService.Quien(value).then((data)=>{

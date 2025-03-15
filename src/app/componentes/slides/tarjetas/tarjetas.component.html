@@ -11,8 +11,8 @@
   <div class="card-footer">
     <div *ngIf="this.user.id===item.userId" class="shared-info">
       <ion-icon name="people"></ion-icon>
-      <span>{{ item.compartir.length }} Compartidas</span>
-      <span class="owner-name">Creada por: {{ this.user.nickname.slice(8) }}</span>
+      <span *ngIf="item.compartir && item.compartir.length > 0">{{ item.compartir.length }} Compartidas</span>
+      <span class="owner-name" *ngIf="this.user.id!==item.userId">Creada por: {{ this.user.nickname.slice(8) }}</span>
     </div>
     <span class="creation-date">{{ this.item.fecha }}</span>
   </div>

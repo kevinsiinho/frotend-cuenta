@@ -49,17 +49,12 @@ export class ItemsService {
     };
 
   const response: HttpResponse = await CapacitorHttp.get(options);
-        response.data.forEach((item:any)=> {
-          this.item=new Items();
-          this.item.setValues(item)
-          this.items.push(this.item)
-        });
-        this.items$.next(this.items)
+       this.items=response.data
         return this.items;
   }
 
-
-/*Codigo temporal borrar luego de una vez*/
+/*
+Codigo temporal borrar luego de una vez
   async all(){
     const { value } = await Preferences.get({ key: 'token' });
     this.items=[]
@@ -71,24 +66,27 @@ export class ItemsService {
     };
 
   const response: HttpResponse = await CapacitorHttp.get(options);
-  response.data.forEach((element:Items) => {
-
-    if(element.NombreTarjeta=="" || element.NombreTarjeta==null || element.NombreTarjeta==undefined){
-      element.tarjetas.forEach((tarjeta:Tarjetas) => {
-        tarjeta.color="#1E88E5"
-      });
-      element.colorLetra="white"
-      element.ColorFondo="#1E88E5"
-      element.icono="card"
-      element.NombreTarjeta="principal-dinamica"
-      element.Idtarjeta="67bfd3c2f9827620d8f22395"
-      console.log(element)
-
+    console.log(response.data)
+  response.data.forEach((element: Items) => {
+    if (!element.tarjetas) {
+      element.tarjetas = []; // Asegurar que siempre sea un array
     }
-    this.Update(element)
+
+    element.tarjetas.forEach((tarjeta: Tarjetas) => {
+      tarjeta.color = "#1E88E5";
+    });
+
+    element.colorLetra = "white";
+    element.ColorFondo = "#1E88E5";
+    element.icono = "card";
+    element.NombreTarjeta = "principal-dinamica";
+    element.Idtarjeta = "67bfd3c2f9827620d8f22395";
+    console.log(element)
+    this.Update(element);
   });
 
-  }
+}
+*/
   async compartidos(id:string){
     const { value } = await Preferences.get({ key: 'token' });
     this.items=[]
@@ -100,13 +98,7 @@ export class ItemsService {
     };
 
   const response: HttpResponse = await CapacitorHttp.get(options);
-        response.data.forEach((item:any)=> {
-          this.item=new Items();
-          this.item.setValues(item)
-          this.items.push(this.item)
-        });
-        this.items$.next(this.items)
-        return this.items;
+      return response.data;
   }
 
 

@@ -54,7 +54,7 @@ constructor(
   }
 
 async ngOnInit() {
-  this.itemService.all()
+  //this.itemService.all()
   }
 
 async Principal(){
@@ -76,8 +76,8 @@ async Principal(){
           })
 
           this.itemService.allitems(data.data).then(async (res)=>{
-            this.items=res
-
+           // this.items=res
+           // console.log(this.items)
             //buscando los compartidos
             this.itemService.compartidos(data.data).then((res)=>{
               this.items2=res
