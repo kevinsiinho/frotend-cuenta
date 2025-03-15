@@ -1,11 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
 import { UserService } from '../servicios/user/user.service';
 import { Items } from '../clases/Items/items';
 import { ItemsService } from '../servicios/items/items.service';
 import { LoadingController } from '@ionic/angular';
 import { User } from '../clases/user/user';
-import Swiper from 'swiper';
 import { register } from 'swiper/element/bundle';
 import { IonPopover } from '@ionic/angular';
 
@@ -24,8 +23,6 @@ export class Tab2Page implements OnInit{
   public loading:any;
   public user = new User()
   @ViewChild('popover') popover!: IonPopover;
-  @ViewChild('swiper', { static: false }) swiperRef: ElementRef | undefined;
-  swiper?: Swiper;
 
  //lista de opciones y opción selecionada
  public listopciones:string[] = ['ALL','TARJETAS','LISTAS','COMPARTIDOS'];
@@ -48,7 +45,7 @@ constructor(
 
   handleRefresh(event:any) {
     setTimeout(() => {
-      this.ngOnInit()
+      this.Principal()
       event.target.complete();
     }, 2000);
   }
@@ -76,7 +73,7 @@ async Principal(){
           })
 
           this.itemService.allitems(data.data).then(async (res)=>{
-           // this.items=res
+           this.items=res
            // console.log(this.items)
             //buscando los compartidos
             this.itemService.compartidos(data.data).then((res)=>{

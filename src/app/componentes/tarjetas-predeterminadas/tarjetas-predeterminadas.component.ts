@@ -26,9 +26,7 @@ export class TarjetasPredeterminadasComponent  implements OnInit {
   constructor(
     public itemService:ItemsService,
     public link:Router,
-    private alertController: AlertController,
     public userService:UserService,
-    private loadingController: LoadingController,
     private tarjetasServices:TarjetasService
   ) {}
 
