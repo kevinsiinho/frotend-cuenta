@@ -140,8 +140,50 @@ ion-button {
   --ripple-color: $fondo-color;
 }
 
-@media screen and (max-height: 600px){
-  .abajo{
-    display: none;
+@media screen and (max-height: 1340px){
+  .form{
+    width: 300px;
+    height: 350px;
   }
+
+  img {
+    width: 80px;
+    height: 50px;
+  }
+
+
+.title{
+  font-size: 30px;
+  margin-top: 1px;
+}
+
+.title2 span{
+  font-size: 20px;
+}
+
+ion-input{
+  margin-top: 5px;
+  margin-bottom: 2px;
+  height: auto;
+}
+
+
+.btn-ingresar{
+  margin-top: 15px !important;
+}
+
+
+.link-registrar{
+  margin-top: 25px;
+}
+
+.recuperarPassword{
+  padding: 1px;
+  font-size: 12px;
+}
+
+ion-checkbox{
+margin-top: 10px;
+}
+
 }

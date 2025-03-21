@@ -107,4 +107,10 @@ constructor() { }
     return response.data;
   }
 
+  async UltimaVez() {
+    const ahora = new Date()
+    await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
+  }
+
+
 }

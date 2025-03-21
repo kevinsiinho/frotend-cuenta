@@ -32,19 +32,19 @@
   <ion-segment-view>
  <!-- Slide RECIENTES -->
   <ion-segment-content id="ALL">
-    <ion-label>No disponible</ion-label>
+    <app-reciente [items]="this.items"></app-reciente>
   </ion-segment-content>
 <!-- Slide Tarjetas -->
-<ion-segment-content id="TARJETAS">
+<ion-segment-content class="segmen-boton" id="TARJETAS">
   <app-tarjetas [items]="this.items"></app-tarjetas>
 </ion-segment-content>
 <!-- Slide listas -->
-<ion-segment-content id="LISTAS">
+<ion-segment-content class="segmen-boton" id="LISTAS">
   <ion-label>No disponible</ion-label>
 </ion-segment-content>
 <!-- Slide COMPARTIDAS -->
-<ion-segment-content id="COMPARTIDAS">
-  <ion-label>No disponible</ion-label>
+<ion-segment-content class="segmen-boton" id="COMPARTIDAS">
+  <app-compartidas [items2]="this.items2"></app-compartidas>
 </ion-segment-content>
 </ion-segment-view>
 

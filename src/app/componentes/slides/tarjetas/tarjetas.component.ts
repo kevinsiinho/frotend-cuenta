@@ -22,17 +22,16 @@ export class TarjetasComponent {
 
 constructor(
     public userService:UserService,
-    public itemService:ItemsService,
     public link:Router,
   ) {}
 
-    getCssVariables(color: string) {
+ getCssVariables(color: string) {
       let lighterColor = tinycolor(color).lighten(30).toString();
       return {
         '--color1': color,
         '--color2': lighterColor
       };
-    }
+ }
 
 async ngOnChanges(changes: SimpleChanges) {
 

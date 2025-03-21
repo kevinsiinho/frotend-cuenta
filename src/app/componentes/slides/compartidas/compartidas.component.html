@@ -1,3 +1,72 @@
-<p>
-  compartidas works!
-</p>
+<div class="compartidas">
+
+<div class="swpier-tarjeta">
+
+<ion-label>Tarjetas</ion-label>
+
+<swiper-container
+  [pagination]="{ clickable: true }"
+  >
+  <swiper-slide *ngFor="let item of this.items2">
+    <ion-card [style.color]="item.colorLetra" class="custom-card" [ngClass]="item.NombreTarjeta"  [ngStyle]="getCssVariables(item.ColorFondo!)" (click)="this.Ruta(item.id!)">
+      <div class="card-header">
+        <ion-icon [style.color]="item.colorLetra" name={{item.icono}} class="chip-icon"></ion-icon>
+        <span class="card-type">{{ item.itemname }}</span>
+      </div>
+
+      <div class="card-balance">Saldo: {{item.total}}</div>
+
+      <div class="card-number">**** **** **** {{ item.id!.slice(-4) }}</div>
+
+      <div class="card-footer">
+        <div class="shared-info">
+          <ion-icon name="people"></ion-icon>
+          <span >{{ item.compartir.length }} Compartidas</span>
+          <span class="owner-name">Creada por: {{ item.itemname }}</span>
+        </div>
+        <span class="creation-date">{{ item.fecha }}</span>
+      </div>
+
+      <div class="softk-brand">SoftK</div>
+    </ion-card>
+  </swiper-slide>
+
+</swiper-container>
+</div>
+
+<div class="swipers-listas">
+
+  <ion-label>Listas compartidas, No disponible</ion-label>
+<!--
+<swiper-container
+  [pagination]="{ clickable: true }"
+  >
+  <swiper-slide *ngFor="let item of this.items2">
+    <ion-card [style.color]="item.colorLetra" class="custom-card" [ngClass]="item.NombreTarjeta"  [ngStyle]="getCssVariables(item.ColorFondo!)" (click)="this.Ruta(item.id!)">
+      <div class="card-header">
+        <ion-icon [style.color]="item.colorLetra" name={{item.icono}} class="chip-icon"></ion-icon>
+        <span class="card-type">{{ item.itemname }}</span>
+      </div>
+
+      <div class="card-balance">Saldo: {{item.total}}</div>
+
+      <div class="card-number">**** **** **** {{ item.id!.slice(-4) }}</div>
+
+      <div class="card-footer">
+        <div class="shared-info">
+          <ion-icon name="people"></ion-icon>
+          <span >{{ item.compartir.length }} Compartidas</span>
+          <span class="owner-name">Creada por: {{ item.itemname }}</span>
+        </div>
+        <span class="creation-date">{{ item.fecha }}</span>
+      </div>
+
+      <div class="softk-brand">SoftK</div>
+    </ion-card>
+  </swiper-slide>
+
+</swiper-container>
+-->
+</div>
+
+</div>

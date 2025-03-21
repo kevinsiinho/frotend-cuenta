@@ -185,9 +185,7 @@ async VerificacionSesion(){
             }else if(info.estado=="desactivada"){
               this.presentAlert("Tu cuenta ha sido bloqueado por uso inadecuado, si consideras que hay un error por favor comunicate con atención al usuario.")
             }
-
             })
-
           })
         })
         }

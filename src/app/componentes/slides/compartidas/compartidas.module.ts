@@ -1,12 +1,20 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-
+import { CompartidasComponent } from './compartidas.component';
+import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [],
+  declarations: [CompartidasComponent],
   imports: [
-    CommonModule
-  ]
+    CommonModule,
+    IonicModule,
+    FormsModule,
+  ],
+  exports:[CompartidasComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class CompartidasModule { }
+
+export class CompartidasModule {
+
+}

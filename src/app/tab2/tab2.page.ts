@@ -74,12 +74,11 @@ async Principal(){
 
           this.itemService.allitems(data.data).then(async (res)=>{
            this.items=res
-           // console.log(this.items)
+
             //buscando los compartidos
             this.itemService.compartidos(data.data).then((res)=>{
               this.items2=res
             })
-
             //
             this.loading.dismiss();
             this.isLoading = false;
@@ -96,7 +95,6 @@ async Principal(){
   }
 
  async Ordenar(ordenar:string){
-
     await Preferences.set({
       key: 'IntemsOrden',
       value: ordenar,
@@ -110,11 +108,11 @@ async Principal(){
       this.items.sort((a, b) => {
         return a.favorito === b.favorito ? 0 : a.favorito ? -1 : 1;
       });
+    }else if(ordenar=="reciente"){
+      this.items.sort((a,b)=>{
+        return new Date(b.reciente!).getTime() - new Date(a.reciente!).getTime();
+      })
     }
   }
 
-
-  tempo(x:any){
-    console.log(x)
-  }
 }

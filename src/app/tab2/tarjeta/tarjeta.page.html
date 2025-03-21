@@ -252,6 +252,7 @@
 
         <ion-list *ngIf="this.compartirUno.estado===false">
           <ion-item [button]="true" [detail]="false" (click)="setOpen(true)">Ver Integrantes</ion-item>
+          <ion-item [button]="true" [detail]="false" (click)="this.EliminarCompartida(this.user.id!)">Eliminar compartida</ion-item>
         </ion-list>
 
       </ion-content>

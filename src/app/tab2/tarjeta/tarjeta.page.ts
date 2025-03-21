@@ -220,10 +220,6 @@ async ngOnInit() {
         }
       });
 
-      if(temporal){
-        console.log("Debe actualizar")
-        this.Update()
-      }
       this.CompartidoUNO()
       const { value } = await Preferences.get({ key: 'TarjetaOrden' });
       if(value){
@@ -237,13 +233,20 @@ async ngOnInit() {
           type: 'text',
         }
       ];
+
+
+      this.ActualizarUltimaVez()
     })
     this.loading.dismiss();
     this.isLoading = false;
 
   }
-
   }
+
+ActualizarUltimaVez(){
+  this.item.reciente= new Date()
+  this.Update()
+}
 
   async CompartidoUNO(){
     const { value } = await Preferences.get({ key: 'token' });
@@ -255,7 +258,6 @@ async ngOnInit() {
         this.item.compartir.forEach(element => {
           if(res.data===element.iduser){
             this.compartirUno=element
-            console.log(this.compartirUno)
           }
         });
        }
@@ -459,6 +461,33 @@ async EliminarItem(x:number){
       ],
     });
     await alert.present();
+}
+
+
+async EliminarCompartida(id:string){
+  const alert = await this.alertController.create({
+    header: 'Eliminar',
+    buttons: [
+      {
+        text: 'Cancelar',
+        role: 'cancel',
+      },
+      {
+        text: 'Quitar',
+        handler: () => {
+          this.item.compartir.forEach((data,index)=>{
+            if(data.iduser===id){
+              this.item.compartir.splice(index,1)
+              this.Update()
+              this.regresar()
+              return
+            }
+          })
+        },
+      },
+    ],
+  });
+  await alert.present();
 }
 
 async EliminarTarjeta(){
