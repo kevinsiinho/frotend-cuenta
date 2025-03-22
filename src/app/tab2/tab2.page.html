@@ -10,16 +10,16 @@
 
 <ion-header class="header2" slot="fixed" [translucent]="true">
   <ion-segment  [scrollable]="true">
-    <ion-segment-button value="ALL" content-id="ALL">
+    <ion-segment-button (ionChange)="scrollToTop()" value="ALL" content-id="ALL">
       <ion-label>ALL</ion-label>
     </ion-segment-button>
-    <ion-segment-button value="TARJETAS" content-id="TARJETAS">
+    <ion-segment-button (ionChange)="scrollToTop()" value="TARJETAS" content-id="TARJETAS">
       <ion-label>TARJETAS</ion-label>
     </ion-segment-button>
-    <ion-segment-button value="LISTAS" content-id="LISTAS">
+    <ion-segment-button (ionChange)="scrollToTop()" value="LISTAS" content-id="LISTAS">
       <ion-label>LISTAS</ion-label>
     </ion-segment-button>
-    <ion-segment-button value="COMPARTIDAS" content-id="COMPARTIDAS">
+    <ion-segment-button (ionChange)="scrollToTop()" value="COMPARTIDAS" content-id="COMPARTIDAS">
       <ion-label>COMPARTIDAS</ion-label>
     </ion-segment-button>
   </ion-segment>

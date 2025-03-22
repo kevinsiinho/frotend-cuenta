@@ -3,7 +3,7 @@ import { Preferences } from '@capacitor/preferences';
 import { UserService } from '../servicios/user/user.service';
 import { Items } from '../clases/Items/items';
 import { ItemsService } from '../servicios/items/items.service';
-import { LoadingController } from '@ionic/angular';
+import { IonContent, LoadingController } from '@ionic/angular';
 import { User } from '../clases/user/user';
 import { register } from 'swiper/element/bundle';
 import { IonPopover } from '@ionic/angular';
@@ -23,6 +23,8 @@ export class Tab2Page implements OnInit{
   public loading:any;
   public user = new User()
   @ViewChild('popover') popover!: IonPopover;
+  @ViewChild(IonContent, { static: false }) content!: IonContent;
+
 
  //lista de opciones y opción selecionada
  public listopciones:string[] = ['ALL','TARJETAS','LISTAS','COMPARTIDOS'];
@@ -116,5 +118,11 @@ async Principal(){
       })
     }
   }
+
+
+scrollToTop() {
+  this.content.scrollToTop(300); // 300ms para suavizar el desplazamiento
+}
+
 
 }
