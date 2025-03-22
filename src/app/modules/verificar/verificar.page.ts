@@ -51,7 +51,7 @@ escucharCambiosConexion() {
 
   async ngOnInit() {
     this.loading = await this.loadingController.create({
-      message: 'Verificando...',
+      message: '',
     });
 
     await this.loading.present();
@@ -79,6 +79,7 @@ escucharCambiosConexion() {
       this.presentAlert("Tu sesión ha caducado")
       await Preferences.remove({ key: 'token' });
       this.link.navigate(['login'])
+      this.loading.dismiss();
     }else{
       await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
         this.loading.dismiss();
