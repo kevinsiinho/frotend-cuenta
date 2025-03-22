@@ -16,7 +16,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'verificar',
     pathMatch: 'full'
   },
   {
@@ -62,6 +62,10 @@ const routes: Routes = [
   {
     path: 'editar-tarjeta/:id',
     loadChildren: () => import('./modules/editar/editar.module').then( m => m.EditarPageModule)
+  },
+  {
+    path: 'verificar',
+    loadChildren: () => import('./modules/verificar/verificar.module').then( m => m.VerificarPageModule)
   }
 ];
 @NgModule({

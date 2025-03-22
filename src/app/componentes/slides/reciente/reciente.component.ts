@@ -15,6 +15,7 @@ export class RecienteComponent {
   public item1= new Items();
   public item2= new Items();
   public item3= new Items();
+  public item4= new Items();
 
   constructor(public userService:UserService, public link:Router) { }
 
@@ -30,6 +31,7 @@ export class RecienteComponent {
       this.item1=this.items[0]
       this.item2=this.items[1]
       this.item3=this.items[2]
+      this.item4=this.items[3]
   }
 
    getCssVariables(color: string) {

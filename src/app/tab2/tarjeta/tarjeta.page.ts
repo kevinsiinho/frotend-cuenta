@@ -463,7 +463,6 @@ async EliminarItem(x:number){
     await alert.present();
 }
 
-
 async EliminarCompartida(id:string){
   const alert = await this.alertController.create({
     header: 'Eliminar',

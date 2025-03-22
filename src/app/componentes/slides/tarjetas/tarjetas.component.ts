@@ -2,7 +2,6 @@ import { Component,Input, SimpleChanges } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
 import { Items } from 'src/app/clases/Items/items';
 import { User } from 'src/app/clases/user/user';
-import { ItemsService } from 'src/app/servicios/items/items.service';
 import { UserService } from 'src/app/servicios/user/user.service';
 import tinycolor from 'tinycolor2';
 import { register } from 'swiper/element/bundle';
@@ -19,6 +18,8 @@ export class TarjetasComponent {
     public item= new Items();
     public user = new User()
     @Input() items: Items[] = [];
+  public positivo:number=0
+  public negativo:number=0
 
 constructor(
     public userService:UserService,
@@ -40,6 +41,7 @@ async ngOnChanges(changes: SimpleChanges) {
 
       const { value } = await Preferences.get({ key: 'IntemsOrden' });
       if(value){
+        this.total()
         this.Ordenar(value)
       }
       }
@@ -67,5 +69,39 @@ Ruta(id:string){
       });
     }
   }
+
+  formatNumberMil(value: number): string {
+    return value.toLocaleString();
+}
+
+
+total(){
+  this.items.forEach((item:Items,index)=>{
+    this.positivo=0
+    this.negativo=0
+    item.tarjetas.forEach((tarjeta) =>{
+      if(tarjeta.Vinicial){
+        tarjeta.depositos!.forEach(depositos => {
+          if(depositos.valor<0){
+            this.negativo=this.negativo+depositos.valor
+          }else{
+            this.positivo=this.positivo+depositos.valor
+          }
+        });
+        this.positivo=this.positivo+tarjeta.Valor!
+      }else{
+        tarjeta.depositos!.forEach(depositos => {
+          if(depositos.valor<0){
+            this.negativo=this.negativo+depositos.valor
+          }else{
+            this.positivo=this.positivo+depositos.valor
+          }
+        });
+      }
+  });
+  item.total=this.positivo+(this.negativo)
+  })
+
+}
 
 }

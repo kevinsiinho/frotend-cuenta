@@ -38,7 +38,6 @@ export class CompartidasComponent   {
 
     if (changes['items2'] && changes['items2'].currentValue) {
       if(await this.userService.Verificar()){
-        console.log(this.items2[0].NombreTarjeta)
          }
       }
   }

@@ -44,28 +44,8 @@ export class LoginPage implements OnInit{
     await alert.present();
   }
 
-  async verificarConexion() {
-    const status = await Network.getStatus();
-    console.log('Estado de conexión:', status.connected ? 'Conectado' : 'Desconectado');
-  }
-
-  escucharCambiosConexion() {
-    Network.addListener('networkStatusChange', (status) => {
-      console.log('Estado de conexión cambiado:', status.connected ? 'Conectado' : 'Desconectado');
-    });
-  }
-
 async ngOnInit() {
-  const { value } = await Preferences.get({ key: 'token' });
-
-  if(value){
- this.VerificacionSesion()
-}
-
-    this.InfoCel= await this.ConfigService.getDeviceInfo()
-    await this.verificarConexion();
-
-    this.escucharCambiosConexion();
+     this.InfoCel= await this.ConfigService.getDeviceInfo()
      const result2 = await Preferences.get({ key: 'select' });
      this.recordaremail = Boolean(JSON.parse(result2.value!))
 
@@ -98,19 +78,6 @@ async ngOnInit() {
       });
     }
   }
-
-async VerificacionSesion(){
-  const ultima = await Preferences.get({ key: 'ultimaActividad' });
-  const ultimaActividad = parseInt(ultima.value!, 10);
-  const ahora = new Date().getTime();
-  if (ahora - ultimaActividad > this.tiempoMaximo) {
-    this.presentAlert("Tu sesión ha caducado")
-    await Preferences.remove({ key: 'token' });
-  }else{
-    await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
-    this.link.navigate(['tabs/tab2'])
-  }
-}
 
  async ingresar(){
  var isValidEmail=false
@@ -160,10 +127,9 @@ async VerificacionSesion(){
               }
               //sino el dispositivo no esta registrado
             if(newDevice){
-              this.presentAlert(info.name+", estas ingresando desde un Dispositivo no registrado previamente")
+             // this.presentAlert(info.name+", estas ingresando desde un Dispositivo no registrado previamente")
               this.ConfigService.Create(this.InfoCel).then(async (res)=>{
                 await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
-
                 this.link.navigate(['tabs/tab2'])
                /* if(res.status===200){
                   console.log("Registrado")
@@ -172,18 +138,23 @@ async VerificacionSesion(){
                   console.log(res)
                 }*/
               })
+              return
             }else if(info.estado=="Activo"){
               //Verificando que el dispositivo alla sido agregado
               await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
               this.link.navigate(['tabs/tab2'])
+              return
             }else if(info.estado=="pendiente"){
               //para recuperar la contraseña
             }else if(info.estado=="verificar"){
               this.link.navigate(['/codigo/'+info.id])
+              return
             }else if(info.estado=="suspendida"){
               //poner para cuando sea suspendida
+              return
             }else if(info.estado=="desactivada"){
               this.presentAlert("Tu cuenta ha sido bloqueado por uso inadecuado, si consideras que hay un error por favor comunicate con atención al usuario.")
+              return
             }
             })
           })
@@ -199,6 +170,5 @@ async VerificacionSesion(){
     this.presentAlert("Verifica los campos e intenta nuevamente.")
   }
 }
-
 
 }
