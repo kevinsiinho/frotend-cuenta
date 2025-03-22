@@ -51,13 +51,15 @@ constructor(
   }
 
 async ngOnInit() {
+  const ahora= new Date();
+  await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
   //this.itemService.all()
   }
 
 async Principal(){
 
   this.loading = await this.loadingController.create({
-    message: '',
+    message: 'Cargando...',
   });
 
     await this.loading.present();

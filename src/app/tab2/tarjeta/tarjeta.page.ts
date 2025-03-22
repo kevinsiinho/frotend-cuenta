@@ -201,6 +201,8 @@ async ngOnInit() {
   await this.loading.present();
 
   if(await this.userService.Verificar()){
+    const ahora= new Date();
+    await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
     const { value } = await Preferences.get({ key: 'token' });
     if(value){
       this.userService.Quien(value).then((data)=>{

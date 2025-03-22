@@ -4,7 +4,6 @@ import { Preferences } from '@capacitor/preferences';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Login } from 'src/app/clases/login/login';
 import { UserService } from 'src/app/servicios/user/user.service';
-import { Network } from '@capacitor/network';
 import { User } from 'src/app/clases/user/user';
 import { ConfiguracionesService } from 'src/app/servicios/configuraciones/configuraciones.service';
 import { InfoDevice } from 'src/app/clases/device/device';
@@ -129,7 +128,6 @@ async ngOnInit() {
             if(newDevice){
              // this.presentAlert(info.name+", estas ingresando desde un Dispositivo no registrado previamente")
               this.ConfigService.Create(this.InfoCel).then(async (res)=>{
-                await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
                 this.link.navigate(['tabs/tab2'])
                /* if(res.status===200){
                   console.log("Registrado")

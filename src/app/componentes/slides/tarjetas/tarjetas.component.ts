@@ -6,6 +6,7 @@ import { UserService } from 'src/app/servicios/user/user.service';
 import tinycolor from 'tinycolor2';
 import { register } from 'swiper/element/bundle';
 import { Router } from '@angular/router';
+import { LoadingController } from '@ionic/angular';
 
 register();
 @Component({
@@ -15,15 +16,17 @@ register();
 })
 
 export class TarjetasComponent {
-    public item= new Items();
-    public user = new User()
-    @Input() items: Items[] = [];
+  public item= new Items();
+  public user = new User()
+  @Input() items: Items[] = [];
   public positivo:number=0
   public negativo:number=0
+  public loading:any;
 
 constructor(
     public userService:UserService,
     public link:Router,
+    private loadingController: LoadingController,
   ) {}
 
  getCssVariables(color: string) {
@@ -35,10 +38,10 @@ constructor(
  }
 
 async ngOnChanges(changes: SimpleChanges) {
-
+  this.loading = await this.loadingController.create({});
+  await this.loading.present();
   if (changes['items'] && changes['items'].currentValue) {
     if(await this.userService.Verificar()){
-
       const { value } = await Preferences.get({ key: 'IntemsOrden' });
       if(value){
         this.total()
@@ -46,14 +49,15 @@ async ngOnChanges(changes: SimpleChanges) {
       }
       }
     }
+    this.loading.dismiss();
 }
-
 
 Ruta(id:string){
   this.link.navigate(['/tabs/tab2/tarjeta/',id])
 }
 
-  async Ordenar(ordenar:string){
+async Ordenar(ordenar:string){
+
     await Preferences.set({
       key: 'IntemsOrden',
       value: ordenar,
@@ -68,7 +72,7 @@ Ruta(id:string){
         return a.favorito === b.favorito ? 0 : a.favorito ? -1 : 1;
       });
     }
-  }
+ }
 
   formatNumberMil(value: number): string {
     return value.toLocaleString();
