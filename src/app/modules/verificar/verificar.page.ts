@@ -60,6 +60,7 @@ escucharCambiosConexion() {
       if(data.status===200){
       this.VerificacionSesion()
       }else{
+        this.loading.dismiss();
         this.link.navigate(['login'])
       }
     })
@@ -78,8 +79,9 @@ escucharCambiosConexion() {
     if (ahora - ultimaActividad > this.tiempoMaximo) {
       this.presentAlert("Tu sesión ha caducado")
       await Preferences.remove({ key: 'token' });
-      this.link.navigate(['login'])
       this.loading.dismiss();
+      this.link.navigate(['login'])
+
     }else{
       await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
         this.loading.dismiss();
