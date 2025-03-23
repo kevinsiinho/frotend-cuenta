@@ -1,8 +1,8 @@
 <div class="container">
-  <ion-label>Tarjetas abierta recientemente</ion-label>
 
-<ion-list >
-  <ion-item>
+<ion-label *ngIf="this.items.length>0">Tarjetas abierta recientemente</ion-label>
+<ion-list *ngIf="this.items.length>0">
+  <ion-item *ngIf="this.item1">
     <ion-card class="custom-card" [style.color]="item1.colorLetra" [ngClass]="item1.NombreTarjeta"  [ngStyle]="getCssVariables(item1.ColorFondo!)" (click)="this.Ruta(item1.id!)">
       <div class="card-header">
        <ion-icon [style.color]="item1.colorLetra" name={{item1.icono}} class="chip-icon"></ion-icon>
@@ -11,7 +11,7 @@
       <div class="softk-brand">SoftK</div>
     </ion-card>
   </ion-item>
-  <ion-item>
+  <ion-item *ngIf="this.item2">
     <ion-card class="custom-card" [style.color]="item2.colorLetra" [ngClass]="item2.NombreTarjeta"  [ngStyle]="getCssVariables(item2.ColorFondo!)" (click)="this.Ruta(item2.id!)">
       <div class="card-header">
         <ion-icon [style.color]="item2.colorLetra" name={{item2.icono}} class="chip-icon"></ion-icon>
@@ -20,7 +20,7 @@
       <div class="softk-brand">SoftK</div>
     </ion-card>
   </ion-item>
-  <ion-item>
+  <ion-item *ngIf="this.item3">
     <ion-card class="custom-card" [style.color]="item3.colorLetra" [ngClass]="item3.NombreTarjeta"  [ngStyle]="getCssVariables(item3.ColorFondo!)" (click)="this.Ruta(item3.id!)">
       <div class="card-header">
         <ion-icon [style.color]="item3.colorLetra" name={{item3.icono}} class="chip-icon"></ion-icon>
@@ -29,7 +29,7 @@
       <div class="softk-brand">SoftK</div>
     </ion-card>
   </ion-item>
-  <ion-item>
+  <ion-item *ngIf="this.item4">
     <ion-card class="custom-card" [style.color]="item4.colorLetra" [ngClass]="item4.NombreTarjeta"  [ngStyle]="getCssVariables(item4.ColorFondo!)" (click)="this.Ruta(item4.id!)">
       <div class="card-header">
         <ion-icon [style.color]="item4.colorLetra" name={{item4.icono}} class="chip-icon"></ion-icon>
@@ -47,13 +47,51 @@
 -->
 </ion-list>
 
+<ion-label *ngIf="this.itemsC.length>0">Últimas Tarjetas compartidas</ion-label>
+<ion-list *ngIf="this.itemsC.length>0">
+  <ion-item *ngIf="this.itemc1">
+    <ion-card class="custom-card" [style.color]="itemc1.colorLetra" [ngClass]="itemc1.NombreTarjeta"  [ngStyle]="getCssVariables(itemc1.ColorFondo!)" (click)="this.Ruta(itemc1.id!)">
+      <div class="card-header">
+       <ion-icon [style.color]="itemc1.colorLetra" name={{itemc1.icono}} class="chip-icon"></ion-icon>
+        <span class="card-type">{{ this.itemc1.itemname }}</span>
+      </div>
+      <div class="softk-brand">SoftK</div>
+    </ion-card>
+  </ion-item>
+  <ion-item *ngIf="this.itemc2">
+    <ion-card class="custom-card" [style.color]="itemc2.colorLetra" [ngClass]="itemc2.NombreTarjeta"  [ngStyle]="getCssVariables(itemc2.ColorFondo!)" (click)="this.Ruta(itemc2.id!)">
+      <div class="card-header">
+        <ion-icon [style.color]="itemc2.colorLetra" name={{itemc2.icono}} class="chip-icon"></ion-icon>
+        <span class="card-type">{{ this.itemc2.itemname }}</span>
+      </div>
+      <div class="softk-brand">SoftK</div>
+    </ion-card>
+  </ion-item>
+  <ion-item *ngIf="this.itemc3">
+    <ion-card class="custom-card" [style.color]="itemc3.colorLetra" [ngClass]="itemc3.NombreTarjeta"  [ngStyle]="getCssVariables(itemc3.ColorFondo!)" (click)="this.Ruta(itemc3.id!)">
+      <div class="card-header">
+        <ion-icon [style.color]="itemc3.colorLetra" name={{itemc3.icono}} class="chip-icon"></ion-icon>
+        <span class="card-type">{{ this.itemc3.itemname }}</span>
+      </div>
+      <div class="softk-brand">SoftK</div>
+    </ion-card>
+  </ion-item>
+  <ion-item *ngIf="this.itemc4">
+    <ion-card class="custom-card" [style.color]="itemc4.colorLetra" [ngClass]="itemc4.NombreTarjeta"  [ngStyle]="getCssVariables(itemc4.ColorFondo!)" (click)="this.Ruta(itemc4.id!)">
+      <div class="card-header">
+        <ion-icon [style.color]="itemc4.colorLetra" name={{itemc4.icono}} class="chip-icon"></ion-icon>
+        <span class="card-type">{{ this.itemc4.itemname }}</span>
+      </div>
+      <div class="softk-brand">SoftK</div>
+    </ion-card>
+  </ion-item>
 <!--
-<ion-label><h1>Listas</h1></ion-label>
-<ion-list>
-  <ion-item>1</ion-item>
-  <ion-item>2</ion-item>
-  <ion-item>3</ion-item>
-  <ion-item>4</ion-item>
-</ion-list>
+  <ion-item class="ver">
+    <ion-card class="custom-card ver">
+      <div class="card-header2">Ver más <ion-icon name="chevron-forward-outline"></ion-icon></div>
+    </ion-card>
+  </ion-item>
 -->
+</ion-list>
+
 </div>

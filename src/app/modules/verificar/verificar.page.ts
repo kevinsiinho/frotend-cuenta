@@ -53,39 +53,19 @@ async ngOnInit() {
   });
 
   await this.loading.present();
+ const { value } = await Preferences.get({ key: 'token' });
 
-  const { value } = await Preferences.get({ key: 'token' });
-
-  if (!value) {
-    this.loading.dismiss();
-    this.link.navigate(['login']);
-  }
-
-  // Agregar un timeout real a la petición
-  const timeoutPromise = new Promise((_, reject) =>
-    setTimeout(() => reject(new Error('Tiempo de espera agotado')), 120000) // 2m máximo
-  );
-
-  try {
-    const data = await Promise.race([
-      this.userService.Quien(value!) as Promise<{ status: number }>, // Casting de tipo
-      timeoutPromise
-    ]) as { status: number }; // Asegurar que data tenga la estructura correcta
-
-    if (data.status === 200) {
-      await this.VerificacionSesion();
-    } else {
+    if(value){
+    this.VerificacionSesion()
+    }else{
+      await Preferences.remove({ key: 'token' });
       this.loading.dismiss();
-      this.link.navigate(['login']);
+      this.link.navigate(['login'])
     }
+//  await this.verificarConexion();
+ // this.escucharCambiosConexion();
+
   }
-   catch (error) {
-    console.error('Error verificando sesión:', error);
-    this.loading.dismiss();
-    this.presentAlert('Error de conexión');
-    this.link.navigate(['login']);
-  }
-}
 
 
   async VerificacionSesion(){

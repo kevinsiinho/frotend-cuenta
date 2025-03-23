@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Preferences } from '@capacitor/preferences';
 import { AlertController, LoadingController } from '@ionic/angular';
@@ -7,6 +7,7 @@ import { Items } from 'src/app/clases/Items/items';
 import { Compartir } from 'src/app/clases/compartir/compartir';
 import { Mensajes } from 'src/app/clases/mensajes/mensajes';
 import { User } from 'src/app/clases/user/user';
+import { EmailService } from 'src/app/servicios/email/email.service';
 import { ItemsService } from 'src/app/servicios/items/items.service';
 import { UserService } from 'src/app/servicios/user/user.service';
 
@@ -40,6 +41,7 @@ export class CompartirPage implements OnInit {
     private loadingController: LoadingController,
     public itemService:ItemsService,
     private router:ActivatedRoute,
+    public enviarEmail:EmailService,
   ) { }
 
   async presentAlert(msn:String) {
@@ -51,6 +53,10 @@ export class CompartirPage implements OnInit {
     });
     await alert.present();
   }
+
+async ngOnChanges(changes: SimpleChanges) {
+  this.ngOnInit()
+}
 
   async ngOnInit() {
 
@@ -139,10 +145,10 @@ async add(id:string, email:string,nombre:string,apellido:string){
           this.item.compartir.push(this.compartir)
           this.presentAlert("Añadido")
           this.Update()
+          this.enviarEmail.enviarEmail("compartir","Tarjeta compartida: "+this.item.itemname,this.compartir.email!,this.user.name+" "+this.user.nickname,"https://softk-cuenta.onrender.com/tabs/tab2/tarjeta/"+this.item.id)
           this.compartir=new Compartir()
         }else{
           this.item.compartir.forEach(element => {
-
             if(element.iduser===this.compartir.iduser && this.compartir.email!.length>7){
               this.presentAlert("Ya lo haz agregado")
               return
@@ -151,6 +157,7 @@ async add(id:string, email:string,nombre:string,apellido:string){
                 this.item.compartir.push(this.compartir)
                 this.presentAlert("Añadido")
                 this.Update()
+                this.enviarEmail.enviarEmail("compartir","Tarjeta compartida: "+this.item.itemname,this.compartir.email!,this.user.name+" "+this.user.nickname,"https://softk-cuenta.onrender.com/tabs/tab2/tarjeta/"+this.item.id)
                 this.compartir=new Compartir()
                 return
               }

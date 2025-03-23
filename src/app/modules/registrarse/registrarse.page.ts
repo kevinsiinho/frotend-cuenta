@@ -86,7 +86,7 @@ export class RegistrarsePage implements OnInit{
   async VerificarEmail(){
     const res = await this.userService.buscar(this.user.email);
     if (res.length > 0) {
-      this.presentAlert("El correo ingreado ya se encuentra registrado.");
+      this.presentAlert("El correo ingreado ya se encuentra registrado, inicia sesión o intenta con uno nuevo");
       return false;
     } else {
       return true;

@@ -52,4 +52,43 @@ export class EmailService {
 
     const response: HttpResponse = await CapacitorHttp.post(options);
   }
+
+async enviarEmail(tipo:string,asunto:string,destinatario: string, nombre: string,otro:any) {
+
+  let msn=""
+    if(tipo=="compartir"){
+      msn = `
+      <p>Cordial saludos </p>
+      <p>Apreciado (a) Usuario,</p>
+      <p>Atentamente nos permitimos comunicarle que ${nombre} le ha compartido la siguiente tarjeta:</p>
+      <ul>
+        <li>Enlace: ${otro} </li>
+      </ul>
+      <p>Respetado usuario, este correo ha sido generado por un sistema de envío; por favor NO responda al mismo ya que no podrá ser gestionado.</p>
+      <p>Le recordamos que los canales de atención son los siguientes:</p>
+      <ul>
+        <li>CORREO DE ATENCIÓN  Softk0131@hotmail.com</li>
+        <li>CORREO DE ATENCIÓN  Softk0131@gmail.com</li>
+      </ul>
+    `;
+   }
+
+   const email = {
+    destinatario: destinatario,
+    asunto: asunto,
+    cuerpo: msn,
+    isHtml: true
+  };
+
+    // Envía el correo electrónico utilizando el complemento EmailComposer
+    const options = {
+      url: this.url+'/send-email',
+      headers: { "Content-Type": "application/json" },
+      data: email
+      };
+
+    const response: HttpResponse = await CapacitorHttp.post(options);
+      console.log(response.data)
+  }
 }
+

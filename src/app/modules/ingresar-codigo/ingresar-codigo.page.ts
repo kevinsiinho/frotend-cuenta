@@ -110,8 +110,6 @@ async ngOnInit() {
 
   verificar(){
     this.codigo2=Number(this.codigo)
-    console.log(this.codigo)
-    console.log(this.user.codigo)
     if(this.user.codigo!=0){
       if(this.intentos<3){
         if(this.user.codigo===this.codigo2){
