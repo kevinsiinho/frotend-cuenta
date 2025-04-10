@@ -16,6 +16,8 @@
             type="text"
             placeholder="Escribe aquí"
             [(ngModel)]="this.user.name"
+            autocomplete="off"
+            autocorrect="off"
             ></ion-input>
           </div>
 
@@ -23,6 +25,8 @@
             <ion-label>Apellidos</ion-label>
             <ion-input
               type="text"
+              autocomplete="off"
+              autocorrect="off"
               placeholder="Escribe aquí"
               [(ngModel)]="this.user.nickname"
               ></ion-input>
@@ -31,20 +35,38 @@
             <div class="inputs">
               <ion-label>Contraseña</ion-label>
               <ion-input
-                type="password"
-                placeholder="Escribe aquí"
-                [(ngModel)]="this.user.password"
-                ></ion-input>
+              [type]="verPassword ? 'text' : 'password'"
+              [(ngModel)]="this.user.password"
+              placeholder="Escribe aquí"
+              autocomplete="off"
+              autocorrect="off"
+              autocomplete="new-password"
+              [clearOnEdit]="false"
+              class="input-password"
+             >
+               <ion-button class="btn-ver" color="white" (click)="this.VerPassword()" fill="clear" slot="end" aria-label="Show/hide">
+                 <ion-icon [name]="verPassword ? 'eye-off' : 'eye'" slot="icon-only"></ion-icon>
+               </ion-button>
+             </ion-input>
               </div>
 
               <div class="inputs">
                 <ion-label>Repite la contraseña</ion-label>
                 <ion-input
-                  type="password"
-                  placeholder="Escribe aquí"
-                  [(ngModel)]="this.password2"
-                  ></ion-input>
-                </div>
+                [type]="verPassword2 ? 'text' : 'password'"
+                [(ngModel)]="this.password2"
+                placeholder="Escribe aquí"
+                autocomplete="off"
+                autocorrect="off"
+                autocomplete="new-password"
+                [clearOnEdit]="false"
+                class="input-password"
+               >
+                 <ion-button class="btn-ver" color="white" (click)="this.VerPassword2()" fill="clear" slot="end" aria-label="Show/hide">
+                   <ion-icon [name]="verPassword2 ? 'eye-off' : 'eye'"  slot="icon-only"></ion-icon>
+                 </ion-button>
+               </ion-input>
+              </div>
 <!--
         <ion-input
           label="Número de celular"

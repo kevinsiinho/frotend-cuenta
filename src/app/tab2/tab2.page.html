@@ -16,8 +16,8 @@
     <ion-segment-button (ionChange)="scrollToTop()" value="TARJETAS" content-id="TARJETAS">
       <ion-label>TARJETAS</ion-label>
     </ion-segment-button>
-    <ion-segment-button (ionChange)="scrollToTop()" value="LISTAS" content-id="LISTAS">
-      <ion-label>LISTAS</ion-label>
+    <ion-segment-button (ionChange)="scrollToTop()" value="NOTAS" content-id="NOTAS">
+      <ion-label>NOTAS</ion-label>
     </ion-segment-button>
     <ion-segment-button (ionChange)="scrollToTop()" value="COMPARTIDAS" content-id="COMPARTIDAS">
       <ion-label>COMPARTIDAS</ion-label>
@@ -32,15 +32,15 @@
   <ion-segment-view>
  <!-- Slide RECIENTES -->
   <ion-segment-content id="ALL">
-    <app-reciente [items]="this.items" [itemsC]="this.items2"></app-reciente>
+    <app-reciente [items]="this.items" [itemsC]="this.items2" [notas]="this.notas"></app-reciente>
   </ion-segment-content>
 <!-- Slide Tarjetas -->
 <ion-segment-content class="segmen-boton" id="TARJETAS">
   <app-tarjetas [items]="this.items"></app-tarjetas>
 </ion-segment-content>
 <!-- Slide listas -->
-<ion-segment-content class="segmen-boton" id="LISTAS">
-  <ion-label>No disponible</ion-label>
+<ion-segment-content id="NOTAS">
+  <app-notas [notas]="this.notas" [user]="this.user" ></app-notas>
 </ion-segment-content>
 <!-- Slide COMPARTIDAS -->
 <ion-segment-content class="segmen-boton" id="COMPARTIDAS">

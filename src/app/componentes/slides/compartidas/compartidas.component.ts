@@ -1,11 +1,10 @@
 import { Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Preferences } from '@capacitor/preferences';
 import { Items } from 'src/app/clases/Items/items';
-import { UserService } from 'src/app/servicios/user/user.service';
 import tinycolor from 'tinycolor2';
 import Swiper from 'swiper';
 import { register } from 'swiper/element/bundle';
+import { UserService } from 'src/app/servicios/user/user.service';
 
 register();
 @Component({

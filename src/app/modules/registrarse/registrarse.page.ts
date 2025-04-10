@@ -18,6 +18,8 @@ export class RegistrarsePage implements OnInit{
   public email=""
   public emailvalido = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   public password2:string=""
+  public verPassword: boolean = false;
+  public verPassword2: boolean = false;
 
   constructor(
     private alertController: AlertController,
@@ -142,4 +144,11 @@ async Datos(){
   return numeroAleatorio
 }
 
+VerPassword() {
+  this.verPassword = !this.verPassword;
+}
+
+VerPassword2() {
+  this.verPassword2 = !this.verPassword2;
+}
 }

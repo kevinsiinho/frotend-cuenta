@@ -9,13 +9,13 @@
   box-sizing: border-box;
 }
 
-ion-list > ion-item {
+.list-tarjeta > .item-tarjeta {
   border-radius: 5px;
   padding: 0px;
   width: 100%;
 }
 
-ion-list {
+.list-tarjeta {
   display: grid;
   grid-template-columns: repeat(2,1fr);
   grid-auto-rows: minmax(100px, 100px);

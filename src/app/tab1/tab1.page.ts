@@ -1,6 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ItemsService } from '../servicios/items/items.service';
-import { Items } from '../clases/Items/items';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { Preferences } from '@capacitor/preferences';
@@ -10,6 +9,7 @@ import { Mensajes } from '../clases/mensajes/mensajes';
 import { register } from 'swiper/element/bundle';
 import tinycolor from 'tinycolor2';
 import { Tarjetas } from '../clases/tarjetas/tarjetas';
+import { Items } from '../clases/Items/items';
 
 register();
 @Component({

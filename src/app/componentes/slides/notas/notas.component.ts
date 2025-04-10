@@ -1,57 +1,65 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
-import { debounceTime, Subject } from 'rxjs';
-import { Items } from 'src/app/clases/Items/items';
-import { ItemsNotas } from 'src/app/clases/notas/items';
+import { ChangeDetectorRef, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Notas } from 'src/app/clases/notas/notas';
-import { NotasService } from 'src/app/servicios/notas/notas.service';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { UserService } from 'src/app/servicios/user/user.service';
-import tinycolor from 'tinycolor2';
+import { User } from 'src/app/clases/user/user';
+import { AlertController, IonModal } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { ItemsNotas } from 'src/app/clases/notas/items';
+import { NotasService } from 'src/app/servicios/notas/notas.service';
+
 
 @Component({
-  selector: 'app-reciente',
-  templateUrl: './reciente.component.html',
-  styleUrls: ['./reciente.component.scss'],
+  selector: 'app-notas',
+  templateUrl: './notas.component.html',
+  styleUrls: ['./notas.component.scss'],
 })
-export class RecienteComponent {
+export class NotasComponent {
 
-  @Input() items: Items[] = [];
-  @Input() itemsC: Items[] = [];
   @Input() notas: Notas[] = [];
-  isModalOpen = false;
-  isModalOpen2 = false;
+  public nota= new Notas()
   public UpdateList= new Notas()
   public UpdateNote= new Notas()
-  private cambiosTextoMap = new Map<string, Subject<any>>();
-  private timeoutGuardar: any;
+  public items:ItemsNotas[]=[]
+  public item= new ItemsNotas()
   public Acitem= new ItemsNotas()
-  public Notasitems= new ItemsNotas()
-  public notaitem= new ItemsNotas()
-  public nota= new Notas()
+  @Input() user = new User()
+  isModalOpen = false;
+  isModalOpen2 = false;
+  private cambiosTextoMap = new Map<string, Subject<any>>();
+  public tipo!:string
+  public Lactualizar:boolean=false
+  public Lregistrar:boolean=false
+  public Nactualizar:boolean=false
+  public Nregistrar:boolean=false
+  private timeoutGuardar: any;
 
-
-  public itemc1= new Items();
-  public itemc2= new Items();
-  public itemc3= new Items();
-  public itemc4= new Items();
-
-  constructor(
-    public userService:UserService,
-    public link:Router,
-    public notaServices:NotasService,
-    public alertController: AlertController) { }
-
+//modal ItemsNotas o lista
   setOpen(isOpen: boolean,tipo:string) {
     this.isModalOpen = isOpen;
+    this.nota.tipo=tipo
+    this.Lregistrar=true
+    this.Lactualizar=false
   }
 
   setOpen2(isOpen2: boolean) {
     this.isModalOpen2 = isOpen2;
+    this.nota.userId=this.user.id!
+    this.Nregistrar=true
+    this.Nactualizar=false
     console.log("Creando una nota")
   }
 
+  constructor
+  ( public notaServices:NotasService,
+    public userService:UserService,
+    public link:Router,
+    private alertController: AlertController,
+  ) {}
+
   async presentAlert(msn:String) {
+
     const alert = await this.alertController.create({
       header: 'Mensaje',
       message: ''+msn,
@@ -60,57 +68,42 @@ export class RecienteComponent {
     await alert.present();
   }
 
+guardarNota() {
+  clearTimeout(this.timeoutGuardar); // Borra el temporizador anterior
+  this.timeoutGuardar = setTimeout(() => {
+    if(this.nota.texto!.length>0 && this.nota.id==undefined){
+      console.log("la nota 2"+this.nota.id)
 
-  async ngOnChanges(changes: SimpleChanges) {
-
-    if (changes['items'] && changes['items'].currentValue) {
-      this.items.sort((a,b)=>{
-        return new Date(b.reciente!).getTime() - new Date(a.reciente!).getTime();
-      })
+      this.nota.tipo="nota"
+      this.nota.userId=this.user.id!
+      this.nota.creado= new Date()
+      if(this.nota.titulo=="" || this.nota.titulo==null || this.nota.titulo==undefined){
+        this.nota.titulo="Sin título"
       }
-
-      this.itemc1=this.itemsC[0]
-      this.itemc2=this.itemsC[1]
-      this.itemc3=this.itemsC[2]
-      this.itemc4=this.itemsC[3]
-
-      if (changes['notas'] && changes['notas'].currentValue) {
-        this.notas.sort((a,b)=>{
-          return new Date(b.reciente!).getTime() - new Date(a.reciente!).getTime();
-        })
+      this.notaServices.Create(this.nota).then((res)=>{
+        if(res.status==200){
+          this.nota.id=res.data.id
+          this.Nregistrar=false
+          this.Nactualizar=true
+          this.UpdateNote=res.data
         }
-  }
+      })
 
-   getCssVariables(color: string) {
-        let lighterColor = tinycolor(color).lighten(30).toString();
-        return {
-          '--color1': color,
-          '--color2': lighterColor
-        };
-   }
-
-   Ruta(id:string){
-    this.link.navigate(['/tabs/tab2/tarjeta/',id])
-  }
-
-
-
-  guardarNota() {
-    clearTimeout(this.timeoutGuardar); // Borra el temporizador anterior
-    this.timeoutGuardar = setTimeout(() => {
-      if(this.nota.texto!.length>0){
-        this.UpdateNote.reciente= new Date()
-        this.notaServices.Update(this.UpdateNote).then((res)=>{
-          if(res!==204){
-            console.log("Error en el servidor")
-          }
-        })
-      }
-    }, 1000); // Espera 1 segundo antes de guardar
-  }
+    }else if(this.UpdateNote.id!=undefined){
+      this.UpdateNote.reciente= new Date()
+      this.notaServices.Update(this.UpdateNote).then((res)=>{
+        if(res!==204){
+          console.log("Error en el servidor")
+        }
+      })
+    }
+  }, 1000); // Espera 1 segundo antes de guardar
+}
 
 VerNota(isOpen2: boolean,nota:Notas) {
   this.isModalOpen2 = isOpen2;
+  this.Nregistrar=false
+  this.Nactualizar=true
   this.UpdateNote=nota
   clearTimeout(this.timeoutGuardar); // Borra el temporizador anterior
 
@@ -131,7 +124,36 @@ VerNota(isOpen2: boolean,nota:Notas) {
 
 Verlista(isOpen: boolean,nota:Notas){
   this.isModalOpen = isOpen;
+  this.Lactualizar=true
+  this.Lregistrar=false
   this.UpdateList=nota
+}
+
+agregarItem() {
+  this.item.estado=false
+  this.nota.userId=this.user.id!
+  this.nota.creado= new Date()
+  if(this.nota.tipo=="lista"){
+    if(this.nota.id==undefined){
+      this.nota.items!.push(this.item)
+      if(this.nota.titulo=="" || this.nota.titulo==null ){
+          this.presentAlert("El título es obligatorio.")
+        }else{
+          if(this.item.texto!=""){
+          this.item=new ItemsNotas()
+          this.notaServices.Create(this.nota).then((res)=>{
+            if(res.status==200){
+              this.UpdateList=res.data
+              this.Lregistrar=false
+              this.Lactualizar=true
+              this.item=new ItemsNotas()
+            }
+          })
+        }
+      }
+    }
+}
+
 }
 
 ActualizarItem() {
@@ -200,10 +222,16 @@ CambioEstado(index:number,estado:boolean){
   });
 }
 
-
 LinkCompartir(id:string){
   console.log("compartir"+id)
   this.link.navigate(['compartir/',id])
 }
 
+async ngOnChanges(changes: SimpleChanges) {
+  this.nota.userId=this.user.id!
+  this.notas
+  if (changes['notas'] && changes['notas'].currentValue) {
+
+      }
+  }
 }

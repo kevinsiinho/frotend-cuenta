@@ -24,7 +24,7 @@ export class LoginPage implements OnInit{
   public emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   public InfoCel:InfoDevice = new InfoDevice()
   public InfoCel2:InfoDevice = new InfoDevice()
-  private tiempoMaximo = 30 * 60 * 1000; // 30 minutos en milisegundos
+  verPassword: boolean = false;
 
   constructor(
     private alertController: AlertController,
@@ -167,6 +167,10 @@ async ngOnInit() {
     this.loading.dismiss();
     this.presentAlert("Verifica los campos e intenta nuevamente.")
   }
+}
+
+VerPassword() {
+  this.verPassword = !this.verPassword;
 }
 
 }

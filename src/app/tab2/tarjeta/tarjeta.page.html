@@ -37,42 +37,47 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
+
   <ion-list lines="none" >
     <ion-item [disabled]="this.item.estado">
       <ion-reorder-group [disabled]="isDisabled" (ionItemReorder)="handleReorder($any($event))">
-        <ion-item class="item-card-principal" #capturableArea [id]="'item-' + x" *ngFor="let res of this.item.tarjetas; let x=index;">
+        <ion-item class="item-card-principal" #capturableArea [id]="'item-' + x" *ngFor="let bolsillo of this.item.bolsillos; let x=index;">
         <ion-card>
             <ion-card-header>
-              <ion-card-title>{{res.nombre}}
+              <ion-card-title>{{bolsillo.nombre}}
                 <ion-item [button]="true" class="btn-bolsillos-opc" [detail]="false" [id]="'popover-' + x" *ngIf="this.compartirUno.estado===true || this.creador===true" class="estado" fill="clear">
-                  <ion-icon name="settings" [style.color]="res.color" ></ion-icon>
+                  <ion-icon name="settings" [style.color]="bolsillo.color" ></ion-icon>
 
                   <ion-popover [trigger]="'popover-' + x" [dismissOnSelect]="true" alignment="start" size="auto">
                     <ng-template>
                       <ion-content>
                         <ion-list>
-                          <ion-item [button]="true" [detail]="false" (click)="openModalEditar = !openModalEditar; this.EditarBolsillo(x)">Editar bolsillo</ion-item>
+                          <ion-item [button]="true" [detail]="false" (click)="openModalEditar = !openModalEditar; this.EditarBolsillo(bolsillo)">Editar bolsillo</ion-item>
                           <ion-item [button]="true" [detail]="false" (click)="EliminarItem(x)">Eliminar bolsillo</ion-item>
                           <ion-item [button]="true" [detail]="false" (click)="EliminarDepositos(x)">Eliminar depositos</ion-item>
                         </ion-list>
                       </ion-content>
                     </ng-template>
                   </ion-popover>
+
                 </ion-item>
               </ion-card-title>
+
             <!--Titulos de las cantidades-->
-            <ion-card-subtitle class="subvalores" *ngIf="res.Vinicial">
-              <span class="left">${{formatNumberMil(res.Valor!)}}</span>
-              <span class="center">${{formatNumberMil(res.subtotal)}}</span>
-              <span class="right">${{formatNumberMil(res.Valor!+res.subtotal) }}</span>
+            <ion-card-subtitle class="subvalores" *ngIf="bolsillo.Vinicial">
+              <span class="left">${{formatNumberMil(bolsillo.valor!)}}</span>
+              <span class="center">${{formatNumberMil(bolsillo.subtotal)}}</span>
+              <span class="right">${{formatNumberMil(bolsillo.valor!+bolsillo.subtotal) }}</span>
             </ion-card-subtitle>
-            <ion-card-subtitle class="subvalores" *ngIf="!res.Vinicial">
-              <span class="left">${{Positivo(x)}}</span>
-              <span class="center">${{Negativo(x)}}</span>
-              <span class="right">${{formatNumberMil(res.subtotal) }}</span>
+            <ion-card-subtitle class="subvalores" *ngIf="!bolsillo.Vinicial">
+              <span class="left">${{Positivo(bolsillo)}}</span>
+              <span class="center">${{Negativo(bolsillo)}}</span>
+              <span class="right">${{formatNumberMil(bolsillo.subtotal) }}</span>
           </ion-card-subtitle>
-              <ion-button expand="full" [style.--background]="res.color" (click)="show(x)"><ion-icon name="eye-outline"></ion-icon></ion-button>
+
+              <ion-button expand="full" [style.--background]="bolsillo.color" (click)="show(x)"><ion-icon name="eye-outline"></ion-icon></ion-button>
             </ion-card-header>
+
           <ion-card-content *ngIf="cardStates[x]===true">
             <ion-item>
               <ion-grid class="grid-principal">
@@ -85,12 +90,12 @@
             <ion-list>
             <ion-item>
               <ion-grid>
-                <ion-row *ngFor="let item2 of res.depositos; let z=index">
-                  <ion-col class="valor">${{formatNumberMil(item2.valor)}}</ion-col>
+                <ion-row *ngFor="let deposito of bolsillo.depositos; let z=index">
+                  <ion-col class="valor">${{formatNumberMil(deposito.valor)}}</ion-col>
                   <ion-col *ngIf="this.compartirUno.estado===true || this.creador===true" class="ver btnVer">
                     <ion-button
-                      (click)="this.presentActionSheetEliminar(x,z)"
-                      [style.--background]="res.color">
+                      (click)="this.presentActionSheetEliminar(bolsillo,deposito)"
+                      [style.--background]="bolsillo.color">
                       <ion-icon name="eye-outline"></ion-icon>
                     </ion-button>
                   </ion-col>
@@ -108,12 +113,12 @@
                 <ion-textarea label="Comentario" class="itemInput" labelPlacement="floating" [(ngModel)]="this.deposito.comentario" [counter]="true" maxlength="60"></ion-textarea>
               </ion-item >
               <ion-item class="list-btns">
-                <ion-button class="btnoption" (click)="depositar(x,'sumar')" color="success"><ion-icon name="add-outline"></ion-icon></ion-button>
-              <ion-button class="btnoption" (click)="depositar(x,'restar')" color="warning"><ion-icon name="remove-outline"></ion-icon></ion-button>
+                <ion-button class="btnoption" (click)="depositar(bolsillo,'sumar')" color="success"><ion-icon name="add-outline"></ion-icon></ion-button>
+              <ion-button class="btnoption" (click)="depositar(bolsillo,'restar')" color="warning"><ion-icon name="remove-outline"></ion-icon></ion-button>
               </ion-item>
 
             </div>
-            <ion-button [style.--background]="res.color" (click)="CapturaPantalla(x)" expand="full"><ion-icon name="camera-outline"></ion-icon></ion-button>
+            <ion-button [style.--background]="bolsillo.color" (click)="CapturaPantalla(x)" expand="full"><ion-icon name="camera-outline"></ion-icon></ion-button>
           </ion-card-content>
         </ion-card>
         <ion-reorder slot="end"></ion-reorder>
@@ -122,11 +127,12 @@
     </ion-item>
     <ion-item class="msn-totales">Totales</ion-item>
     <ion-item class="totales">
-      <span class="left">${{formatNumberMil(this.positivo)}}</span>
-      <span class="center">${{formatNumberMil(this.negativo)}}</span>
+      <span class="left">${{formatNumberMil(this.positivos)}}</span>
+      <span class="center">${{formatNumberMil(this.negativos)}}</span>
       <span class="right">${{formatNumberMil(this.Totalresultado)}}</span>
     </ion-item>
   </ion-list>
+
 
   <ion-content class="ion-padding">
     <ion-modal #modal [isOpen]="openModal" (willDismiss)="onWillDismiss($event)">
@@ -149,7 +155,7 @@
               labelPlacement="stacked"
               type="text"
               placeholder="Escribe aquí"
-              [(ngModel)]="this.tarjeta.nombre"
+              [(ngModel)]="this.bolsillo.nombre"
               [counter]="true"
               maxlength="12"
             ></ion-input>
@@ -163,12 +169,12 @@
               labelPlacement="stacked"
               type="number"
               placeholder="Ingresa el valor"
-              [(ngModel)]="this.tarjeta.Valor"
+              [(ngModel)]="this.bolsillo.valor"
             ></ion-input>
           </ion-item>
           <ion-item >
             <ion-label>Color:</ion-label>
-            <input type="color" class="color" [(ngModel)]="this.tarjeta.color"/>
+            <input type="color" class="color" [(ngModel)]="this.bolsillo.color"/>
           </ion-item>
           <ion-item>
            </ion-item>
@@ -198,7 +204,7 @@
               labelPlacement="stacked"
               type="text"
               placeholder="Escribe aquí"
-              [(ngModel)]="this.tarjetaEditar.nombre"
+              [(ngModel)]="this.bolsilloEditar.nombre"
               [counter]="true"
               maxlength="12"
             ></ion-input>
@@ -206,18 +212,18 @@
           <ion-item>
             <ion-toggle [enableOnOffLabels]="false" (click)="this.FingresarValor()">Valor Inicial</ion-toggle>
           </ion-item>
-          <ion-item *ngIf="this.tarjetaEditar.Vinicial===true">
+          <ion-item *ngIf="this.bolsilloEditar.Vinicial===true">
             <ion-input
               label="Valor"
               labelPlacement="stacked"
               type="number"
               placeholder="Ingresa el valor"
-              [(ngModel)]="this.tarjetaEditar.Valor"
+              [(ngModel)]="this.bolsilloEditar.valor"
             ></ion-input>
           </ion-item>
           <ion-item >
             <ion-label>Color:</ion-label>
-            <input type="color" class="color" [(ngModel)]="this.tarjetaEditar.color"/>
+            <input type="color" class="color" [(ngModel)]="this.bolsilloEditar.color"/>
           </ion-item>
           <ion-item>
            </ion-item>

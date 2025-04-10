@@ -91,4 +91,3 @@ async enviarEmail(tipo:string,asunto:string,destinatario: string, nombre: string
       console.log(response.data)
   }
 }
-

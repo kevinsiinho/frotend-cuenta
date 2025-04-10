@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
-import { UserService } from '../servicios/user/user.service';
 import { User } from '../clases/user/user';
 import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
+import { UserService } from '../servicios/user/user.service';
 
 @Component({
   selector: 'app-tab3',

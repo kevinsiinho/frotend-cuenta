@@ -6,13 +6,16 @@ import { Subscription } from 'rxjs';
 import { Depositos } from 'src/app/clases/Items/depositos';
 import { Items } from 'src/app/clases/Items/items';
 import { Tarjetas } from 'src/app/clases/Items/tarjetas';
-import { ItemsService } from 'src/app/servicios/items/items.service';
 import { UserService } from 'src/app/servicios/user/user.service';
 import html2canvas from 'html2canvas';
 import { Preferences } from '@capacitor/preferences';
 import { Compartir } from 'src/app/clases/compartir/compartir';
 import { User } from 'src/app/clases/user/user';
 import { ItemReorderEventDetail } from '@ionic/angular';
+import { ItemsService } from 'src/app/servicios/items/items.service';
+import { BolsillosService } from 'src/app/servicios/bolsillos/bolsillos.service';
+import { Bolsillo } from 'src/app/clases/Items/bolsillo';
+import { DepositosService } from 'src/app/servicios/depositos/depositos.service';
 
 @Component({
   selector: 'app-tarjeta',
@@ -29,12 +32,14 @@ export class TarjetaPage implements OnInit {
   public item= new Items();
   public items:Items[]=[];
   public tarjeta=new Tarjetas();
-  public tarjetaEditar=new Tarjetas();
+  public bolsilloEditar=new Bolsillo();
   public tarjetas:Tarjetas[]=[];
   public user = new User()
   public deposito= new Depositos()
   public depositos:Depositos[]=[];
   public alertInputs2:any[]=[];
+  public bolsillos:Bolsillo[]=[]
+  public bolsillo= new Bolsillo()
   public compartir=new Compartir()
   public compartirUno=new Compartir()
   public isLoading = true;
@@ -52,9 +57,12 @@ export class TarjetaPage implements OnInit {
   public btnEliminar=true;
   public isDisabled = true;
   public positivo:number=0
+  public positivos:number=0
+  public negativos:number=0
   public negativo:number=0
   public Totalresultado:number=0
   public posicion!:Number
+
 
   public alertInputs3:any[]= [
     {
@@ -83,6 +91,8 @@ export class TarjetaPage implements OnInit {
     public link:Router,
     private loadingController: LoadingController,
     private actionSheetController: ActionSheetController,
+    private bolsilloService: BolsillosService,
+    private depositoServices:DepositosService
   ) { }
 
   handleReorder(ev: CustomEvent<ItemReorderEventDetail>) {
@@ -90,52 +100,40 @@ export class TarjetaPage implements OnInit {
       const AIndex = ev.detail.to;    // Índice nuevo
 
       // Mover el elemento dentro de this.item.tarjetas
-      const movedItem = this.item.tarjetas.splice(DeIndex, 1)[0]; // Sacar el elemento
-      this.item.tarjetas.splice(AIndex, 0, movedItem);// Insertarlo en la nueva posición
+      const movedItem = this.item.bolsillos?.splice(DeIndex, 1)[0]; // Sacar el elemento
+      this.item.bolsillos?.splice(AIndex, 0, movedItem!);// Insertarlo en la nueva posición
 
       // Marcar el reordenamiento como completado
       ev.detail.complete();
       this.Update()
-      console.log('Nuevo orden:', this.item.tarjetas);
   }
 
   toggleReorder() {
     this.isDisabled = !this.isDisabled;
   }
 
-  public async presentActionSheetEliminar(x:number,z:number) {
-    let datos = new Depositos()
-    this.item.tarjetas.forEach((element,index) => {
-      if(index===x){
-           element.depositos!.forEach((deposito:Depositos,index) => {
-             if(index===z){
-                datos=deposito
-                return
-             }
-          });
-      }
-    });
+  public async presentActionSheetEliminar(bolsillo:Bolsillo,deposito:Depositos) {
 
     const actionSheet = await this.actionSheetController.create({
       header: 'Información del deposito',
       buttons: [
         {
-          text: 'Creado por: '+datos.email,
+          text: 'Creado por: '+deposito.email,
         },
         {
-          text: 'Fecha: '+datos.fecha,
+          text: 'Fecha: '+deposito.fecha,
         },
         {
-          text: 'Valor: $'+datos.valor,
+          text: 'Valor: $'+deposito.valor,
         },
         {
-          text: datos.comentario,
+          text: deposito.comentario,
         },
         {
           text: 'Eliminar',
           role: 'destructive',
           handler: () => {
-            this.AlertEliminar(x,z)
+            this.AlertEliminar(bolsillo,deposito)
           }
         },
         {
@@ -151,7 +149,7 @@ export class TarjetaPage implements OnInit {
     await actionSheet.present();
   }
 
-  public getBtnEliminar(x: number, z: number) {
+  public getBtnEliminar(bolsillo:Bolsillo, deposito:Depositos) {
     return [
       {
         text: 'No',
@@ -161,16 +159,16 @@ export class TarjetaPage implements OnInit {
       {
         text: 'Sí',
         handler: () => {
-          this.EliminarDeposito(x, z);
+          this.EliminarDeposito(bolsillo,deposito);
         }
       }
     ];
   }
 
-  async AlertEliminar(x: number, z: number) {
+  async AlertEliminar(bolsillo:Bolsillo, deposito:Depositos) {
     const alert = await this.alertController.create({
       header: '¿Estás seguro?',
-      buttons: this.getBtnEliminar(x,z),
+      buttons: this.getBtnEliminar(bolsillo,deposito),
     });
 
     await alert.present();
@@ -215,12 +213,36 @@ async ngOnInit() {
     this.id=this.router.snapshot.paramMap.get('id')!
     this.itemService.GetItem(this.id).then(async (res)=>{
       this.item=res;
-      this.item.tarjetas.forEach((tarjeta,x) => {
-        if(tarjeta.posicion==undefined){
-          temporal=true
-           tarjeta.posicion=x
-        }
-      });
+      console.log(this.item)
+      this.bolsilloService.allbolsillo(this.id).then((data)=>{
+        this.item.bolsillos=data
+        this.item.bolsillos?.forEach((bolsillo:Bolsillo,x) => {
+          this.depositoServices.alldepositos(this.id).then((res)=>{
+            this.depositos=res
+            this.positivos=0
+            this.negativos=0
+            console.log(this.depositos)
+            this.depositos?.forEach(deposito => {
+              if(deposito.valor>0){
+                this.positivos=this.positivos+deposito.valor
+              }else if(deposito.valor<0){
+                this.negativos=this.negativos+deposito.valor
+              }
+            })
+            this.Totalresultado=this.positivos+(this.negativos)
+            this.depositos.forEach((deposito:Depositos) => {
+              if(bolsillo.id===deposito.idBolsillo){
+                if (!this.item.bolsillos![x].depositos) {
+                  this.item.bolsillos![x].depositos = [];
+                }
+                this.item.bolsillos![x].depositos?.push(deposito);
+              }
+            });
+
+          })
+        });
+      })
+
 
       this.CompartidoUNO()
       const { value } = await Preferences.get({ key: 'TarjetaOrden' });
@@ -270,21 +292,21 @@ ActualizarUltimaVez(){
 formatNumberMil(value: number): string {
     return value.toLocaleString();
 }
-
+/*
 Resultado(x:number): string {
   let Tvalor=0
   let Result=0
   let positivos=0
   let negativos=0
-  this.tarjetas.forEach((tarjeta,index) =>{
+  this.bolsillos.forEach((bolsillo,index) =>{
     if(x===index){
-      if(tarjeta.Vinicial){
-        tarjeta.depositos!.forEach(depositos => {
+      if(bolsillo.Vinicial){
+        bolsillo.depositos!.forEach(depositos => {
           Tvalor=Tvalor+depositos.valor
         });
-        Result=tarjeta.Valor!+Tvalor
+        Result=bolsillo.valor!+Tvalor
       }else{
-        tarjeta.depositos!.forEach(depositos => {
+        bolsillo.depositos!.forEach(depositos => {
           if(depositos.valor>0){
             positivos=positivos+depositos.valor
           }else{
@@ -297,31 +319,24 @@ Resultado(x:number): string {
   });
   return String(Result)
 }
+*/
 
-Positivo(x:number): string {
+Positivo(bolsillo:Bolsillo): string {
   let positivos=0
-  this.item.tarjetas.forEach((tarjeta,index) =>{
-    if(x===index){
-        tarjeta.depositos!.forEach(depositos => {
-          if(depositos.valor>0){
-            positivos=positivos+depositos.valor
+        bolsillo.depositos!.forEach(deposito => {
+          if(deposito.valor>0){
+            positivos=positivos+deposito.valor
           }
         });
-      }
-  });
   return this.formatNumberMil(positivos)
 }
 
-Negativo(x:number): string {
+Negativo(bolsillo:Bolsillo): string {
   let negativos=0
-  this.item.tarjetas.forEach((tarjeta,index) =>{
-    if(x===index){
-        tarjeta.depositos!.forEach(depositos => {
-          if(depositos.valor<0){
-            negativos=negativos+depositos.valor
-          }
-        });
-      }
+  bolsillo.depositos!.forEach(depositos => {
+    if(depositos.valor<0){
+      negativos=negativos+depositos.valor
+    }
   });
   return this.formatNumberMil(negativos)
 }
@@ -330,22 +345,22 @@ total(){
   this.positivo=0
   this.negativo=0
   this.Totalresultado=0
-  this.item.tarjetas.forEach((tarjeta) =>{
-      if(tarjeta.Vinicial){
-        tarjeta.depositos!.forEach(depositos => {
+  this.item.bolsillos!.forEach((bolsillo) =>{
+      if(bolsillo.Vinicial){
+        bolsillo.depositos!.forEach(depositos => {
           if(depositos.valor<0){
             this.negativo=this.negativo+depositos.valor
           }else{
             this.positivo=this.positivo+depositos.valor
           }
         });
-        this.positivo=this.positivo+tarjeta.Valor!
+        this.positivo=this.positivo+bolsillo.valor!
       }else{
-        tarjeta.depositos!.forEach(depositos => {
-          if(depositos.valor<0){
-            this.negativo=this.negativo+depositos.valor
+        bolsillo.depositos!.forEach(deposito => {
+          if(deposito.valor<0){
+            this.negativo=this.negativo+deposito.valor
           }else{
-            this.positivo=this.positivo+depositos.valor
+            this.positivo=this.positivo+deposito.valor
           }
         });
       }
@@ -369,26 +384,20 @@ this.link.navigate(['/editar-tarjeta/',this.id])
 
 }
 
-async EditarBolsillo(x:number) {
-  this.item.tarjetas.forEach(async (tarjeta,index) => {
-    if(x===index){
-      this.posicion=index
-      this.tarjetaEditar=tarjeta
-    }
-    return
-  });
+async EditarBolsillo(bolsillo:Bolsillo) {
+  this.bolsilloEditar=bolsillo
 }
 
 confirmEditar() {
-  if(this.tarjetaEditar.nombre!="" && this.tarjetaEditar.color!=null){
-    this.tarjetaEditar.Vinicial=Boolean(this.tarjetaEditar.Vinicial)
-    if(this.tarjetaEditar.Vinicial && this.tarjetaEditar.Valor!<1){
+  if(this.bolsilloEditar.nombre!="" && this.bolsilloEditar.color!=null){
+    this.bolsilloEditar.Vinicial=Boolean(this.bolsilloEditar.Vinicial)
+    if(this.bolsilloEditar.Vinicial && this.bolsilloEditar.valor!<1){
       this.presentAlert("Ingresa el valor inicial");
     }else{
-      this.itemService.Update(this.item).then((res)=>{
+      this.bolsilloService.Update(this.bolsilloEditar).then((res)=>{
         if(res===204){
           this.modalEditar.dismiss('confirm');
-          this.tarjetaEditar= new Tarjetas();
+          this.bolsilloEditar= new Bolsillo();
         }else{
           this.presentAlert("Error, intenta nuevamente");
         }
@@ -411,13 +420,23 @@ async EliminarDepositos(x:number){
       {
         text: 'Sí',
         handler: () => {
-          this.item.tarjetas.forEach((bolsillos:Tarjetas, posicion) => {
+          this.item.bolsillos!.forEach((bolsillo:Bolsillo, posicion) => {
             if(x===posicion){
-              console.log(this.item.tarjetas[x].depositos=[])
-              this.item.tarjetas[x].subtotal=0
+              if(bolsillo.depositos){
+              bolsillo.depositos.forEach(element => {
+                this.depositoServices.Delete(element.id!)
+              });
+            }
+
+              bolsillo.subtotal=0
+              this.bolsilloService.Update(bolsillo).then((res)=>{
+                if(res==204){
+                  bolsillo.depositos=[]
+                }
+              })
             }
           });
-          this.Update()
+
           this.total()
         },
       },
@@ -444,7 +463,7 @@ show(x:number):void{
     })
   }
 
-async EliminarItem(x:number){
+  async EliminarItem(x: number) {
     const alert = await this.alertController.create({
       header: 'Eliminar',
       buttons: [
@@ -455,15 +474,32 @@ async EliminarItem(x:number){
         {
           text: 'Sí',
           handler: () => {
-            this.item.tarjetas.splice(x,1)
-            this.Update()
-            this.total()
+            this.item.bolsillos?.forEach((bolsillo, i) => {
+              if (x == i) {
+                bolsillo.depositos?.forEach(element => {
+                  this.depositoServices.Delete(element.id!)
+                });
+
+                this.bolsilloService.Delete(bolsillo.id!).then((res) => {
+                  if (res == 204) {
+                    this.item.bolsillos?.splice(x, 1);
+
+                  } else {
+                    this.presentAlert("Error en el servidor, intenta más tarde.");
+                  }
+                  alert.dismiss();
+                });
+              }
+            });
+            this.total();
+            this.ngOnInit()
+            return false;
           },
         },
       ],
     });
     await alert.present();
-}
+  }
 
 async EliminarCompartida(id:string){
   const alert = await this.alertController.create({
@@ -502,8 +538,20 @@ async EliminarTarjeta(){
       {
         text: 'Confirmar',
         handler: () => {
+
+          this.item.bolsillos?.forEach(bolsillo => {
+            if(bolsillo.depositos?.length==undefined){
+              bolsillo.depositos=[]
+            }
+            bolsillo.depositos?.forEach(deposito => {
+                this.depositoServices.Delete(deposito.id!)
+            });
+            this.bolsilloService.Delete(bolsillo.id!)
+          });
+
           this.itemService.Delete(this.id).then((data)=>{
            if(data==204){
+
             this.regresar()
            }else{
             this.presentAlert("Error, intenta nuevamente");
@@ -517,57 +565,69 @@ async EliminarTarjeta(){
   await alert.present();
 }
 
-  EliminarDeposito(x:number,z:number){
+EliminarDeposito(bolsillo:Bolsillo,deposito:Depositos){
+    bolsillo.subtotal=0
+    console.log(deposito.id)
+    this.depositoServices.Delete(deposito.id!).then((res)=>{
+      if(res==204){
+        bolsillo.depositos?.forEach((element,x) => {
+          if(element.id==deposito.id){
+            bolsillo.depositos?.splice(x,1)
+            bolsillo.depositos!.forEach((deposito) => {
+              bolsillo.subtotal=bolsillo.subtotal+deposito.valor
+            });
 
-    this.item.tarjetas.forEach((element,index) => {
-      if(index===x){
-        element.depositos!.splice(z,1);
-        element.subtotal=0
-        element.depositos!.forEach(element2 => {
-          element.subtotal=element.subtotal+element2.valor
+            this.bolsilloService.Update(bolsillo)
+            this.total()
+          }
         });
-        this.total()
-        return;
       }
-    });
+    })
 
-    this.Update();
-  }
+}
 
-  Compartir(){
-    this.link.navigate(['compartir/',this.id])
-  }
+Compartir(){
+ this.link.navigate(['compartir/',this.id])
+}
 
-  depositar(x:number,tipo:string){
+  depositar(bolsillo:Bolsillo,tipo:string,){
     const fecha= new Date();
     const dia = fecha.getDate();
     const mes = fecha.getMonth() + 1; // Los meses empiezan desde 0, por lo que sumamos 1
     const ano = fecha.getFullYear();
     this.deposito.fecha = dia+"/"+mes+"/"+ano;
     this.deposito.email=this.user.email
-
+    this.deposito.creado= new Date ()
+    this.deposito.idBolsillo=bolsillo.id
+    this.deposito.idItem=this.item.id
+    if(!bolsillo.depositos || bolsillo.depositos.length<0){
+      bolsillo.depositos=[]
+    }
+    bolsillo.depositos!.push(this.deposito)
+    bolsillo.subtotal=0
     if(this.deposito.valor!=null){
 
       if(tipo==="restar"){
         this.deposito.valor=this.deposito.valor*-1;
       }
-      this.item.tarjetas.forEach((element,index) => {
-        if(index===x){
-          element.depositos?.push(this.deposito)
-          element.subtotal=0
-            element.depositos!.forEach(element2 => {
-              element.subtotal=element.subtotal+element2.valor
-            });
-            this.total()
-          return;
+      this.depositoServices.Create(this.deposito).then((res)=>{
+        if(res.status==200){
+
+          bolsillo.depositos!.forEach((deposito) => {
+            bolsillo.subtotal=bolsillo.subtotal+deposito.valor
+          });
         }
-      });
+        this.bolsilloService.Update(bolsillo)
+        this.total()
+        this.ngOnInit()
+      })
+
       //this.NewNotification("ha añadido un nuevo valor de $"+this.deposito.valor)
-      this.Update();
+
       this.deposito= new Depositos();
 
     }else{
-      this.presentAlert("Error, verifica los datos e intenta nuevamente");
+      this.presentAlert("Debes ingresar un valor.");
     }
   }
 
@@ -583,34 +643,35 @@ cancel2() {
   this.modalEditar.dismiss(null, 'cancel');
 }
 
-
-  Festado(tipo:string){
+Festado(tipo:string){
     tipo=="activar" ?   this.item.estado=false:  this.item.estado=true
     this.Update()
-  }
+}
 
   FingresarValor(){
-    if(!this.tarjeta.Vinicial){
-      this.tarjeta.Vinicial=true
+    if(!this.bolsilloEditar.Vinicial){
+      this.bolsilloEditar.Vinicial=true
     }else{
-      this.tarjeta.Vinicial=false
+      this.bolsilloEditar.Vinicial=false
     }
   }
 
-  confirm() {
-    if(this.tarjeta.nombre!="" && this.tarjeta.color!=null){
-      this.tarjeta.Vinicial=Boolean(this.tarjeta.Vinicial)
-      if(this.tarjeta.Vinicial && this.tarjeta.Valor!<1){
+confirm() {
+    if(this.bolsillo.nombre!="" && this.bolsillo.color!=null){
+      this.bolsillo.Vinicial=Boolean(this.bolsillo.Vinicial)
+      if(this.bolsillo.Vinicial && this.bolsillo.valor!<1){
         this.presentAlert("Ingresa el valor inicial");
       }else{
-        this.tarjeta.subtotal=0;
-        this.tarjeta.depositos=[]
-        this.tarjeta.posicion=this.item.tarjetas.length+1
-      this.item.tarjetas.push(this.tarjeta);
-        this.itemService.Update(this.item).then((res)=>{
-          if(res===204){
+        this.bolsillo.subtotal=0;
+        this.bolsillo.creado=new Date()
+        this.bolsillo.idItem=this.item.id!
+        this.bolsillo.posicion=this.item.bolsillos!.length+1
+      this.item.bolsillos!.push(this.bolsillo);
+        this.bolsilloService.Create(this.bolsillo).then((res)=>{
+          if(res.status===200){
             this.modal.dismiss('confirm');
-            this.tarjeta= new Tarjetas();
+            this.bolsillo= new Bolsillo();
+            this.ngOnInit()
           }else{
             this.presentAlert("Error, intenta nuevamente");
           }
@@ -619,7 +680,7 @@ cancel2() {
     }else{
       this.presentAlert("Error, verifica los datos e intenta nuevamente");
     }
-  }
+}
 
   onWillDismiss(event: Event) {
     const ev = event as CustomEvent<OverlayEventDetail<string>>;

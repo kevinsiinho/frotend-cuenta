@@ -1,4 +1,5 @@
 import { Compartir } from "../compartir/compartir";
+import { Bolsillo } from "./bolsillo";
 import { Tarjetas } from "./tarjetas";
 
 export class Items {
@@ -8,6 +9,7 @@ export class Items {
     estado!: boolean;
     favorito!: boolean;
     tarjetas:Tarjetas[]=[];
+    bolsillos?:Bolsillo[]
     compartir:Compartir[]=[]
     userId!: string
     fecha?:string
@@ -35,6 +37,7 @@ export class Items {
       this.Idtarjeta=item.Idtarjeta
       this.NombreTarjeta=item.NombreTarjeta
       this.ColorFondo=item.ColorFondo
+      this.bolsillos=item.bolsillos
 
     }
 }

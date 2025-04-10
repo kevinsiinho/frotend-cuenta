@@ -1,0 +1,28 @@
+@import '../../../../global.scss';
+
+.div-texto{
+  height: auto;
+}
+
+.texto{
+  margin-top: 5px;
+  height: 100%;
+}
+
+.text-view{
+  border-left: solid 1px rgba(124, 124, 124, 0.734);
+  margin-left: 5px;
+  padding: 3px;
+}
+
+ion-checkbox{
+  display: flex;
+  justify-content: center;
+  width: 50%;
+  --checkbox-background-checked: #c3683e;
+  --checkbox-border-color-checked: solid 1px #c3683e;
+}
+
+.titulo{
+  margin-left: 10px;
+}

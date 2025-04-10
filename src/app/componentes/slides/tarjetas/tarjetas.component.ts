@@ -2,11 +2,11 @@ import { Component,Input, SimpleChanges } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
 import { Items } from 'src/app/clases/Items/items';
 import { User } from 'src/app/clases/user/user';
-import { UserService } from 'src/app/servicios/user/user.service';
 import tinycolor from 'tinycolor2';
 import { register } from 'swiper/element/bundle';
 import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
+import { UserService } from 'src/app/servicios/user/user.service';
 
 register();
 @Component({

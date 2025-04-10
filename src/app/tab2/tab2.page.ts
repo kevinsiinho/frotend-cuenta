@@ -1,12 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
-import { UserService } from '../servicios/user/user.service';
 import { Items } from '../clases/Items/items';
 import { ItemsService } from '../servicios/items/items.service';
 import { IonContent, LoadingController } from '@ionic/angular';
 import { User } from '../clases/user/user';
 import { register } from 'swiper/element/bundle';
 import { IonPopover } from '@ionic/angular';
+import { Notas } from '../clases/notas/notas';
+import { NotasService } from '../servicios/notas/notas.service';
+import { UserService } from '../servicios/user/user.service';
 
 register();
 @Component({
@@ -19,6 +21,7 @@ export class Tab2Page implements OnInit{
   public items:Items[]=[];
   public item2= new Items();
   public items2:Items[]=[];
+  public notas:Notas[]=[]
   public isLoading = true;
   public loading:any;
   public user = new User()
@@ -33,7 +36,8 @@ export class Tab2Page implements OnInit{
 constructor(
     public userService:UserService,
     public itemService:ItemsService,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    public notaservices:NotasService
   ) {}
 
   openPopover(event: Event) {
@@ -74,6 +78,10 @@ async Principal(){
 
           this.userService.InfoUser(data.data).then((res)=>{
             this.user=res
+          })
+
+          this.notaservices.allnotas(data.data).then((res)=>{
+            this.notas=res
           })
 
           this.itemService.allitems(data.data).then(async (res)=>{

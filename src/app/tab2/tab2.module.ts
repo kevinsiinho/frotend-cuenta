@@ -9,6 +9,7 @@ import { Tab2PageRoutingModule } from './tab2-routing.module';
 import { TarjetasModule } from '../componentes/slides/tarjetas/tarjetas.module';
 import { CompartidasModule } from '../componentes/slides/compartidas/compartidas.module';
 import { RecienteModule } from '../componentes/slides/reciente/reciente.module';
+import { NotasModule } from '../componentes/slides/notas/notas.module';
 
 @NgModule({
   imports: [
@@ -19,7 +20,8 @@ import { RecienteModule } from '../componentes/slides/reciente/reciente.module';
     Tab2PageRoutingModule,
     TarjetasModule,
     CompartidasModule,
-    RecienteModule
+    RecienteModule,
+    NotasModule
   ],
    schemas: [CUSTOM_ELEMENTS_SCHEMA],
   declarations: [Tab2Page]

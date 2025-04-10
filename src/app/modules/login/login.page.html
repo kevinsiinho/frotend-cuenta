@@ -26,11 +26,19 @@
 
         <div class="inputs">
           <ion-label>Contraseña</ion-label>
-          <ion-input
-            type="password"
-            placeholder="Introduce la contraseña"
-            [(ngModel)]="this.login.password"
-            ></ion-input>
+            <ion-input
+             [type]="verPassword ? 'text' : 'password'"
+             [(ngModel)]="this.login.password"
+             placeholder="Introduce la contraseña"
+             autocomplete="off"
+             autocorrect="off"
+             [clearOnEdit]="false"
+             class="input-password"
+            >
+              <ion-button class="btn-ver" color="white" (click)="this.VerPassword()" fill="clear" slot="end" aria-label="Show/hide">
+                <ion-icon [name]="verPassword ? 'eye-off' : 'eye'" color="white" slot="icon-only"></ion-icon>
+              </ion-button>
+            </ion-input>
           </div>
 
       <ion-button class="btn-ingresar" (click)="ingresar()" expand="block">Ingresar</ion-button>
