@@ -7,6 +7,9 @@ import { register } from 'swiper/element/bundle';
 import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { UserService } from 'src/app/servicios/user/user.service';
+import { Depositos } from 'src/app/clases/Items/depositos';
+import { DepositosService } from 'src/app/servicios/depositos/depositos.service';
+import { BolsillosService } from 'src/app/servicios/bolsillos/bolsillos.service';
 
 register();
 @Component({
@@ -19,14 +22,20 @@ export class TarjetasComponent {
   public item= new Items();
   public user = new User()
   @Input() items: Items[] = [];
-  public positivo:number=0
-  public negativo:number=0
+  public positivos:number=0
+  public negativos:number=0
   public loading:any;
+  public deposito= new Depositos()
+  public depositos:Depositos[]=[];
+  public Totalresultado:number=0
 
 constructor(
     public userService:UserService,
     public link:Router,
     private loadingController: LoadingController,
+    private depositoServices:DepositosService,
+    private bolsilloService: BolsillosService,
+
   ) {}
 
  getCssVariables(color: string) {
@@ -38,17 +47,18 @@ constructor(
  }
 
 async ngOnChanges(changes: SimpleChanges) {
+
   this.loading = await this.loadingController.create({});
   await this.loading.present();
   if (changes['items'] && changes['items'].currentValue) {
     if(await this.userService.Verificar()){
       const { value } = await Preferences.get({ key: 'IntemsOrden' });
       if(value){
-        this.total()
         this.Ordenar(value)
       }
       }
     }
+    this.total()
     this.loading.dismiss();
 }
 
@@ -80,30 +90,32 @@ async Ordenar(ordenar:string){
 
 
 total(){
-  this.items.forEach((item:Items,index)=>{
-    this.positivo=0
-    this.negativo=0
-    item.tarjetas.forEach((tarjeta) =>{
-      if(tarjeta.Vinicial){
-        tarjeta.depositos!.forEach(depositos => {
-          if(depositos.valor<0){
-            this.negativo=this.negativo+depositos.valor
-          }else{
-            this.positivo=this.positivo+depositos.valor
+  this.items.forEach(async (item:Items,index)=>{
+    this.depositos = await this.depositoServices.alldepositos(item.id!);
+    this.item.bolsillos = await this.bolsilloService.allbolsillo(item.id!);
+    this.positivos=0
+    this.negativos=0
+     this.depositos.forEach(deposito => {
+          if (deposito.valor > 0) {
+            this.positivos += deposito.valor;
+          } else if (deposito.valor < 0) {
+            this.negativos += deposito.valor;
           }
-        });
-        this.positivo=this.positivo+tarjeta.Valor!
-      }else{
-        tarjeta.depositos!.forEach(depositos => {
-          if(depositos.valor<0){
-            this.negativo=this.negativo+depositos.valor
-          }else{
-            this.positivo=this.positivo+depositos.valor
-          }
-        });
+    });
+
+    // Distribuir depósitos a cada bolsillo
+    this.item.bolsillos?.forEach(bolsillo => {
+      bolsillo.depositos = this.depositos.filter(dep => dep.idBolsillo === bolsillo.id);
+      if(bolsillo.Vinicial){
+        if (bolsillo.valor! > 0) {
+          this.positivos += bolsillo.valor!
+        } else if (bolsillo.valor! < 0) {
+          this.negativos += bolsillo.valor!
+        }
       }
-  });
-  item.total=this.positivo+(this.negativo)
+    });
+
+  item.total=this.positivos+(this.negativos)
   })
 
 }

@@ -110,7 +110,7 @@ async Guardar(){
 
   await this.loading.present();
   this.isLoading = true;
-    this.item.estado=true;
+    this.item.estado=false;
     this.item.favorito=false;
     this.item.total=0;
     this.item.userId=this.iduser

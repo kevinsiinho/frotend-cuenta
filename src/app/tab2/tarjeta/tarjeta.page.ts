@@ -5,7 +5,6 @@ import { OverlayEventDetail } from '@ionic/core';
 import { Subscription } from 'rxjs';
 import { Depositos } from 'src/app/clases/Items/depositos';
 import { Items } from 'src/app/clases/Items/items';
-import { Tarjetas } from 'src/app/clases/Items/tarjetas';
 import { UserService } from 'src/app/servicios/user/user.service';
 import html2canvas from 'html2canvas';
 import { Preferences } from '@capacitor/preferences';
@@ -31,9 +30,7 @@ export class TarjetaPage implements OnInit {
   public id!:string;
   public item= new Items();
   public items:Items[]=[];
-  public tarjeta=new Tarjetas();
   public bolsilloEditar=new Bolsillo();
-  public tarjetas:Tarjetas[]=[];
   public user = new User()
   public deposito= new Depositos()
   public depositos:Depositos[]=[];
@@ -191,80 +188,79 @@ export class TarjetaPage implements OnInit {
     }, 2000);
   }
 
-async ngOnInit() {
-  let temporal=false
-  this.loading = await this.loadingController.create({
-    message: '',
-  });
-  await this.loading.present();
+  async ngOnInit() {
+     this.bolsillo.color="#1E88E5"
+     this.bolsilloEditar.color="#1E88E5"
+    this.loading = await this.loadingController.create({ message: '' });
+    await this.loading.present();
 
-  if(await this.userService.Verificar()){
-    const ahora= new Date();
-    await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
-    const { value } = await Preferences.get({ key: 'token' });
-    if(value){
-      this.userService.Quien(value).then((data)=>{
-        this.userService.InfoUser(data.data).then((res)=>{
-          this.user=res
-        })
-      })
-    }
+    if (await this.userService.Verificar()) {
+      const ahora = new Date();
+      await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
 
-    this.id=this.router.snapshot.paramMap.get('id')!
-    this.itemService.GetItem(this.id).then(async (res)=>{
-      this.item=res;
-      console.log(this.item)
-      this.bolsilloService.allbolsillo(this.id).then((data)=>{
-        this.item.bolsillos=data
-        this.item.bolsillos?.forEach((bolsillo:Bolsillo,x) => {
-          this.depositoServices.alldepositos(this.id).then((res)=>{
-            this.depositos=res
-            this.positivos=0
-            this.negativos=0
-            console.log(this.depositos)
-            this.depositos?.forEach(deposito => {
-              if(deposito.valor>0){
-                this.positivos=this.positivos+deposito.valor
-              }else if(deposito.valor<0){
-                this.negativos=this.negativos+deposito.valor
-              }
-            })
-            this.Totalresultado=this.positivos+(this.negativos)
-            this.depositos.forEach((deposito:Depositos) => {
-              if(bolsillo.id===deposito.idBolsillo){
-                if (!this.item.bolsillos![x].depositos) {
-                  this.item.bolsillos![x].depositos = [];
-                }
-                this.item.bolsillos![x].depositos?.push(deposito);
-              }
-            });
-
-          })
-        });
-      })
-
-
-      this.CompartidoUNO()
-      const { value } = await Preferences.get({ key: 'TarjetaOrden' });
-      if(value){
-        this.Ordenar(value)
+      const { value: token } = await Preferences.get({ key: 'token' });
+      if (token) {
+        const data = await this.userService.Quien(token);
+        this.user = await this.userService.InfoUser(data.data);
       }
-      this.total()
+
+      this.id = this.router.snapshot.paramMap.get('id')!;
+      this.item = await this.itemService.GetItem(this.id);
+
+      await this.CompartidoUNO();
+
+      this.item.bolsillos = await this.bolsilloService.allbolsillo(this.id);
+
+      const todosLosDepositos = await this.depositoServices.alldepositos(this.id);
+      this.depositos = todosLosDepositos;
+
+      this.positivos = 0;
+      this.negativos = 0;
+
+      this.depositos.forEach(deposito => {
+        if (deposito.valor > 0) {
+          this.positivos += deposito.valor;
+        } else if (deposito.valor < 0) {
+          this.negativos += deposito.valor;
+        }
+      });
+
+
+      // Distribuir depósitos a cada bolsillo
+      this.item.bolsillos?.forEach(bolsillo => {
+        bolsillo.depositos = this.depositos.filter(dep => dep.idBolsillo === bolsillo.id);
+        if(bolsillo.Vinicial){
+          if (bolsillo.valor! > 0) {
+            this.positivos += bolsillo.valor!
+          } else if (bolsillo.valor! < 0) {
+            this.negativos += bolsillo.valor!
+          }
+        }
+      });
+
+
+      this.Totalresultado = this.positivos + this.negativos;
+
+      const { value: orden } = await Preferences.get({ key: 'TarjetaOrden' });
+      if (orden) {
+        this.Ordenar(orden);
+      }
+
+      this.total();
+
       this.alertInputs2 = [
         {
           name: 'itemname',
-          placeholder:"Escribe aquí",
+          placeholder: "Escribe aquí",
           type: 'text',
         }
       ];
 
+      this.ActualizarUltimaVez();
 
-      this.ActualizarUltimaVez()
-    })
-    this.loading.dismiss();
-    this.isLoading = false;
-
-  }
+      this.loading.dismiss();
+      this.isLoading = false;
+    }
   }
 
 ActualizarUltimaVez(){
@@ -289,9 +285,11 @@ ActualizarUltimaVez(){
     })
   }
 
-formatNumberMil(value: number): string {
+  formatNumberMil(value: number | undefined | null): string {
+    if (typeof value !== 'number') return '0';
     return value.toLocaleString();
-}
+  }
+
 /*
 Resultado(x:number): string {
   let Tvalor=0
@@ -323,7 +321,7 @@ Resultado(x:number): string {
 
 Positivo(bolsillo:Bolsillo): string {
   let positivos=0
-        bolsillo.depositos!.forEach(deposito => {
+        bolsillo.depositos?.forEach(deposito => {
           if(deposito.valor>0){
             positivos=positivos+deposito.valor
           }
@@ -333,7 +331,7 @@ Positivo(bolsillo:Bolsillo): string {
 
 Negativo(bolsillo:Bolsillo): string {
   let negativos=0
-  bolsillo.depositos!.forEach(depositos => {
+  bolsillo.depositos?.forEach(depositos => {
     if(depositos.valor<0){
       negativos=negativos+depositos.valor
     }
@@ -648,12 +646,22 @@ Festado(tipo:string){
     this.Update()
 }
 
-  FingresarValor(){
+FingresarValor(){
+    if(!this.bolsillo.Vinicial){
+      this.bolsillo.Vinicial=true
+    }else{
+      this.bolsillo.Vinicial=false
+    }
+    console.log("Valor"+this.bolsillo.Vinicial)
+  }
+
+FingresarValor2(){
     if(!this.bolsilloEditar.Vinicial){
       this.bolsilloEditar.Vinicial=true
     }else{
       this.bolsilloEditar.Vinicial=false
     }
+    console.log("Valor editar"+this.bolsilloEditar.Vinicial)
   }
 
 confirm() {
@@ -702,7 +710,7 @@ async Ordenar(ordenar:string){
   });
 
   if(ordenar=="nombre"){
-    this.tarjetas.sort((a, b) => {
+    this.bolsillos.sort((a, b) => {
       return a.nombre.localeCompare(b.nombre);
     });
   }else if(ordenar=="favorito"){

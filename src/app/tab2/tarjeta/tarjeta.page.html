@@ -105,7 +105,7 @@
 
           </ion-list>
 
-            <div class="btns" *ngIf="this.compartirUno.estado===true || this.creador===true">
+            <div class="btns" *ngIf="this.compartirUno.estado || this.creador">
               <ion-item class="list-form">
                 <ion-input class="itemInput" type="number" [(ngModel)]="this.deposito.valor" label="Ingresa el valor" label-placement="floating"></ion-input>
               </ion-item>
@@ -163,7 +163,7 @@
           <ion-item>
             <ion-toggle [enableOnOffLabels]="false" (click)="this.FingresarValor()">Valor Inicial</ion-toggle>
           </ion-item>
-          <ion-item *ngIf="this.tarjeta.Vinicial===true">
+          <ion-item *ngIf="this.bolsillo.Vinicial===true">
             <ion-input
               label="Valor"
               labelPlacement="stacked"
@@ -210,7 +210,7 @@
             ></ion-input>
           </ion-item>
           <ion-item>
-            <ion-toggle [enableOnOffLabels]="false" (click)="this.FingresarValor()">Valor Inicial</ion-toggle>
+            <ion-toggle [enableOnOffLabels]="false" (click)="this.FingresarValor2()">Valor Inicial</ion-toggle>
           </ion-item>
           <ion-item *ngIf="this.bolsilloEditar.Vinicial===true">
             <ion-input
