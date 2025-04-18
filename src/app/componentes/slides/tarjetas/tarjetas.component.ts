@@ -25,7 +25,6 @@ export class TarjetasComponent {
   public positivos:number=0
   public negativos:number=0
   public loading:any;
-  public deposito= new Depositos()
   public depositos:Depositos[]=[];
   public Totalresultado:number=0
 
@@ -58,7 +57,6 @@ async ngOnChanges(changes: SimpleChanges) {
       }
       }
     }
-    this.total()
     this.loading.dismiss();
 }
 
@@ -86,38 +84,6 @@ async Ordenar(ordenar:string){
 
   formatNumberMil(value: number): string {
     return value.toLocaleString();
-}
-
-
-total(){
-  this.items.forEach(async (item:Items,index)=>{
-    this.depositos = await this.depositoServices.alldepositos(item.id!);
-    this.item.bolsillos = await this.bolsilloService.allbolsillo(item.id!);
-    this.positivos=0
-    this.negativos=0
-     this.depositos.forEach(deposito => {
-          if (deposito.valor > 0) {
-            this.positivos += deposito.valor;
-          } else if (deposito.valor < 0) {
-            this.negativos += deposito.valor;
-          }
-    });
-
-    // Distribuir depósitos a cada bolsillo
-    this.item.bolsillos?.forEach(bolsillo => {
-      bolsillo.depositos = this.depositos.filter(dep => dep.idBolsillo === bolsillo.id);
-      if(bolsillo.Vinicial){
-        if (bolsillo.valor! > 0) {
-          this.positivos += bolsillo.valor!
-        } else if (bolsillo.valor! < 0) {
-          this.negativos += bolsillo.valor!
-        }
-      }
-    });
-
-  item.total=this.positivos+(this.negativos)
-  })
-
 }
 
 }

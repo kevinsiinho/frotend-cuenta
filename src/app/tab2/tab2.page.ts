@@ -9,6 +9,10 @@ import { IonPopover } from '@ionic/angular';
 import { Notas } from '../clases/notas/notas';
 import { NotasService } from '../servicios/notas/notas.service';
 import { UserService } from '../servicios/user/user.service';
+import { DepositosService } from '../servicios/depositos/depositos.service';
+import { BolsillosService } from '../servicios/bolsillos/bolsillos.service';
+import { Depositos } from '../clases/Items/depositos';
+import { Bolsillo } from '../clases/Items/bolsillo';
 
 register();
 @Component({
@@ -25,6 +29,10 @@ export class Tab2Page implements OnInit{
   public isLoading = true;
   public loading:any;
   public user = new User()
+  public positivos:number=0
+  public negativos:number=0
+  public depositos:Depositos[]=[];
+
   @ViewChild('popover') popover!: IonPopover;
   @ViewChild(IonContent, { static: false }) content!: IonContent;
 
@@ -37,7 +45,9 @@ constructor(
     public userService:UserService,
     public itemService:ItemsService,
     private loadingController: LoadingController,
-    public notaservices:NotasService
+    public notaservices:NotasService,
+    private depositoServices:DepositosService,
+    private bolsilloService: BolsillosService,
   ) {}
 
   openPopover(event: Event) {
@@ -71,36 +81,21 @@ async Principal(){
     await this.loading.present();
 
     if(await this.userService.Verificar()){
+    const { value:token } = await Preferences.get({ key: 'token' });
+      if(token){
+        const data = await this.userService.Quien(token)
+        this.user = await this.userService.InfoUser(data.data)
+        this.notas= await this.notaservices.allnotas(data.data)
+        this.items= await this.itemService.allitems(data.data)
+        this.items2= await   this.itemService.compartidos(data.data)
+        this.total()
 
-      const { value } = await Preferences.get({ key: 'token' });
-      if(value){
-        this.userService.Quien(value).then((data)=>{
-
-          this.userService.InfoUser(data.data).then((res)=>{
-            this.user=res
-          })
-
-          this.notaservices.allnotas(data.data).then((res)=>{
-            this.notas=res
-          })
-
-          this.itemService.allitems(data.data).then(async (res)=>{
-           this.items=res
-
-            //buscando los compartidos
-            this.itemService.compartidos(data.data).then((res)=>{
-              this.items2=res
-            })
-            //
-            this.loading.dismiss();
-            this.isLoading = false;
-            const { value } = await Preferences.get({ key: 'IntemsOrden' });
-            if(value){
-              this.Ordenar(value)
-            }
-          })
-        })
       }
+      const { value } = await Preferences.get({ key: 'IntemsOrden' });
+      if(value){
+        this.Ordenar(value)
+      }
+
     }
     this.loading.dismiss();
     this.isLoading = false;
@@ -132,5 +127,40 @@ scrollToTop() {
   this.content.scrollToTop(300); // 300ms para suavizar el desplazamiento
 }
 
+async total() {
+  for (const item of this.items) {
+    let positivos = 0;
+    let negativos = 0;
+    item.total = 0;
 
+    const bolsillos = await this.bolsilloService.allbolsillo(item.id!);
+    const depositos = await this.depositoServices.alldepositos(item.id!);
+
+    bolsillos.forEach((bolsillo:Bolsillo) => {
+      bolsillo.depositos = depositos.filter((dep:Bolsillo) => dep.idItem === bolsillo.id);
+
+      if (item.id === bolsillo.idItem) {
+        if (bolsillo.Vinicial) {
+          if (bolsillo.valor! > 0) {
+            positivos += bolsillo.valor!;
+          } else if (bolsillo.valor! < 0) {
+            negativos += bolsillo.valor!;
+          }
+        }
+      }
+    });
+
+    depositos.forEach((deposito:Depositos) => {
+      if (item.id === deposito.idItem) {
+        if (deposito.valor > 0) {
+          positivos += deposito.valor;
+        } else if (deposito.valor < 0) {
+          negativos += deposito.valor;
+        }
+      }
+    });
+
+    item.total = positivos + negativos;
+  }
+}
 }
