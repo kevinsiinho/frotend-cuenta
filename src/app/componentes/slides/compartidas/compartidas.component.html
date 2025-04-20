@@ -2,7 +2,7 @@
 
 <div class="swpier-tarjeta">
 
-<h2>Tarjetas</h2>
+<h2 *ngIf="this.items2.length>0">Tarjetas</h2>
 
 <swiper-container
   [pagination]="{ clickable: true }"
@@ -33,39 +33,108 @@
 </swiper-container>
 </div>
 
-<div class="swipers-listas">
+<div *ngIf="this.notas.length>0" class="swipers-listas">
 
-  <ion-label>Listas compartidas, No disponible</ion-label>
-<!--
-<swiper-container
-  [pagination]="{ clickable: true }"
-  >
-  <swiper-slide *ngFor="let item of this.items2">
-    <ion-card [style.color]="item.colorLetra" class="custom-card" [ngClass]="item.NombreTarjeta"  [ngStyle]="getCssVariables(item.ColorFondo!)" (click)="this.Ruta(item.id!)">
-      <div class="card-header">
-        <ion-icon [style.color]="item.colorLetra" name={{item.icono}} class="chip-icon"></ion-icon>
-        <span class="card-type">{{ item.itemname }}</span>
-      </div>
+  <h2>Listas/Notas</h2>
 
-      <div class="card-balance">Saldo: {{item.total}}</div>
+  <ion-list>
+    <ion-item-sliding *ngFor="let nota of this.notas">
+      <ion-item *ngIf="nota.tipo==='lista'"  (click)="this.Verlista(true,nota)">
+        <ion-label>{{ nota.titulo }}</ion-label>
+       </ion-item>
+      <ion-item *ngIf="nota.tipo==='nota'" (click)="this.VerNota(true,nota)">
+        <ion-label>{{ nota.titulo }}</ion-label>
+      </ion-item>
 
-      <div class="card-number">**** **** **** {{ item.id!.slice(-4) }}</div>
+      <ion-item-options side="end" expand="full">
+       <!-- <ion-item-option color="warning" (click)="this.LinkCompartir(nota.id!)">
+          Compartir
+        </ion-item-option>-->
+        <ion-item-option color="danger" (click)="this.Eliminar(nota.id!)">
+          Eliminar
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
 
-      <div class="card-footer">
-        <div class="shared-info">
-          <ion-icon name="people"></ion-icon>
-          <span >{{ item.compartir.length }} Compartidas</span>
-          <span class="owner-name">Creada por: {{ item.itemname }}</span>
+
+
+  <!--Modal1 listas items-->
+  <ion-modal [isOpen]="isModalOpen">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="end">
+            <ion-button (click)="setOpen(false,'')">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <!--Actualizar la lista-->
+      <ion-content class="ion-padding" >
+        <div>
+          <ion-input placeholder="Título" [(ngModel)]="this.UpdateList.titulo" [counter]="true" maxlength="30"></ion-input>
         </div>
-        <span class="creation-date">{{ item.fecha }}</span>
-      </div>
+        <div>
+          <ion-item>
+            <ion-textarea placeholder="Agregar item" autoGrow="true" [(ngModel)]="this.Acitem.texto"></ion-textarea>
+            <ion-button fill="clear" color="success" (click)="this.ActualizarItem()"><ion-icon name="checkmark-outline"></ion-icon></ion-button>
+          </ion-item>
+          <ng-container *ngFor="let item of this.UpdateList.items; let i = index">
+            <ion-item *ngIf="!item.estado">
+              <ion-checkbox (click)="this.CambioEstado(i, true)" [checked]="false"></ion-checkbox>
+              <ion-textarea class="text-view" [(ngModel)]="item.texto" autoGrow="true"></ion-textarea>
+              <ion-button fill="clear" color="danger" (click)="this.EliminarItem(i)">
+                <ion-icon name="close-outline"></ion-icon>
+              </ion-button>
+            </ion-item>
+          </ng-container>
 
-      <div class="softk-brand">SoftK</div>
-    </ion-card>
-  </swiper-slide>
 
-</swiper-container>
--->
+          <ion-accordion-group>
+            <ion-accordion value="first">
+              <ion-item slot="header" color="light">
+                <ion-label>Items completados</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content">
+                <ng-container *ngFor="let item of this.UpdateList.items; let i = index">
+                  <ion-item *ngIf="item.estado">
+                    <ion-checkbox (click)="this.CambioEstado(i, false)" [checked]="true"></ion-checkbox>
+                    <ion-textarea class="text-view" [(ngModel)]="item.texto" autoGrow="true"></ion-textarea>
+                    <ion-button fill="clear" color="danger" (click)="this.EliminarItem(i)">
+                      <ion-icon name="close-outline"></ion-icon>
+                    </ion-button>
+                  </ion-item>
+                </ng-container>
+              </div>
+            </ion-accordion>
+          </ion-accordion-group>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!--Modal2-->
+  <ion-modal [isOpen]="isModalOpen2">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="end">
+            <ion-button (click)="setOpen2(false)">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <div class="div-texto">
+          <ion-textarea placeholder="Escribe aquí..."(ngModelChange)="guardarNota()" [(ngModel)]="this.UpdateNote.texto" class="texto" autoGrow="true"></ion-textarea>
+        </div>
+      </ion-content>
+
+    </ng-template>
+  </ion-modal>
+
+
 </div>
 
 </div>

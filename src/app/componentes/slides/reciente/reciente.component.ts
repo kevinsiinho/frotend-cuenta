@@ -60,7 +60,6 @@ export class RecienteComponent {
     await alert.present();
   }
 
-
   async ngOnChanges(changes: SimpleChanges) {
 
     if (changes['items'] && changes['items'].currentValue) {
