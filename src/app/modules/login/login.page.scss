@@ -75,7 +75,7 @@ img {
 a{
   color: #ff8a08;
   text-decoration: none;
-  float: right;
+  float: center;
 }
 
 .segundario{
@@ -84,17 +84,7 @@ a{
 }
 
 ion-list{
-  margin-bottom: 10px;
   background-color: none;
-}
-
-.btn-ingresar{
-  margin-top: 35px !important;
-  width: 100%;
-  margin: 0 auto;
-  height: 40px;
-  font-size: 15px;
-  font-weight: bold;
 }
 
 .inputs{
@@ -113,8 +103,15 @@ ion-input{
   text-align: center;
 }
 
-.link-registrar{
-  margin-top: 25px;
+.pie-list{
+  margin-bottom: 10px;
+  width: 100%;
+  list-style: none;
+}
+
+.pie-list li{
+  margin-top: 10px;
+  float: right;
 }
 
 ion-checkbox, .recuperarPassword{
@@ -123,13 +120,10 @@ ion-checkbox, .recuperarPassword{
   font-size: 15px;
 }
 
-.recuperarPassword{
-  margin-right: 30px;
-}
 
-ion-checkbox{
-margin-top: 30px;
-font-size: 12px;
+.check{
+  font-size: 12px;
+  float: left;
 }
 
 ion-button {
@@ -153,7 +147,7 @@ ion-button {
 @media screen and (max-height: 1340px){
   .form{
     width: 300px;
-    height: 350px;
+    height: auto;
   }
 
   img {

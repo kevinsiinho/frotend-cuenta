@@ -42,12 +42,15 @@
           </div>
 
       <ion-button class="btn-ingresar" (click)="ingresar()" expand="block">Ingresar</ion-button>
-      <ion-checkbox class="check" value="{{this.recordaremail}}" [(ngModel)]="this.recordaremail" (ionChange)="RecordarEmail()" labelPlacement="end">Recordar datos</ion-checkbox>
-    <a class="link-registrar recuperarPassword" [routerLink]="['/registrarse']" >Registrarme</a>
-    <a class="recuperarPassword" [routerLink]="['/change-password']" >¿Recuperar contraseña?</a>
+    <ul class="pie-list">
+    <li><a class="link-registrar recuperarPassword" [routerLink]="['/registrarse']" >Soy nuevo registrarme</a></li>
+    <li><a class="recuperarPassword" [routerLink]="['/change-password']" >¿Recuperar contraseña?</a></li>
+    </ul>
+
+    <ion-checkbox class="check" value="{{this.recordaremail}}" [(ngModel)]="this.recordaremail" (ionChange)="RecordarEmail()" labelPlacement="end">Recordar datos</ion-checkbox>
     </ion-list>
 
-  <div class="msn">Creado por SoftK: 01/01/2025</div>
+  <div class="msn">SoftK</div>
   <div class="abajo"></div>
    <!--<ion-label class="lbl-net">No estás conectado a internet</ion-label>-->
 </ion-content>
