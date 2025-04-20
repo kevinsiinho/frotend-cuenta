@@ -34,6 +34,11 @@
                 "glob": "static.json",
                 "input": "src",
                 "output": "."
+              },
+              {
+                "glob": "_redirects",
+                "input": "src",
+                "output": "."
               }
             ],
             "styles": ["src/theme/variables.scss", "src/global.scss"],
