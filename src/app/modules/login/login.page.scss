@@ -89,6 +89,7 @@ ion-list{
 
 .inputs{
   color: $fondo-color;
+  margin-top: 10px;
 }
 
 ion-input{
@@ -115,11 +116,10 @@ ion-input{
 }
 
 ion-checkbox, .recuperarPassword{
-  padding: 5px;
+  padding: 2px;
   color: white;
   font-size: 15px;
 }
-
 
 .check{
   font-size: 12px;
