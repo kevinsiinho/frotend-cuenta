@@ -143,6 +143,17 @@ ion-button {
   --color:white;
 }
 
+//errores
+.error{
+  border: solid red;
+  background-color: rgba(231, 98, 98, 0.802);
+}
+
+.lbl-error{
+  background-color: red;
+  width: 100%;
+  font-weight: bolder;
+}
 
 @media screen and (max-height: 1340px){
   .form{

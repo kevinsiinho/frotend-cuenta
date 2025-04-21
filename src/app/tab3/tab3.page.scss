@@ -1,24 +1,27 @@
+@import '../../global.scss';
+
 .salir{
-  color: #ff8a08;
+  color: $principal-color;
 }
 
-.toolbar-menu{
-  color: white
-}
 
 a{
   text-decoration: none;
-  color: none;
-  color: #ff8a08;
+  color: gray;
 }
 
-
-ion-menu::part(backdrop) {
-  background-color: rgba(217, 184, 217, 0.5);
+.item-icono{
+  color: $principal-color;
 }
 
-ion-menu::part(container) {
-  border-radius: 0 20px 20px 0;
+.icon-ultima{
+  margin-right: 10px;
+}
 
-  box-shadow: 4px 0px 16px rgba(212, 164, 212, 0.18);
+.mis-datos{
+  width: 100%;
+}
+
+ion-accordion-group{
+  width: 100%;
 }

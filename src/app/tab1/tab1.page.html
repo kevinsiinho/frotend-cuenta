@@ -30,7 +30,7 @@
          </ion-select>
        </ion-item>
        <ion-item [disabled]="this.tarjeta.nombreCSS!=='principal-dinamica'">
-         <ion-toggle aria-label="Color letra" [(ngModel)]="this.colorletra" (click)="this.ColorDeLetra()" [enableOnOffLabels]="true" color="dark" [checked]="true">Color negro de letra</ion-toggle>
+         <ion-toggle aria-label="Color letra" [(ngModel)]="this.colorletra" (click)="this.ColorDeLetra()" [enableOnOffLabels]="true" color="dark" [checked]="true">Color de letra</ion-toggle>
        </ion-item>
        <ion-item [disabled]="this.tarjeta.nombreCSS!=='principal-dinamica'">
          <input type="color" class="picker" [(ngModel)]="this.item.ColorFondo!" [style.background]="getGradientColor()"/>

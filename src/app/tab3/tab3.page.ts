@@ -23,10 +23,10 @@ export class Tab3Page implements OnInit {
 
 
     public menu=[
-      {name:"Modificar datos", icono:"", link:"/update-user", estado:true},
-      {name:"Modificar Contraseña", icono:"", link:"/modificar-password", estado:true},
-      {name:"Dispositivos", icono:"", link:"/dispositivos", estado:true},
-      {name:"Eliminar cuenta", icono:"", link:"/delete-user", estado:true}
+      {name:"Modificar datos", icono:"log-in-outline", link:"/update-user", estado:true},
+      {name:"Modificar Contraseña", icono:"key-outline", link:"/modificar-password", estado:true},
+      {name:"Dispositivos", icono:"phone-portrait-outline", link:"/dispositivos", estado:true},
+      {name:"Eliminar cuenta", icono:"close-circle-outline", link:"/delete-user", estado:true}
 
     ]
 

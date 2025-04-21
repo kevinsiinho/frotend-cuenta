@@ -15,13 +15,15 @@
         <span>INICIAR SESIÓN</span>
       </div>
 
-      <div class="inputs">
+      <div class="inputs" >
         <ion-label>Email</ion-label>
         <ion-input
+          [class.error]="this.EmailmsnError"
           type="text"
           placeholder="Introduce tu correo electrónico"
           [(ngModel)]="this.login.email"
           ></ion-input>
+          <ion-label *ngIf="this.EmailmsnError" class="lbl-error">Introduce un email valido</ion-label>
         </div>
 
         <div class="inputs">
@@ -33,12 +35,15 @@
              autocomplete="off"
              autocorrect="off"
              [clearOnEdit]="false"
+             [class.error]="this.PasswordmsnError || this.Password2msnError"
              class="input-password"
             >
               <ion-button class="btn-ver" color="white" (click)="this.VerPassword()" fill="clear" slot="end" aria-label="Show/hide">
                 <ion-icon [name]="verPassword ? 'eye-off' : 'eye'" color="white" slot="icon-only"></ion-icon>
               </ion-button>
             </ion-input>
+            <ion-label *ngIf="this.PasswordmsnError" class="lbl-error">Contraseña invalida</ion-label>
+            <ion-label *ngIf="this.Password2msnError" class="lbl-error">Ingresa la contraseña</ion-label>
           </div>
 
       <ion-button class="btn-ingresar" (click)="ingresar()" expand="block">Ingresar</ion-button>

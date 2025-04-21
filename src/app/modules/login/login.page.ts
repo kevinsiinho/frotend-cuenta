@@ -25,6 +25,9 @@ export class LoginPage implements OnInit{
   public InfoCel:InfoDevice = new InfoDevice()
   public InfoCel2:InfoDevice = new InfoDevice()
   verPassword: boolean = false;
+  public EmailmsnError=false
+  public PasswordmsnError=false
+  public Password2msnError=false
 
   constructor(
     private alertController: AlertController,
@@ -88,8 +91,14 @@ async ngOnInit() {
   //verifica si el correo es valido
   isValidEmail = this.emailPattern.test(this.login.email);
 
-  if(this.login.password!=null && isValidEmail){
-
+  if(this.login.email==null || this.login.email==""){
+    this.loading.dismiss();
+    this.EmailmsnError=true
+  }
+  if(this.login.password==null || this.login.password==""){
+    this.loading.dismiss();
+    this.Password2msnError=true
+  }else if(isValidEmail){
     this.login.email = this.login.email.toLowerCase();
 
     this.userService.Login(this.login).then(async(res)=>{
@@ -160,14 +169,16 @@ async ngOnInit() {
         }
       }else{
         this.loading.dismiss();
-        this.presentAlert("Credenciales invalidas, intentanuevamente")
+        this.PasswordmsnError=true
       }
    })
-  }else{
-    this.loading.dismiss();
-    this.presentAlert("Verifica los campos e intenta nuevamente.")
+    }else{
+      this.loading.dismiss();
+      this.EmailmsnError=true
+    }
+
   }
-}
+
 
 VerPassword() {
   this.verPassword = !this.verPassword;
