@@ -24,7 +24,6 @@ export class EmailService {
 
   async enviarCorreo(destinatario: string, codigo: number, nombre: string) {
     const cuerpo = `
-      <p>Señor (a): ${nombre}</p>
       <p>Apreciado (a) Usuario,</p>
       <p>Atentamente nos permitimos comunicarle que el código que haz solicitado es el siguiente:</p>
       <ul>

@@ -9,10 +9,16 @@
         <span>REGISTRARME</span>
       </div>
 
-      <div class="form1" *ngIf="!this.showBTN">
+      <div class="form1" *ngIf="form1">
+        <div class="msn">
+          El código ingresado fue verificado correctamente. Por favor, completa el siguiente formulario para continuar con el registro.
+        </div>
+      
+
         <div class="inputs">
           <ion-label>Nombres</ion-label>
           <ion-input
+            [class.error]="errorName"
             type="text"
             placeholder="Escribe aquí"
             [(ngModel)]="this.user.name"
@@ -24,6 +30,7 @@
           <div class="inputs">
             <ion-label>Apellidos</ion-label>
             <ion-input
+            [class.error]="errorApellido"
               type="text"
               autocomplete="off"
               autocorrect="off"
@@ -33,22 +40,35 @@
             </div>
 
             <div class="inputs">
-              <ion-label>Contraseña</ion-label>
+              <ion-label>Número de celular</ion-label>
               <ion-input
-              [type]="verPassword ? 'text' : 'password'"
-              [(ngModel)]="this.user.password"
-              placeholder="Escribe aquí"
-              autocomplete="off"
-              autocorrect="off"
-              autocomplete="new-password"
-              [clearOnEdit]="false"
-              class="input-password"
-             >
-               <ion-button class="btn-ver" color="white" (click)="this.VerPassword()" fill="clear" slot="end" aria-label="Show/hide">
-                 <ion-icon [name]="verPassword ? 'eye-off' : 'eye'" slot="icon-only"></ion-icon>
-               </ion-button>
-             </ion-input>
+                [class.error]="errorCel"
+                type="number"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="Escribe aquí"
+                [(ngModel)]="this.user.cel"
+                ></ion-input>
               </div>
+
+              <div class="inputs">
+                <ion-label>Contraseña</ion-label>
+                  <ion-input
+                   [type]="verPassword ? 'text' : 'password'"
+                   [(ngModel)]="this.user.password"
+                   placeholder="Escribe aquí"
+                   autocomplete="off"
+                   autocorrect="off"
+                   [clearOnEdit]="false"
+                   [class.error]="errorpassword"
+                   class="input-password"
+                  >
+                    <ion-button class="btn-ver" color="white" (click)="this.VerPassword()" fill="clear" slot="end" aria-label="Show/hide">
+                      <ion-icon [name]="verPassword ? 'eye-off' : 'eye'" color="white" slot="icon-only"></ion-icon>
+                    </ion-button>
+                  </ion-input>
+                </div>
+
 
               <div class="inputs">
                 <ion-label>Repite la contraseña</ion-label>
@@ -58,14 +78,14 @@
                 placeholder="Escribe aquí"
                 autocomplete="off"
                 autocorrect="off"
-                autocomplete="new-password"
                 [clearOnEdit]="false"
-                class="input-password"
+                [class.error]="errorpassword2"
                >
                  <ion-button class="btn-ver" color="white" (click)="this.VerPassword2()" fill="clear" slot="end" aria-label="Show/hide">
-                   <ion-icon [name]="verPassword2 ? 'eye-off' : 'eye'"  slot="icon-only"></ion-icon>
+                   <ion-icon [name]="verPassword2 ? 'eye-off' : 'eye'" color="white"  slot="icon-only"></ion-icon>
                  </ion-button>
                </ion-input>
+               <ion-label *ngIf="errorpassword" class="lbl-error">{{msnError}}</ion-label>   
               </div>
 <!--
         <ion-input
@@ -77,10 +97,10 @@
 -->
     </div>
 
-    <div class="form2" *ngIf="this.showBTN">
+    <div class="form2" *ngIf="form2">
       <div class="msn">
         Debes tener en cuenta que el correo electrónico que ingreses debe ser único,
-        estar activo y no estar registrado.
+        estar activo y no estar registrado previamente.
       </div>
 
       <div class="inputs">
@@ -99,13 +119,32 @@
             placeholder="example@gmail.com"
             [(ngModel)]="this.email"
             ></ion-input>
+            <ion-label *ngIf="this.EmailmsnError" class="lbl-error">{{msnError}}</ion-label>
+          </div>
+    </div>
+    
+    <div class="form2" *ngIf="form3">
+    <div class="msn">
+        El correo electrónico que ingresaste es único y está activo, por lo que puedes continuar con el registro.
+    </div>
+      <div class="msn">
+        Te hemos enviado un código de verificación a tu correo electrónico. Por favor, ingrésalo a continuación para continuar con el registro.
+      </div>
+        <div class="inputs">
+          <ion-label>Código de verificación</ion-label>
+          <ion-input
+            type="text"
+            placeholder="Ingresa el código aquí"
+            [(ngModel)]="verificarCodigo"
+            ></ion-input>
+            <ion-label *ngIf="this.EmailmsnError" class="lbl-error">{{msnError}}</ion-label>
           </div>
     </div>
 
-      <ion-button  *ngIf="this.showBTN" (click)="create()" expand="block">Crear cuenta</ion-button>
-      <ion-button class="btn-siguiente" *ngIf="!this.showBTN" (click)="Datos()" expand="block">Siguiente</ion-button>
-      <ion-button *ngIf="this.showBTN" (click)="Regresar()" expand="block">Regresar</ion-button>
-      <ion-button *ngIf="!this.showBTN"  [routerLink]="['/login']" expand="block">Iniciar Sesión</ion-button>
+      <ion-button  *ngIf="form1" (click)="create()" expand="block">Crear cuenta</ion-button>
+      <ion-button class="btn-siguiente" *ngIf="form2" (click)="VerificarEmail()" expand="block">Verificar</ion-button>
+      <ion-button class="btn-siguiente" *ngIf="form3" (click)="VerificarCodigo()" expand="block">continuar</ion-button>
+      <ion-button  [routerLink]="['/login']" expand="block">Iniciar Sesión</ion-button>
     </ion-list>
 
   <div class="abajo">

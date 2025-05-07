@@ -54,7 +54,6 @@ export class ChangePasswordPage {
                   if(res==204){
                     const nombre= this.user.name+" "+this.user.nickname
                     this.enviarEmail.enviarCorreo(this.user.email,this.user.codigo!,nombre)
-                    this.presentAlert("hola señor(a) "+nombre+", se ha te ha enviado un codigo a tu correo.")
                   }else{
                     this.presentAlert("En estos momentos estamos teniendo problema con el servidor, intenta más tarde.")
                     this.link.navigate(['/change-password'])

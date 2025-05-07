@@ -43,8 +43,8 @@
 }
 
 img {
-  width: 40%;
-  height: 20%;
+  width: 30%;
+  height: 30%;
   display: flex;
   margin: auto;
   margin-bottom: 3%;
@@ -75,7 +75,7 @@ ion-input{
   margin: 0 auto;
   margin-top: 5px;
   margin-bottom: 10px;
-  color: white;
+  color: black;
   font-weight: bold;
   background-color: $segundario-color;
   border-radius: 50px 50px 50px 50px;
@@ -97,7 +97,7 @@ ion-button {
 }
 
 .btn-ver{
-  --color:white;
+  --color:$principal-color;
   margin: 0 auto;
 }
 
@@ -120,10 +120,22 @@ ion-button {
   z-index: -1;
 }
 
+//errores
+.error{
+  border: solid $color-error 1px;
+  background-color: $color-error;
+}
+
+
+.lbl-error{
+  color: $color-error;
+  width: 100%;
+}
 
 @media screen and (max-height: 600px){
   .abajo{
     display: none;
   }
+
 }
 
