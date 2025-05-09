@@ -15,10 +15,17 @@ ion-card,ion-card-content{
   width: 100%;
 }
 
+
+ion-segment-button{
+  --color-checked: #5d4037;
+}
+
+
 ion-segment-button{
   color:$cuarto-color;
-  --color-checked: #ec953f;
+  --color-checked: #5d4037;
 }
+
 
 ion-header ion-toolbar ion-title{
   color:$cuarto-color;
@@ -26,7 +33,6 @@ ion-header ion-toolbar ion-title{
 }
 
 .btnModals{
-  color:$cuarto-color;
   font-size: 15px;
 }
 

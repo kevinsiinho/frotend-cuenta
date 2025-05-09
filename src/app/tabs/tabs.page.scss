@@ -1,6 +1,23 @@
-ion-tabs ion-tab-bar ion-tab-button{
-  color:#ff8a08;
+@import '../../global.scss';
+
+/*
+ion-tabs ion-tab-button ion-icon{
+  color:$tercero-color;
 }
+
+ion-tabs ion-tab-button ion-label{
+  color:$tercero-color;
+}
+*/
+
+ion-tab-button.tab-selected {
+  color: $principal-color;
+  background: #5d40370f; 
+  border-radius: 12px; 
+  font-weight: bold;
+}
+
+
 
 .avatar{
   width: 25px;
@@ -8,7 +25,7 @@ ion-tabs ion-tab-bar ion-tab-button{
   border: 0.5px solid;
   border-radius: 50%;
   background-color: none;
-  color:#ff8a08;
+  color:$principal-color;
   font-size: 20px;
   display: flex;
   justify-content: center;

@@ -8,17 +8,12 @@
 .button{
   font-size: 18px;
   height: 45px;
-  --background:#ec953f;
+  --background:#5d4037;
   width: 100%;
 }
 
 ion-segment-button{
-  color:$cuarto-color;
-  --color-checked: #ec953f;
-}
-
-ion-header ion-toolbar ion-title{
-  color:$cuarto-color;
+  --color-checked:#9f8781 ;
 }
 
 .segmen-boton{

@@ -1,3 +1,5 @@
+@import "../../../global.scss";
+
 ion-header ion-toolbar ion-item{
   width: 60px;
   margin-top: -10px;
@@ -6,7 +8,7 @@ ion-header ion-toolbar ion-item{
 
 ion-title{
   text-align: center;
-  color: #ff8a08;
+  color: $cuarto-color;
   width: 90%;
   float: right;
 }
@@ -24,7 +26,7 @@ ion-title{
   left: 0;
   width: 100%;
   height: 10%; /* Ajusta la altura al 100% de la ventana */
-  background: linear-gradient(to bottom left,  #eab862, #f2974d, #fb7952);
+  background: linear-gradient(to bottom left,$principal-color,  $principal-color);
   clip-path: polygon(0 100%, 100% 100%, 0 0);
 }
 
@@ -34,7 +36,7 @@ ion-title{
   left: 0;
   width: 100%;
   height: 10%;
-  background: linear-gradient(to bottom right,  #eab862, #f2974d, #fb7952);
+  background: linear-gradient(to bottom right, $principal-color, $cuarto-color);
   clip-path: polygon(100% 100%, 0 100%, 100% 0);
 }
 

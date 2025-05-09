@@ -73,7 +73,7 @@ ColorDeLetra(){
 async ngOnInit(){
   if(await this.userService.Verificar()){
     this.item.colorLetra="white"
-    this.item.ColorFondo="#1E88E5"
+    this.item.ColorFondo="#5d4037"
     this.item.icono="card"
     this.getGradientColor()
     const fecha= new Date();
@@ -134,7 +134,7 @@ async Guardar(){
           }else{
             this.loading.dismiss();
             this.isLoading = false;
-            this.presentAlert("Error en el servidor");
+            this.presentAlert("Debes agregar un nombre");
           }
         })
       }

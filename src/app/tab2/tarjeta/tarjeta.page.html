@@ -132,7 +132,7 @@
       <span class="right">${{formatNumberMil(this.Totalresultado)}}</span>
     </ion-item>
   </ion-list>
-
+<!--Crear bolsillo-->
   <ion-content class="ion-padding">
     <ion-modal #modal [isOpen]="openModal" (willDismiss)="onWillDismiss($event)">
       <ng-template>
@@ -141,7 +141,7 @@
             <ion-buttons slot="start">
               <ion-button class="btnModals" (click)="cancel()">Cancelar</ion-button>
             </ion-buttons>
-            <ion-title>Crear Bolsillo</ion-title>
+            <ion-title></ion-title>
             <ion-buttons slot="end">
               <ion-button class="btnModals" (click)="confirm()" [strong]="true">Confirmar</ion-button>
             </ion-buttons>
@@ -185,12 +185,12 @@
   <ion-content class="ion-padding">
     <ion-modal #modalEditar [isOpen]="openModalEditar" (willDismiss)="onWillDismissE($event)">
       <ng-template>
-        <ion-header>
+        <ion-header class="">
           <ion-toolbar>
             <ion-buttons slot="start">
               <ion-button class="btnModals" (click)="cancel2()">Cancelar</ion-button>
             </ion-buttons>
-            <ion-title>Editar Bolsillo</ion-title>
+            <ion-title></ion-title>
             <ion-buttons slot="end">
               <ion-button class="btnModals" (click)="confirmEditar()" [strong]="true">Confirmar</ion-button>
             </ion-buttons>
