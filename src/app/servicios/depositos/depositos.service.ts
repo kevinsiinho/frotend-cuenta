@@ -43,6 +43,20 @@ const response: HttpResponse = await CapacitorHttp.get(options);
  return response.data;
 }
 
+  async alldepositosIDBolsillo(id:string){
+    const { value } = await Preferences.get({ key: 'token' });
+    const options = {
+      url: this.url+'/depositos?filter=%7B%0A%20%20%0A%20%20%22where%22%3A%20%7B%0A%20%20%20%20%22idBolsillo%22%3A%22'+id+'%22%0A%20%20%7D%0A%7D',
+      headers: { "Content-Type": "application/json",
+      "Authorization": 'Bearer ' + value
+      },
+    };
+
+const response: HttpResponse = await CapacitorHttp.get(options);
+ return response.data;
+}
+
+
   async GetItem(id:String){
     const { value } = await Preferences.get({ key: 'token' });
     const options = {

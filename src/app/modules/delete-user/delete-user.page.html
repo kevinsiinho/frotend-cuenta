@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" *ngIf="!cargar">
   <ion-toolbar>
     <ion-item  class="btn-back" [button]="true" [detail]="false" (click)="regresar()"> <ion-icon name="chevron-back-outline"> </ion-icon></ion-item>
     <ion-title>Eliminar cuenta</ion-title>
@@ -6,7 +6,7 @@
 </ion-header>
 <ion-content [fullscreen]="true">
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" *ngIf="!cargar">
   <ion-list>
     <div class="texto">
       <p>¿Estás seguro de que deseas proceder con la eliminación definitivamente de tu cuenta?</p>
@@ -18,4 +18,8 @@
   </ion-list>
   <div class="abajo"></div>
   <div class="abajo2"></div>
+</ion-content>
+
+<ion-content [fullscreen]="true" *ngIf="cargar">
+  <ion-progress-bar color="light" type="indeterminate"></ion-progress-bar>
 </ion-content>

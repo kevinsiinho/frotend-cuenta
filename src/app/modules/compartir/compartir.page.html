@@ -14,8 +14,8 @@
      (input)="buscar($event)"
     ></ion-searchbar>
       <!-- Muestra los resultados en tiempo real -->
-    <ion-list *ngIf="resultados.length > 0 && this.compartirUno.estado===true || this.creador===true">
-      <ion-button *ngFor="let usuario of resultados" (click)="add(usuario.id,usuario.email,usuario.name,usuario.nickname)">
+    <ion-list  *ngIf="resultados.length > 0 && this.compartirUno.estado===true || this.creador===true">
+      <ion-button color="dark" *ngFor="let usuario of resultados" (click)="add(usuario.id,usuario.email,usuario.name,usuario.nickname)">
         {{ usuario.name }} - {{ usuario.email }}
       </ion-button>
     </ion-list>

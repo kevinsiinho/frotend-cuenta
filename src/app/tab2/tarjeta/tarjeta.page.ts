@@ -113,6 +113,7 @@ export class TarjetaPage implements OnInit {
 
     const actionSheet = await this.actionSheetController.create({
       header: 'Información del deposito',
+      cssClass: 'informacion-action-sheet',
       buttons: [
         {
           text: 'Creado por: '+deposito.email,
@@ -406,45 +407,49 @@ confirmEditar() {
   }
 }
 
-async EliminarDepositos(x:number){
-  if(this.item.tarjetas[x].depositos!.length>0){
-  const alert = await this.alertController.create({
-    header: 'Vaciar depositos',
-    buttons: [
-      {
-        text: 'Cancelar',
-        role: 'cancel',
-      },
-      {
-        text: 'Sí',
-        handler: () => {
-          this.item.bolsillos!.forEach((bolsillo:Bolsillo, posicion) => {
-            if(x===posicion){
-              if(bolsillo.depositos){
-              bolsillo.depositos.forEach(element => {
-                this.depositoServices.Delete(element.id!)
-              });
-            }
+async EliminarDepositos(id:string){
 
-              bolsillo.subtotal=0
-              this.bolsilloService.Update(bolsillo).then((res)=>{
-                if(res==204){
-                  bolsillo.depositos=[]
-                }
-              })
-            }
+  this.item.bolsillos!.forEach(async (bolsillo:Bolsillo) => {
+     
+    if(id===bolsillo.id){
+          
+      if(bolsillo.depositos!.length>0){
+          const alert = await this.alertController.create({
+            header: 'Vaciar depositos',
+            buttons: [
+              {
+                text: 'Cancelar',
+                role: 'cancel',
+              },
+              {
+                text: 'Sí',
+                handler: async () => {
+                  //eliminando todos los depositos
+                     await this.loading.present();
+                  bolsillo.depositos!.forEach((deposito:Depositos) => {
+                    this.depositoServices.Delete(deposito.id!)  
+                  });
+                  this.loading.dismiss();
+                  bolsillo.subtotal=0
+                      this.bolsilloService.Update(bolsillo).then((res)=>{
+                        if(res==204){
+                          bolsillo.depositos=[]
+                        }
+                      })
+                  this.total()
+                },
+              },
+            ],
           });
 
-          this.total()
-        },
-      },
-    ],
+           await alert.present();
+        }else{
+          this.presentAlert("No hay depositos")
+}
+    }
   });
 
-  await alert.present();
-}else{
-  this.presentAlert("No hay depositos")
-}
+  
 }
 
 show(x:number):void{

@@ -2,10 +2,11 @@
 
 ion-title{
   text-align: center;
-  color: $cuarto-color ;
-  width: 90%;
+  color: $segundario-color;
+  width: 100%;
   float: right;
 }
+
 
 .inputs{
   margin-bottom: 20px;
@@ -15,7 +16,7 @@ ion-title{
 }
 
 ion-button{
-  color: gray;
+  color: $segundario-color;
   font-size: 20px;
 }
 

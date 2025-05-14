@@ -1,21 +1,23 @@
 @import '../../global.scss';
 
 .salir{
-  color: $cuarto-color;
+  color: $segundario-color;
 }
 
 
 a{
   text-decoration: none;
-  color: gray;
+  color: $segundario-color;
 }
 
 .item-icono{
   color: $cuarto-color;
 }
 
+
 .icon-ultima{
   margin-right: 10px;
+  color: $cuarto-color;
 }
 
 .mis-datos{
@@ -24,4 +26,8 @@ a{
 
 ion-accordion-group{
   width: 100%;
+}
+
+.ion-padding ion-item{
+  color: $segundario-color !important;
 }

@@ -1,28 +1,9 @@
-$fondo:rgb(25, 25, 25);
-$fondo2:rgba(56, 55, 55, 0.871);
-$color-principal:rgba(237, 235, 235, 0.928);
-ion-header{
-   ion-toolbar{
-    color: $color-principal;
-    --background: rgb(25, 25, 25);
-    font-size: 26px !important;
-  }
-
-  .btnRegresar{
-    margin-left: 10px;
-    color: $color-principal;
-  }
-
-  ion-title{
-    color: $color-principal;
-  }
-
-}
+@import "../../../global.scss";
 
 ion-content{
-  --background: $fondo;
+  
   ion-searchbar{
-    --background:$color-principal;
+    color: $segundario-color;
   }
   .msn{
     font-size: 15px;
@@ -46,11 +27,18 @@ ion-content{
     .personaNombre{
       margin-left: 10px;
     }
-    .personas:hover{
-      background-color: $fondo2;
-    }
 }
 
+ion-icon{
+  margin-left: 10px;
+  font-size: 20px;
+  color: $segundario-color;
+}
+
+.resultado-busqueda{
+  background-color: $principal-color;
+  color: $segundario-color;
+}
 
 .btn-eliminar-compartido{
   margin-left: 10px;
@@ -73,6 +61,6 @@ ion-content{
   justify-content: center;
   align-items: center;
   margin-right: 10px;
-  background-color: #ff8a08;
+  background-color: $principal-color;
   margin-right: auto;
 }

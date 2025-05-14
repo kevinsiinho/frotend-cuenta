@@ -3,14 +3,40 @@
 .div-form{
   width: 90%;
   margin: 0 auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.918);
+  border-bottom: 1px solid ;
+  border-right: 1px solid ;
+  border-left: 1px solid ;
+  margin-top: 20px;
+  background: var(--ion-background-color, $segundario-color);
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); // sombra suave
+  transition: all 0.3s ease-in-out;
 }
+
+
+ion-item{
+  --background:$fondo !important;
+  color: $segundario-color !important;
+}
+
 
 ion-input{
   margin-top: 20px;
   border-bottom: 1px solid;
   font-size: 18px;
   margin-bottom: 20px;
+  color: $segundario-color;
 }
+
+/* styles.scss o componente.scss */
+.custom-header {
+  --background: rgba(31, 31, 31, 0.85); /* oscuro y semi-transparente */
+  backdrop-filter: blur(10px); /* efecto de vidrio desenfocado */
+  -webkit-backdrop-filter: blur(10px); /* soporte para Safari */
+  --color: #fff; /* texto blanco */
+}
+
 
 .button{
   font-size: 18px;

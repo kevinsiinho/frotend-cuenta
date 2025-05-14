@@ -8,13 +8,19 @@
 .button{
   font-size: 18px;
   height: 45px;
-  --background:#5d4037;
   width: 100%;
 }
 
 ion-segment-button{
-  --color-checked:#9f8781 ;
+  --color-checked:#9f8781;
+  color: $segundario-color;
+   &:hover {
+    --color: black;
+    background-color:$segundario-color;
+      transition: background-color 0.3s;
+    }
 }
+
 
 .segmen-boton{
   display: flex;

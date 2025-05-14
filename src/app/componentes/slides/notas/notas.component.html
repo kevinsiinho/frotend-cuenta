@@ -77,7 +77,7 @@
         </ion-item>
         <ng-container *ngFor="let item of this.UpdateList.items; let i = index">
           <ion-item *ngIf="!item.estado">
-            <ion-checkbox (click)="this.CambioEstado(i, true)" [checked]="false"></ion-checkbox>
+            <ion-checkbox  (click)="this.CambioEstado(i, true)" [checked]="false"></ion-checkbox>
             <ion-textarea class="text-view" [(ngModel)]="item.texto" autoGrow="true"></ion-textarea>
             <ion-button fill="clear" color="danger" (click)="this.EliminarItem(i)">
               <ion-icon name="close-outline"></ion-icon>

@@ -121,7 +121,8 @@ async CompartidoUNO(){
 
  async Permiso(){
   const actionSheet = await this.actionSheetController.create({
-    header: 'Permisos',
+    header: 'PERMISOS:',
+    cssClass: 'informacion-action-sheet',
     buttons: [
       {
         text: 'Editar',

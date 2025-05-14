@@ -1,10 +1,8 @@
-$fondo:rgb(25, 25, 25);
-$fondo2:rgba(56, 55, 55, 0.871);
-$color-principal:rgba(237, 235, 235, 0.928);
-$principal:#ff8a08;
+@import "../../../global.scss";
+
 
 ion-content{
-  --background: #ff8a08;
+  --background: #78564c !important;
   .header{
     ion-avatar{
       display: flex;
@@ -14,31 +12,34 @@ ion-content{
       width: 90px;
       height: 90px;
       border-radius: 50%;
-      background-color: $fondo;
-      color: $principal;
+      background-color: white;
+      color: $principal-color;
       font-size: 70px;
       margin: auto;
     }
     ion-icon{
       font-size: 25px;
       opacity: 0.8;
-      color: rgb(32, 32, 32);
+      color: $segundario-color;
     }
     .info{
       display: flex;
       align-items: center;
       margin-bottom: 5px;
         span{
-          color: $fondo;
           font-size: 20px;
           margin: 0 auto;
+          margin-left: 10px;
         }
     }
   }
 
+ion-card-title{
+  color: $segundario-color;
+}
+
   .informacion{
     background-color: $fondo;
-    color: $color-principal;
     height: 98vh;
     margin-top: 2px;
     border-top-left-radius: 60px;
@@ -55,10 +56,10 @@ ion-content{
       }
       ion-card{
         border-radius: 10px;
-        width: 100%;
+        width: 100%;;
       }
       ion-card:hover{
-        background-color: $principal;
+        background-color: $principal-color;
       }
     }
   }

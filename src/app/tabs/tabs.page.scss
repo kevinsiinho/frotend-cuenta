@@ -1,20 +1,29 @@
 @import '../../global.scss';
 
-/*
-ion-tabs ion-tab-button ion-icon{
-  color:$tercero-color;
-}
 
-ion-tabs ion-tab-button ion-label{
-  color:$tercero-color;
+ion-tab-bar {
+  border-top: solid 1px $tercero-color;
 }
-*/
 
 ion-tab-button.tab-selected {
-  color: $principal-color;
+  color: $segundario-color;
   background: #5d40370f; 
   border-radius: 12px; 
   font-weight: bold;
+}
+
+
+ion-tab-bar {
+  --background: #1f1f1f; 
+
+  ion-tab-button {
+    --color-selected:#78564c;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1); 
+      transition: background-color 0.3s;
+    }
+  }
 }
 
 

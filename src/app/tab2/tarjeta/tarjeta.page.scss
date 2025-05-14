@@ -17,20 +17,16 @@ ion-card,ion-card-content{
 
 
 ion-segment-button{
+  color:$segundario-color;
   --color-checked: #5d4037;
+  font-size: 24px;
+   &:hover {
+      background-color: rgba(30, 29, 29, 0.443); 
+      --color: white;
+      transition: background-color 0.3s;
+    }
 }
 
-
-ion-segment-button{
-  color:$cuarto-color;
-  --color-checked: #5d4037;
-}
-
-
-ion-header ion-toolbar ion-title{
-  color:$cuarto-color;
-  font-size: 20px;
-}
 
 .btnModals{
   font-size: 15px;
@@ -75,6 +71,7 @@ button.alert-button.alert-button-confirm {
 
 ion-card-title{
   width: 100%;
+  color: $segundario-color;
 }
 
 .estado{
@@ -115,10 +112,6 @@ ion-card-title{
   margin-right: -12px;
 }
 
-ion-segment-button{
-  font-size: 25px;
-  color: white;
-}
 
 .list-compartidos{
   margin-top: 10px;

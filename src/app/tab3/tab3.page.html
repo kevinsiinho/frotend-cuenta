@@ -27,27 +27,27 @@
               </ion-item>
               <div class="ion-padding" slot="content">
                 <ion-item>
-                  <ion-input label="ID:" value={{this.user.id}} [disabled]="true"></ion-input>
+                   <ion-label><span>ID: </span> {{this.user.id}}</ion-label>
                 </ion-item>
                 <ion-item>
-                  <ion-input label="Nombres:" value={{this.user.name}} [disabled]="true"></ion-input>
+                  <ion-label><span>Nombres: </span> {{this.user.name}}</ion-label>
                 </ion-item>
                 <ion-item>
-                  <ion-input label="Apellidos:" value={{this.user.nickname}} [disabled]="true"></ion-input>
+                  <ion-label>Apellidos: {{this.user.nickname}}</ion-label>
                 </ion-item>
                 <ion-item>
-                  <ion-input label="Correo:" value={{this.user.email}} [disabled]="true"></ion-input>
+                  <ion-label><span>Email: </span>{{this.user.email}} </ion-label>
                 </ion-item>
                 <ion-item>
-                  <ion-input label="Celular:" value={{this.user.cel}} [disabled]="true"></ion-input>
+                  <ion-label><span>Celular: </span> {{this.user.cel}} </ion-label>
                 </ion-item>
               </div>
             </ion-accordion>
           </ion-accordion-group>
         </ion-item>
-        <ion-item *ngFor="let item of this.menu">
+        <ion-item *ngFor="let item of this.menu" [routerLink]="[item.link]">
           <ion-icon class="item-icono" slot="start" name={{item.icono}}></ion-icon>
-          <a [routerLink]="[item.link]">{{item.name}}</a>
+          <a>{{item.name}}</a>
           <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
         </ion-item>
         <ion-item>

@@ -47,14 +47,14 @@
               <ion-card-title>{{bolsillo.nombre}}
                 <ion-item [button]="true" class="btn-bolsillos-opc" [detail]="false" [id]="'popover-' + x" *ngIf="this.compartirUno.estado===true || this.creador===true" class="estado" fill="clear">
                   <ion-icon name="settings" [style.color]="bolsillo.color" ></ion-icon>
-
+                  <!--Opciones para los bolsillos-->
                   <ion-popover [trigger]="'popover-' + x" [dismissOnSelect]="true" alignment="start" size="auto">
                     <ng-template>
                       <ion-content>
                         <ion-list>
                           <ion-item [button]="true" [detail]="false" (click)="openModalEditar = !openModalEditar; this.EditarBolsillo(bolsillo)">Editar bolsillo</ion-item>
                           <ion-item [button]="true" [detail]="false" (click)="EliminarItem(x)">Eliminar bolsillo</ion-item>
-                          <ion-item [button]="true" [detail]="false" (click)="EliminarDepositos(x)">Eliminar depositos</ion-item>
+                          <ion-item [button]="true" [detail]="false" (click)="EliminarDepositos(bolsillo.id!)">Eliminar depositos</ion-item>
                         </ion-list>
                       </ion-content>
                     </ng-template>
@@ -132,7 +132,8 @@
       <span class="right">${{formatNumberMil(this.Totalresultado)}}</span>
     </ion-item>
   </ion-list>
-<!--Crear bolsillo-->
+
+<!--Modal Crear bolsillo-->
   <ion-content class="ion-padding">
     <ion-modal #modal [isOpen]="openModal" (willDismiss)="onWillDismiss($event)">
       <ng-template>
@@ -181,6 +182,8 @@
       </ng-template>
     </ion-modal>
   </ion-content>
+
+<!--Modal editar bolsillo-->
 
   <ion-content class="ion-padding">
     <ion-modal #modalEditar [isOpen]="openModalEditar" (willDismiss)="onWillDismissE($event)">
@@ -231,6 +234,8 @@
     </ion-modal>
   </ion-content>
 
+
+<!--Poper de las opciones en el menú-->
   <ion-popover  trigger="popover-button2" [dismissOnSelect]="true">
     <ng-template>
       <ion-content>

@@ -6,12 +6,17 @@ ion-header ion-toolbar ion-item{
   position: absolute;
 }
 
+ion-card-title{
+  color:$segundario-color
+}
+
 ion-title{
   text-align: center;
-  color: $cuarto-color;
-  width: 90%;
+  color: $segundario-color;
+  width: 100%;
   float: right;
 }
+
 
 .eliminar{
   color: white;
