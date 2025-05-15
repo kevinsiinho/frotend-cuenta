@@ -31,23 +31,18 @@ export class UserService {
       await alert.present();
     }
 
-/*
+
   async alluser():Promise<any>{
     this.users=[]
     const options = {
-      url: this.url+'/signup'
+      url: this.url+'/users',
     };
 
   const response: HttpResponse = await CapacitorHttp.get(options);
-    console.log(response.data)
-        response.data.forEach((item:any)=> {
-          this.user=new User();
-          this.user.SetValues(item)
-          this.users.push(this.user)
-        });
-        return this.users
+
+        return response.data
   }
-*/
+
 
 async Login(login:Login){
     const options = {

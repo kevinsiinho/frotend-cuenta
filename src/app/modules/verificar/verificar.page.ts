@@ -72,56 +72,17 @@ async ngOnInit() {
 
     if(value){
       this.loading.dismiss();
-      this.link.navigate(['tabs/tab2'])
+     this.link.navigate(['tabs/tab2'])
       //this.VerificacionSesion()
     }else{
       await Preferences.remove({ key: 'token' });
       this.loading.dismiss();
       this.link.navigate(['login'])
     }
-//  await this.verificarConexion();
- // this.escucharCambiosConexion();
+    await this.verificarConexion();
+   this.escucharCambiosConexion();
 
   }
-
-/*
-BtnCrear(item:Items){
-  item.tarjetas.forEach(element => {
-  this.tarjeta.posicion=element.posicion
-  this.tarjeta.nombre=element.nombre
-  this.tarjeta.subtotal=element.subtotal
-  this.tarjeta.color=element.color
-  this.tarjeta.Vinicial=Boolean(element.Vinicial)
-  this.tarjeta.valor=element.Valor
-  this.tarjeta.creado=new Date()
-  this.tarjeta.idItem=item.id
-  this.tarjeta.idCreador=item.userId
-this.bolsilloSer.Create(this.tarjeta).then((res)=>{
-    if(res.status==200){
-       element.depositos?.forEach(element => {
-        this.deposito.valor=element.valor
-        this.deposito.fecha=element.fecha
-        this.deposito.idItem=item.id
-        this.deposito.comentario=element.comentario
-        this.deposito.email=element.email
-        this.deposito.idBolsillo=res.data.id
-        this.deposito.idCreador=item.userId
-        this.deposito.creado= new Date ()
-        console.log(this.deposito)
-        console.log(element)
-        this.depositosServicios.Create(this.deposito).then((res)=>{
-          console.log(res)
-
-
-        })
-        this.deposito=new Depositos()
-      });
-
-    }
-  })
- this.tarjeta=new Bolsillo()
-  });
-}*/
 
   async VerificacionSesion(){
 
