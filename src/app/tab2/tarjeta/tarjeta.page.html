@@ -125,6 +125,7 @@
       </ion-item>
     </ion-reorder-group>
     </ion-item>
+     <ion-button *ngIf="!isDisabled" expand="full" color="medium" (click)="toggleReorder()" >Cerrar</ion-button>
     <ion-item class="msn-totales">Totales</ion-item>
     <ion-item class="totales">
       <span class="left">${{formatNumberMil(this.positivos)}}</span>

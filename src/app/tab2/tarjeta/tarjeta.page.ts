@@ -92,21 +92,29 @@ export class TarjetaPage implements OnInit {
     private depositoServices:DepositosService
   ) { }
 
-  handleReorder(ev: CustomEvent<ItemReorderEventDetail>) {
-      const DeIndex = ev.detail.from; // Índice original
-      const AIndex = ev.detail.to;    // Índice nuevo
+ handleReorder(ev: CustomEvent<ItemReorderEventDetail>) {
+  const DeIndex = ev.detail.from;
+  const AIndex = ev.detail.to;
 
-      // Mover el elemento dentro de this.item.tarjetas
-      const movedItem = this.item.bolsillos?.splice(DeIndex, 1)[0]; // Sacar el elemento
-      this.item.bolsillos?.splice(AIndex, 0, movedItem!);// Insertarlo en la nueva posición
+  const movedItem = this.item.bolsillos?.splice(DeIndex, 1)[0];
+  this.item.bolsillos?.splice(AIndex, 0, movedItem!);
 
-      // Marcar el reordenamiento como completado
-      ev.detail.complete();
-      this.Update()
-  }
+  // ✅ Actualiza la posición
+  this.item.bolsillos?.forEach((bolsillo, index) => {
+    bolsillo.posicion = index + 1;
+  });
+
+  ev.detail.complete();
+
+}
 
   toggleReorder() {
     this.isDisabled = !this.isDisabled;
+    if (this.isDisabled) {
+      this.item.bolsillos!.forEach(element => {
+        this.bolsilloService.Update(element)
+      });
+    }
   }
 
   public async presentActionSheetEliminar(bolsillo:Bolsillo,deposito:Depositos) {
@@ -211,6 +219,10 @@ export class TarjetaPage implements OnInit {
       await this.CompartidoUNO();
 
       this.item.bolsillos = await this.bolsilloService.allbolsillo(this.id);
+      
+      this.item.bolsillos!.sort((a, b) => {
+        return a.posicion - b.posicion;
+      });
 
       const todosLosDepositos = await this.depositoServices.alldepositos(this.id);
       this.depositos = todosLosDepositos;

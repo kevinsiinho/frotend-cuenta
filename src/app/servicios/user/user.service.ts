@@ -56,6 +56,9 @@ async Login(login:Login){
   }
 
   async Quien(token:string){
+    const { value } = await Preferences.get({ key: 'token' });
+    console.log(token) 
+    console.log(value)
     const options = {
       url: this.url+'/whoAmI',
       headers: { "Content-Type": "application/json",
@@ -152,6 +155,7 @@ async Login(login:Login){
   const response: HttpResponse = await CapacitorHttp.get(options);
 
   if(response.status===401){
+     this.presentAlert("La sesión ha expirado, intenta iniciar sesión nuevamente")
     this.link.navigate(['login'])
     return false
   }else{
