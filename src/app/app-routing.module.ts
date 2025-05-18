@@ -66,7 +66,16 @@ const routes: Routes = [
   {
     path: 'verificar',
     loadChildren: () => import('./modules/verificar/verificar.module').then( m => m.VerificarPageModule)
+  },
+  {
+    path: 'tabs/tab2/tarjeta/:id',
+    loadChildren: () => import('./modules/tarjeta/tarjeta.module').then( m => m.TarjetaPageModule)
+  },
+  {
+    path: 'tarjeta/historial/:id',
+    loadChildren: () => import('./modules/historial/historial.module').then( m => m.HistorialPageModule)
   }
+
 ];
 @NgModule({
   imports: [

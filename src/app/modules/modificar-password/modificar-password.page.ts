@@ -16,6 +16,7 @@ export class ModificarPasswordPage implements OnInit {
   public password:string=""
   public password2:string=""
   public user = new User()
+  public verPassword: boolean = false;
 
   constructor(
     private alertController: AlertController,
@@ -101,4 +102,7 @@ async  verificar(){
 
   }
 
+  VerPassword() {
+  this.verPassword = !this.verPassword;
+}
 }

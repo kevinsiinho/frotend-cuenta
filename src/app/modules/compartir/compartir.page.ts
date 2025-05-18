@@ -33,6 +33,7 @@ export class CompartirPage implements OnInit {
   public id:string=""
   public hoy:string=""
   public letra:string=""
+  public ruta="https://cartera-virtual.netlify.app/tabs/tab2/tarjeta/"
 
   constructor(
     private alertController: AlertController,
@@ -145,7 +146,7 @@ async add(id:string, email:string,nombre:string,apellido:string){
           this.item.compartir.push(this.compartir)
           this.presentAlert("Añadido")
           this.Update()
-          this.enviarEmail.enviarEmail("compartir","Tarjeta compartida: "+this.item.itemname,this.compartir.email!,this.user.name+" "+this.user.nickname,"https://softk-cuenta.onrender.com/tabs/tab2/tarjeta/"+this.item.id)
+          this.enviarEmail.enviarEmail("compartir","Tarjeta compartida: "+this.item.itemname,this.compartir.email!,this.user.name+" "+this.user.nickname,this.ruta+this.item.id)
           this.compartir=new Compartir()
         }else{
           this.item.compartir.forEach(element => {
@@ -157,7 +158,7 @@ async add(id:string, email:string,nombre:string,apellido:string){
                 this.item.compartir.push(this.compartir)
                 this.presentAlert("Añadido")
                 this.Update()
-                this.enviarEmail.enviarEmail("compartir","Tarjeta compartida: "+this.item.itemname,this.compartir.email!,this.user.name+" "+this.user.nickname,"https://softk-cuenta.onrender.com/tabs/tab2/tarjeta/"+this.item.id)
+                this.enviarEmail.enviarEmail("compartir","Tarjeta compartida: "+this.item.itemname,this.compartir.email!,this.user.name+" "+this.user.nickname,this.ruta+this.item.id)
                 this.compartir=new Compartir()
                 return
               }

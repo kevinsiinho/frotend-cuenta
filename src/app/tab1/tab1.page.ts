@@ -54,6 +54,11 @@ ColorDeLetra(){
   this.item.colorLetra==="white"? this.item.colorLetra="black":this.item.colorLetra="white"
 }
 
+EstadoHistorial(){
+  this.item.estadohistorial= !this.item.estadohistorial
+  console.log("Estado: "+this.item.estadohistorial)
+}
+
  getGradientColor(){
   const lighterColor = tinycolor(this.item.ColorFondo).lighten(30).toString(); // 20% más claro
   document.documentElement.style.setProperty('--color1',this.item.ColorFondo!);
@@ -75,6 +80,7 @@ async ngOnInit(){
     this.item.colorLetra="white"
     this.item.ColorFondo="#5d4037"
     this.item.icono="card"
+    this.item.estadohistorial=false
     this.getGradientColor()
     const fecha= new Date();
     const dia = fecha.getDate();
@@ -119,6 +125,11 @@ async Guardar(){
     this.item.NombreTarjeta=this.tarjeta.nombreCSS!
     console.log(this.item)
     if(this.item.icono && this.item.itemname!="" || this.item.itemname!=null){
+      
+      if(!this.item.estadohistorial){
+        this.item.diahistorial=0
+      }
+
       if(this.Duplicado()){
             this.presentAlert("Ese nombre ya existe, intenta con uno diferente.");
             this.loading.dismiss();

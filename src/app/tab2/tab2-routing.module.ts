@@ -6,10 +6,6 @@ const routes: Routes = [
   {
     path: '',
     component: Tab2Page,
-  },
-  {
-    path: 'tarjeta/:id',
-    loadChildren: () => import('./tarjeta/tarjeta.module').then( m => m.TarjetaPageModule)
   }
 ];
 

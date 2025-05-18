@@ -32,9 +32,15 @@
        <ion-item [disabled]="this.tarjeta.nombreCSS!=='principal-dinamica'">
          <ion-toggle aria-label="Color letra" [(ngModel)]="this.colorletra" (click)="this.ColorDeLetra()" [enableOnOffLabels]="true" color="dark" [checked]="true">Color de letra</ion-toggle>
        </ion-item>
+        <ion-item [disabled]="this.tarjeta.nombreCSS!=='principal-dinamica'">
+         <ion-toggle aria-label="Color letra" (click)="this.EstadoHistorial()" [enableOnOffLabels]="true" color="dark" [checked]="false">Historial</ion-toggle>
+          </ion-item>
+        <ion-item *ngIf="this.item.estadohistorial" [disabled]="this.tarjeta.nombreCSS!=='principal-dinamica'">
+          <ion-note slot="end"> Al activar esta opción, el historial mensual de esta tarjeta se guardará automáticamente cada primer día del mes. </ion-note>
+        </ion-item>
        <ion-item [disabled]="this.tarjeta.nombreCSS!=='principal-dinamica'">
          <input type="color" class="picker" [(ngModel)]="this.item.ColorFondo!" [style.background]="getGradientColor()"/>
-       </ion-item>
+        </ion-item>
        <ion-item>
         <ion-button class="button" (click)="this.Guardar()">GUARDAR </ion-button>
       </ion-item>

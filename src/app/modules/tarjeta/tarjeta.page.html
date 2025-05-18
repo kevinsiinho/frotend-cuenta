@@ -37,7 +37,6 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-
   <ion-list lines="none" >
     <ion-item [disabled]="this.item.estado">
       <ion-reorder-group [disabled]="isDisabled" (ionItemReorder)="handleReorder($any($event))">
@@ -162,7 +161,7 @@
             ></ion-input>
           </ion-item>
           <ion-item>
-            <ion-toggle [enableOnOffLabels]="false" (click)="this.FingresarValor()">Valor Inicial</ion-toggle>
+            <ion-toggle [enableOnOffLabels]="false" [(ngModel)]="bolsillo.Vinicial"  (click)="this.FingresarValor()">Valor Inicial</ion-toggle>
           </ion-item>
           <ion-item *ngIf="this.bolsillo.Vinicial===true">
             <ion-input
@@ -213,7 +212,7 @@
             ></ion-input>
           </ion-item>
           <ion-item>
-            <ion-toggle [enableOnOffLabels]="false" (click)="this.FingresarValor2()">Valor Inicial</ion-toggle>
+            <ion-toggle [enableOnOffLabels]="false" [(ngModel)]="bolsilloEditar.Vinicial"   (click)="this.FingresarValor2()">Valor Inicial</ion-toggle>
           </ion-item>
           <ion-item *ngIf="this.bolsilloEditar.Vinicial===true">
             <ion-input
@@ -247,6 +246,7 @@
           <ion-item [button]="true" [detail]="false" (click)="Compartir()">Compartir</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="this.EliminarTarjeta()">Eliminar Tarjeta</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="toggleReorder()">Mover bolsillos</ion-item>
+          <ion-item *ngIf="item.estadohistorial" [button]="true" [detail]="false" (click)="RutaHistorial()">Ver historial</ion-item>
 
           <ion-popover trigger="nested-trigger" [dismissOnSelect]="true" side="end">
             <ng-template>

@@ -15,6 +15,7 @@ import { ItemsService } from 'src/app/servicios/items/items.service';
 import { BolsillosService } from 'src/app/servicios/bolsillos/bolsillos.service';
 import { Bolsillo } from 'src/app/clases/Items/bolsillo';
 import { DepositosService } from 'src/app/servicios/depositos/depositos.service';
+import { HistorialMes } from 'src/app/clases/Items/historial-mes';
 
 @Component({
   selector: 'app-tarjeta',
@@ -34,6 +35,7 @@ export class TarjetaPage implements OnInit {
   public user = new User()
   public deposito= new Depositos()
   public depositos:Depositos[]=[];
+  public depositos2:Depositos[]=[];
   public alertInputs2:any[]=[];
   public bolsillos:Bolsillo[]=[]
   public bolsillo= new Bolsillo()
@@ -59,7 +61,132 @@ export class TarjetaPage implements OnInit {
   public negativo:number=0
   public Totalresultado:number=0
   public posicion!:Number
+  nombreMeses = [
+  'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+];
 
+convertirMesANumero(nombre: string): number {
+  return this.nombreMeses.indexOf(nombre);
+}
+
+convertirNumeroAMes(numero: number): string {
+  return this.nombreMeses[numero];
+}
+  // Verifica si el historial tiene datos y completa los meses faltantes
+  // Si no hay historial, empieza desde enero del año actual
+  // Si hay historial, empieza desde el mes siguiente al último registrado
+  // Completa los meses faltantes hasta el mes actual
+verificarYCompletarHistorial() {
+ const hoy = new Date();
+ if (hoy.getDate() === 1 && !this.item.realizado){
+  this.item.realizado=true
+};
+
+
+  if(this.item.estadohistorial &&this.item.realizado && hoy.getDate() === 1){  
+
+  const anioActual = hoy.getFullYear();
+  const mesActual = hoy.getMonth();
+
+  if (!this.item.historial) {
+    this.item.historial = [];
+  }
+
+  let ultimoAnio = -1;
+  let ultimoMes = -1;
+
+  // Buscar el ultimo año y mes registrados
+  for (let i = this.item.historial.length - 1; i >= 0; i--) {
+    const anio = this.item.historial[i].ano;
+    const meses = this.item.historial[i].meses;
+
+    if (meses.length > 0) {
+      ultimoAnio = Number(anio);
+      ultimoMes = this.convertirMesANumero(meses[meses.length - 1].mes);
+      break;
+    }
+  }
+
+  // Si no hay historial, empezar desde enero del año actual
+  if (ultimoAnio === -1) {
+    ultimoAnio = anioActual;
+    ultimoMes = 0; // Enero
+  } else {
+    // Empezar desde el mes siguiente al ultimo registrado
+    ultimoMes += 1;
+    if (ultimoMes > 11) {
+      ultimoMes = 0;
+      ultimoAnio++;
+    }
+  }
+
+  // Completar meses faltantes
+  let anio = Number(ultimoAnio);
+  let mes = ultimoMes;
+  while (anio < anioActual || (anio === anioActual && mes <= mesActual)) {
+    const nombreMes = this.convertirNumeroAMes(mes);
+    const esMesActual = (anio === anioActual && mes === mesActual);
+    if (esMesActual) {
+          console.log("mes actual"+esMesActual)
+        }
+    let registroAnual = this.item.historial.find(h =>Number( h.ano) === anio);
+    if (!registroAnual) {      
+      registroAnual = { ano: String(anio), meses: [] };
+      this.item.historial?.push(registroAnual!);
+      
+    }
+
+    const yaExiste = registroAnual?.meses.some(m => m.mes === nombreMes);
+    if (!yaExiste) {
+      const nuevoMes = new HistorialMes();
+      nuevoMes.mes = nombreMes;
+      nuevoMes.total = 0;
+      nuevoMes.depositos = [];
+      registroAnual?.meses.push(nuevoMes);
+    }
+
+    mes++;
+    if (mes > 11) {
+      mes = 0;
+      anio++;
+    }
+  }
+    // Buscar el ultimo año y mes registrados
+  for (let i = this.item.historial.length - 1; i >= 0; i--) {
+    const anio = this.item.historial[i].ano;
+    const meses = this.item.historial[i].meses;
+
+    if (meses.length > 0) {
+      ultimoAnio = Number(anio);
+      ultimoMes = this.convertirMesANumero(meses[meses.length - 1].mes);
+      break;
+    }
+  }
+  let total=0
+  this.item.historial.forEach(element => {
+      if(Number(anio)== Number(element.ano)){
+        this.depositos.forEach(element => {
+          total=total+element.valor
+        });
+        element.meses[ultimoMes].depositos=this.depositos
+        element.meses[ultimoMes].total=total
+      }
+  });
+
+  this.item.bolsillos?.forEach((bolsillo:Bolsillo) => {
+    bolsillo.subtotal=0
+    bolsillo.depositos?.forEach(element => {
+     this.depositoServices.Delete(element.id!)
+    });
+    this.bolsilloService.Update(bolsillo)
+  });
+  this.item.realizado=false
+  this.depositos=[]
+  this.Update()
+ }
+ 
+}
 
   public alertInputs3:any[]= [
     {
@@ -217,7 +344,11 @@ export class TarjetaPage implements OnInit {
       this.item = await this.itemService.GetItem(this.id);
 
       await this.CompartidoUNO();
-
+      if (this.item.estadohistorial) {
+        this.bolsillo.Vinicial=true
+        this.bolsilloEditar.Vinicial=true
+        console.log(this.bolsillo.Vinicial)
+      }
       this.item.bolsillos = await this.bolsilloService.allbolsillo(this.id);
       
       this.item.bolsillos!.sort((a, b) => {
@@ -253,13 +384,11 @@ export class TarjetaPage implements OnInit {
 
 
       this.Totalresultado = this.positivos + this.negativos;
-
       const { value: orden } = await Preferences.get({ key: 'TarjetaOrden' });
       if (orden) {
         this.Ordenar(orden);
       }
 
-      this.total();
 
       this.alertInputs2 = [
         {
@@ -270,7 +399,7 @@ export class TarjetaPage implements OnInit {
       ];
 
       this.ActualizarUltimaVez();
-
+      this.verificarYCompletarHistorial()
       this.loading.dismiss();
       this.isLoading = false;
     }
@@ -377,6 +506,8 @@ total(){
       }
   });
   this.Totalresultado=this.positivo+(this.negativo)
+  this.item.total=this.Totalresultado
+  this.Update()
 }
 
 Favorito(){
@@ -582,8 +713,7 @@ async EliminarTarjeta(){
 
 EliminarDeposito(bolsillo:Bolsillo,deposito:Depositos){
     bolsillo.subtotal=0
-    console.log(deposito.id)
-    this.depositoServices.Delete(deposito.id!).then((res)=>{
+     this.depositoServices.Delete(deposito.id!).then((res)=>{
       if(res==204){
         bolsillo.depositos?.forEach((element,x) => {
           if(element.id==deposito.id){
@@ -604,6 +734,11 @@ EliminarDeposito(bolsillo:Bolsillo,deposito:Depositos){
 Compartir(){
  this.link.navigate(['compartir/',this.id])
 }
+
+RutaHistorial(){
+ this.link.navigate(['tarjeta/historial',this.id])
+}
+
 
   depositar(bolsillo:Bolsillo,tipo:string,){
     const fecha= new Date();

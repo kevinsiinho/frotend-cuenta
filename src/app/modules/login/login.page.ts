@@ -47,6 +47,7 @@ export class LoginPage implements OnInit{
   }
 
 async ngOnInit() {
+    await Preferences.remove({ key: 'token' });
      this.InfoCel= await this.ConfigService.getDeviceInfo()
      const result2 = await Preferences.get({ key: 'select' });
      this.recordaremail = Boolean(JSON.parse(result2.value!))
@@ -84,6 +85,10 @@ async ngOnInit() {
  async ingresar(){
  var isValidEmail=false
  var newDevice=false
+ this.EmailmsnError=false
+ this.PasswordmsnError=false
+ this.Password2msnError=false
+
  const ahora = new Date().getTime();
 
   await this.loading.present();
@@ -100,7 +105,6 @@ async ngOnInit() {
     this.Password2msnError=true
   }else if(isValidEmail){
     this.login.email = this.login.email.toLowerCase();
-
     this.userService.Login(this.login).then(async(res)=>{
 
       if(res.status===200){

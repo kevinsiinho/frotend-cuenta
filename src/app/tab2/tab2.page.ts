@@ -88,7 +88,7 @@ async Principal(){
         this.notas= await this.notaservices.allnotas(data.data)
         this.items= await this.itemService.allitems(data.data)
         this.items2= await   this.itemService.compartidos(data.data)
-        this.total()
+        //this.total()
 
       }
       const { value } = await Preferences.get({ key: 'IntemsOrden' });

@@ -1,0 +1,42 @@
+<ion-header [translucent]="true">
+ <ion-toolbar>
+    <ion-icon class="regresar" (click)="Regresar()" name="chevron-back-outline" slot="start"> </ion-icon>
+      <ion-title>HISTORIAL</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-accordion-group>
+    <ion-accordion *ngFor="let anios of item.historial" value="{{anios.ano}}">
+      <ion-item slot="header" color="light">
+        <ion-label>{{anios.ano}}</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <ion-accordion-group>
+          <ion-accordion *ngFor="let meses of anios.meses" value="{{meses.mes}}">
+            <ion-item slot="header" color="light">
+              <ion-label>{{meses.mes}}</ion-label>
+            </ion-item>
+            <div class="ion-padding" slot="content">
+              <ion-card>
+              <ion-grid [fixed]="true">
+                <ion-row>
+                  <ion-col>Fecha</ion-col>
+                  <ion-col>Valor</ion-col>
+                </ion-row>
+              </ion-grid>
+              <ion-grid [fixed]="true">
+                <ion-row *ngFor="let deposito of meses.depositos">
+                  <ion-col>{{deposito.fecha}}</ion-col>
+                  <ion-col>${{formatNumberMil(deposito.valor)}}</ion-col>
+                </ion-row>
+              </ion-grid>
+              <ion-label>Total  ${{formatNumberMil(meses.total)}}</ion-label>
+            </ion-card>
+            </div>
+          </ion-accordion>
+        </ion-accordion-group>
+        </div>
+    </ion-accordion>
+  </ion-accordion-group>
+</ion-content>

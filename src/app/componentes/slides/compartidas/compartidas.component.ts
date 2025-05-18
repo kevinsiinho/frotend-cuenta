@@ -85,6 +85,10 @@ async presentAlert(msn:String) {
     this.link.navigate(['/tabs/tab2/tarjeta/',id])
   }
 
+   formatNumberMil(value: number | undefined | null): string {
+    if (typeof value !== 'number') return '0';
+    return value.toLocaleString();
+  }
 
 
    guardarNota() {

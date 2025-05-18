@@ -1,5 +1,6 @@
 import { Compartir } from "../compartir/compartir";
 import { Bolsillo } from "./bolsillo";
+import { Historial } from "./historial";
 import { Tarjetas } from "./tarjetas";
 
 export class Items {
@@ -11,6 +12,10 @@ export class Items {
     tarjetas:Tarjetas[]=[];
     bolsillos?:Bolsillo[]
     compartir:Compartir[]=[]
+    historial:Historial[]=[]
+    estadohistorial?:boolean
+    diahistorial:number=1
+    realizado=false
     userId!: string
     fecha?:string
     updated?:Date
@@ -38,6 +43,9 @@ export class Items {
       this.NombreTarjeta=item.NombreTarjeta
       this.ColorFondo=item.ColorFondo
       this.bolsillos=item.bolsillos
-
+      this.historial=item.historial
+      this.estadohistorial=item.estadohistorial
+      this.diahistorial=item.diahistorial
+      this.realizado=item.realizado
     }
 }

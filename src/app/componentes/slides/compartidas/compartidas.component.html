@@ -14,7 +14,7 @@
         <span class="card-type">{{ item.itemname }}</span>
       </div>
 
-      <div class="card-balance">Saldo: {{item.total}}</div>
+      <div class="card-balance">Saldo: ${{formatNumberMil(item.total)}}</div>
 
       <div class="card-number">**** **** **** {{ item.id!.slice(-4) }}</div>
 

@@ -53,7 +53,6 @@ export class EmailService {
   }
 
 async enviarEmail(tipo:string,asunto:string,destinatario: string, nombre: string,otro:any) {
-
   let msn=""
     if(tipo=="compartir"){
       msn = `

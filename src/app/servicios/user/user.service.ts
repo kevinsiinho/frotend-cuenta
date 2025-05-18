@@ -57,9 +57,7 @@ async Login(login:Login){
 
   async Quien(token:string){
     const { value } = await Preferences.get({ key: 'token' });
-    console.log(token) 
-    console.log(value)
-    const options = {
+   const options = {
       url: this.url+'/whoAmI',
       headers: { "Content-Type": "application/json",
                   "Authorization": 'Bearer ' + token

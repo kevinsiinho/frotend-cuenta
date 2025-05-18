@@ -48,11 +48,10 @@ export class NotasComponent {
     this.nota.userId=this.user.id!
     this.Nregistrar=true
     this.Nactualizar=false
-    console.log("Creando una nota")
   }
 
-  constructor
-  ( public notaServices:NotasService,
+  constructor(
+    public notaServices:NotasService,
     public userService:UserService,
     public link:Router,
     private alertController: AlertController,
@@ -72,7 +71,6 @@ guardarNota() {
   clearTimeout(this.timeoutGuardar); // Borra el temporizador anterior
   this.timeoutGuardar = setTimeout(() => {
     if(this.nota.texto!.length>0 && this.nota.id==undefined){
-      console.log("la nota 2"+this.nota.id)
 
       this.nota.tipo="nota"
       this.nota.userId=this.user.id!
@@ -93,7 +91,7 @@ guardarNota() {
       this.UpdateNote.reciente= new Date()
       this.notaServices.Update(this.UpdateNote).then((res)=>{
         if(res!==204){
-          console.log("Error en el servidor")
+          this.presentAlert("Error en el servidor")
         }
       })
     }
@@ -143,6 +141,7 @@ agregarItem() {
           this.item=new ItemsNotas()
           this.notaServices.Create(this.nota).then((res)=>{
             if(res.status==200){
+              this.notas.push(res.data)
               this.UpdateList=res.data
               this.Lregistrar=false
               this.Lactualizar=true
@@ -231,7 +230,7 @@ async ngOnChanges(changes: SimpleChanges) {
   this.nota.userId=this.user.id!
   this.notas
   if (changes['notas'] && changes['notas'].currentValue) {
-
+      console.log('Notas:', changes['notas'].currentValue);
       }
   }
 }
