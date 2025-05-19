@@ -80,7 +80,7 @@ EstadoHistorial(){
 async ngOnInit(){
   if(await this.userService.Verificar()){
     this.item.colorLetra="white"
-    this.item.ColorFondo="#5d4037"
+    this.item.ColorFondo="#027abb"
     this.item.icono="card"
     this.item.estadohistorial=false
     this.getGradientColor()

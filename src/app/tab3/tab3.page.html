@@ -47,7 +47,7 @@
         </ion-item>
         <ion-item *ngFor="let item of this.menu" [routerLink]="[item.link]">
           <ion-icon class="item-icono" slot="start" name={{item.icono}}></ion-icon>
-          <a>{{item.name}}</a>
+          <label>{{item.name}}</label>
           <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
         </ion-item>
         <ion-item>

@@ -12,11 +12,10 @@
 }
 
 ion-segment-button{
-  --color-checked:#9f8781;
-  color: $segundario-color;
+  --color-checked:#027abb;
    &:hover {
     --color: black;
-    background-color:$segundario-color;
+    background-color:$fondo;
       transition: background-color 0.3s;
     }
 }

@@ -6,7 +6,7 @@ ion-tab-bar {
 }
 
 ion-tab-button.tab-selected {
-  color: $segundario-color;
+  color: $principal-color;
   background: #5d40370f; 
   border-radius: 12px; 
   font-weight: bold;
@@ -14,10 +14,9 @@ ion-tab-button.tab-selected {
 
 
 ion-tab-bar {
-  --background: #1f1f1f; 
 
   ion-tab-button {
-    --color-selected:#78564c;
+    --color-selected:#027abb;
 
     &:hover {
       background-color: rgba(255, 255, 255, 0.1); 

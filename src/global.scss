@@ -25,14 +25,14 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-$principal-color: #78564c;
+$principal-color: #027abb;
 $segundario-color: #dad6d6;
 $tercero-color:rgb(93, 85, 85) ;
 $cuarto-color:#9f8781;
 $fondo-color: #e1e5e7ee;
-$color-error:#ff2a00;
-$color-letra:white;
-$fondo: rgba(8, 8, 8, 0.635);
+$color-error:#e5c2c0;
+$color-letra:black;
+$fondo: rgba(210, 233, 239, 0.635);
 //Estilos de diseños
 
 
@@ -41,7 +41,6 @@ html, body {
   padding: 0;
   height: 100%;
   font-family: 'Poppins', sans-serif;
-  --color: white;
 }
 
 ion-header{
@@ -50,8 +49,7 @@ ion-header{
 
 
 :root {
-	--ion-background-color: rgba(8, 8, 8, 0.922);
-	--ion-text-color: #dad6d6;
+	--ion-background-color: #f1ededde;
 }
 
 .alert-button {
@@ -126,14 +124,14 @@ ion-loading .loading-spinner {
 
 
 ion-checkbox{
-   --border-color:#78564c;
+   --border-color:#027abb;
    --border-color-checked: white;
    --checkmark-color:white;
   display: flex;
   justify-content: center;
   width: 50%;
   --checkbox-background-checked: black;
-  --checkbox-border-color-checked: solid 1px #78564c;
+  --checkbox-border-color-checked: solid 1px #027abb;
   margin-right: 5px;
 }
 

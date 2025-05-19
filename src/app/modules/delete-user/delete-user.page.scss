@@ -48,7 +48,7 @@ ion-progress-bar{
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 30%; /* Ajusta la altura al 100% de la ventana */
+  height: 10%; /* Ajusta la altura al 100% de la ventana */
   background: linear-gradient(to bottom left,  $principal-color, $principal-color);
   clip-path: polygon(0 100%, 100% 100%, 0 0);
 }
@@ -58,8 +58,8 @@ ion-progress-bar{
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 30%;
-  background: linear-gradient(to bottom right, $principal-color, $cuarto-color, );
+  height: 10%;
+  background: linear-gradient(to bottom right, $principal-color, $principal-color );
   clip-path: polygon(100% 100%, 0 100%, 100% 0);
 }
 

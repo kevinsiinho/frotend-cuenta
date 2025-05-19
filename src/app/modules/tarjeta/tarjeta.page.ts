@@ -290,8 +290,6 @@ iniciarTour2() {
     .start();
 }
 
-
-
  handleReorder(ev: CustomEvent<ItemReorderEventDetail>) {
   const DeIndex = ev.detail.from;
   const AIndex = ev.detail.to;
@@ -398,8 +396,8 @@ iniciarTour2() {
   }
 
   async ngOnInit() {
-     this.bolsillo.color="#5d4037"
-     this.bolsilloEditar.color="#5d4037"
+     this.bolsillo.color="#027abb"
+     this.bolsilloEditar.color="#027abb"
     this.loading = await this.loadingController.create({ message: '' });
     await this.loading.present();
 

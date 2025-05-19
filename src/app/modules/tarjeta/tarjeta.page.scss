@@ -17,8 +17,7 @@ ion-card,ion-card-content{
 
 
 ion-segment-button{
-  color:$segundario-color;
-  --color-checked: #5d4037;
+  --color-checked: #027abb;
   font-size: 24px;
    &:hover {
       background-color: rgba(30, 29, 29, 0.443); 
@@ -71,7 +70,6 @@ button.alert-button.alert-button-confirm {
 
 ion-card-title{
   width: 100%;
-  color: $segundario-color;
 }
 
 .estado{
@@ -89,7 +87,7 @@ ion-card-title{
 }
 
 .btns2 ion-icon{
-  color:$cuarto-color;
+  color:$principal-color;
 }
 
 .regresar{

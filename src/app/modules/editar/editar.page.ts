@@ -101,7 +101,7 @@ this.isLoading = true;
         if(res===204){
           this.loading.dismiss();
           this.isLoading = false;
-          this.presentAlert("Guardado correctamente");
+          this.presentAlert("Actualizado correctamente");
           this.item = new Items()
           this.ngOnInit()
         }else{

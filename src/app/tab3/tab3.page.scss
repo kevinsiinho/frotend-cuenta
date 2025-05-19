@@ -2,22 +2,18 @@
 
 .salir{
   color: $segundario-color;
-}
-
-
-a{
-  text-decoration: none;
-  color: $segundario-color;
+  font-weight: bold;
+  background-color: $principal-color;
 }
 
 .item-icono{
-  color: $cuarto-color;
+  color: $principal-color;
 }
 
 
 .icon-ultima{
   margin-right: 10px;
-  color: $cuarto-color;
+  color: $principal-color;
 }
 
 .mis-datos{
@@ -26,8 +22,4 @@ a{
 
 ion-accordion-group{
   width: 100%;
-}
-
-.ion-padding ion-item{
-  color: $segundario-color !important;
 }

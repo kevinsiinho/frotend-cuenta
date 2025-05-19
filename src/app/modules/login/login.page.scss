@@ -30,7 +30,6 @@
   width: 100%;
   font-size: 35px;
   font-weight: bolder;
-  color: $segundario-color;
   text-align: center;
 }
 
@@ -62,10 +61,6 @@ img {
   margin-left: 5px;
 }
 
-.rayitas ion-icon{
-  color: $segundario-color;
-}
-
 .msn {
   position: fixed;
   bottom: 0;
@@ -84,6 +79,8 @@ img {
 ion-list{
   background-color: none;
 }
+
+
 
 .inputs{
   color: $fondo-color;
@@ -136,6 +133,11 @@ ion-button {
 
   --ripple-color: $fondo-color;
 }
+
+.rayitas ion-icon{
+  color: $principal-color;;
+}
+
 
 .btn-ver{
   --color:$principal-color;

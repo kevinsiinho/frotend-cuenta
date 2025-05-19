@@ -2,9 +2,6 @@
 
 ion-content{
   
-  ion-searchbar{
-    color: $segundario-color;
-  }
   .msn{
     font-size: 15px;
     padding: 10px;
@@ -14,11 +11,9 @@ ion-content{
   .list-compartidos{
     align-items: center;
     margin-top: -15px;
-    background-color: $fondo;
   }
 
   .personas{
-    --background: $fondo;
       width: 100%;
       margin: auto;
       margin-top: 20px;
