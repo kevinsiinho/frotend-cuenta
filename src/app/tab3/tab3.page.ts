@@ -14,6 +14,7 @@ export class Tab3Page implements OnInit {
 
   public user= new User()
   public isLoading = true;
+  public ver=false
 
   constructor(
     public userService: UserService,
@@ -60,6 +61,15 @@ export class Tab3Page implements OnInit {
       await Preferences.remove({ key: 'token' });
       await Preferences.remove({ key: 'ultimaActividad' });
       this.link.navigate(['/login'])
+    }
+
+async VerGuia(){
+      this.ver=!this.ver
+      if(this.ver){
+         localStorage.setItem('tourNuevaTarjeta', 'false');
+         localStorage.setItem('tourbolsillo', 'false');
+         localStorage.setItem('tourConfigTarjeta', 'false');
+      }
     }
 
 }

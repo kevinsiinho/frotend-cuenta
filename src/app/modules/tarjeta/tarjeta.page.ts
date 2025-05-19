@@ -16,6 +16,7 @@ import { BolsillosService } from 'src/app/servicios/bolsillos/bolsillos.service'
 import { Bolsillo } from 'src/app/clases/Items/bolsillo';
 import { DepositosService } from 'src/app/servicios/depositos/depositos.service';
 import { HistorialMes } from 'src/app/clases/Items/historial-mes';
+import introJs from 'intro.js';
 
 @Component({
   selector: 'app-tarjeta',
@@ -219,6 +220,78 @@ verificarYCompletarHistorial() {
     private depositoServices:DepositosService
   ) { }
 
+//tour o guia
+iniciarTour() {
+  introJs()
+    .setOptions({
+      steps: [
+        {
+          element: '.favorito',
+          intro: 'Puedes selecionar la tarjeta como favorita'
+        },
+        {
+          element: '#estadoTarjeta',
+          intro: 'Aquí puedes activar o desactivar la tarjeta'
+        },
+        {
+          element: '#popover-button2',
+          intro: 'Más opciones de configuraciones'
+        }
+      ],
+      nextLabel: 'Siguiente',
+      prevLabel: 'Anterior',
+      doneLabel: 'Terminar',
+    })
+     .oncomplete(() => {
+      // Guardar en localStorage que el tour fue completado
+      localStorage.setItem('tourConfigTarjeta', 'true');
+    })
+    .start();
+}
+iniciarTour2() {
+  introJs()
+    .setOptions({
+      steps: [
+        {
+          element: '#configbolsillo',
+          intro: 'Aquí puedes acceder a más opciones para personalizar el bolsillo.'
+        },
+        {
+          element: '#ver',
+          intro: 'Haz clic aquí para ver la lista de depósitos de este bolsillo.'
+        },
+        {
+          element: '#verinfo',
+          intro: 'Al seleccionar un depósito, podrás ver información detallada del mismo.'
+        },
+        {
+          element: '.list-btns',
+          intro: 'Estos dos botones te permiten guardar un depósito como ingreso (positivo) o gasto (negativo).'
+        },
+        {
+          element: '#capture',
+          intro: 'Este botón te permite guardar una captura con el historial de depósitos del bolsillo seleccionado.'
+        }
+      ],
+      nextLabel: 'Siguiente',
+      prevLabel: 'Anterior',
+      doneLabel: 'Terminar',
+    })
+    .onbeforechange((targetElement) => {
+      // Si estamos en el paso donde se necesita mostrar el contenido oculto
+      if (targetElement.id === 'ver') {
+        this.show(0)
+      }
+      return true
+    })
+    .oncomplete(() => {
+      localStorage.setItem('tourbolsillo', 'true');
+    })
+    .start();
+}
+
+
+
  handleReorder(ev: CustomEvent<ItemReorderEventDetail>) {
   const DeIndex = ev.detail.from;
   const AIndex = ev.detail.to;
@@ -402,6 +475,15 @@ verificarYCompletarHistorial() {
       this.verificarYCompletarHistorial()
       this.loading.dismiss();
       this.isLoading = false;
+         
+    const tourHecho1 = localStorage.getItem('tourConfigTarjeta');
+      if (!tourHecho1) {
+        this.iniciarTour();
+      }
+      const tourHecho2 = localStorage.getItem('tourbolsillo');
+      if (this.item.bolsillos!.length>0 && !tourHecho2) {
+        this.iniciarTour2();
+      }
     }
   }
 
@@ -738,7 +820,6 @@ Compartir(){
 RutaHistorial(){
  this.link.navigate(['tarjeta/historial',this.id])
 }
-
 
   depositar(bolsillo:Bolsillo,tipo:string,){
     const fecha= new Date();

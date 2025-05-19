@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, } from '@angular/core';
 import { ItemsService } from '../servicios/items/items.service';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
@@ -10,6 +10,8 @@ import { register } from 'swiper/element/bundle';
 import tinycolor from 'tinycolor2';
 import { Tarjetas } from '../clases/tarjetas/tarjetas';
 import { Items } from '../clases/Items/items';
+import introJs from 'intro.js';
+
 
 register();
 @Component({
@@ -101,6 +103,11 @@ async ngOnInit(){
         })
       })
     }
+    
+  const tourHecho = localStorage.getItem('tourNuevaTarjeta');
+    if (!tourHecho) {
+      this.iniciarTour();
+    }
   }
 }
 
@@ -167,6 +174,55 @@ Duplicado(){
   });
 
   return duplicado;
+}
+
+//tour o guia
+iniciarTour() {
+  introJs()
+    .setOptions({
+      steps: [
+        {
+          element: '#nombreTarjeta',
+          intro: 'Escribe aquí el nombre de tu nueva tarjeta.'
+        },
+        {
+          element: '#icono',
+          intro: 'Selecciona el ícono que mejor represente el propósito de tu tarjeta.'
+        },
+        {
+          element: '#colorLetra',
+          intro: 'Elige si quieres que el texto de tu tarjeta sea blanco o negro.'
+        },
+        {
+          element: '#Historial',
+          intro: 'Activa esta opción si deseas que el historial de la tarjeta se reinicie automáticamente cada primer día del mes.'
+        },
+        {
+          element: '#colorTarjeta',
+          intro: 'Selecciona el color de fondo que más te guste para tu tarjeta.'
+        },
+        {
+          element: '#ListaOpciones',
+          intro: 'Aquí puedes ver algunas plantillas de tarjetas que puedes usar como base.'
+        },
+        {
+          element: '#Personalizacion',
+          intro: 'Visualiza cómo se verá tu tarjeta con las opciones que vas eligiendo.'
+        },
+        {
+          element: '#Guarde',
+          intro: 'Cuando termines, haz clic aquí para guardar tu nueva tarjeta.'
+        }
+      ],
+      nextLabel: 'Siguiente',
+      prevLabel: 'Anterior',
+      doneLabel: 'Terminar',
+    })
+     .oncomplete(() => {
+      // Guardar en localStorage que el tour fue completado
+      localStorage.setItem('tourNuevaTarjeta', 'true');
+    })
+    .start();
 }
 
 }

@@ -51,6 +51,10 @@
           <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
         </ion-item>
         <ion-item>
+          <ion-icon class="item-icono" slot="start" name="analytics-outline"></ion-icon>
+          <ion-toggle [enableOnOffLabels]="true" (click)="VerGuia()">Activar guía</ion-toggle>
+        </ion-item>
+        <ion-item>
           <ion-input label="Versión" value="2.0" [disabled]="true"></ion-input>
         </ion-item>
         <ion-button fill="clear" class="salir" (click)="salir()" expand="full">Salir</ion-button>

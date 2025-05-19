@@ -230,7 +230,6 @@ async ngOnChanges(changes: SimpleChanges) {
   this.nota.userId=this.user.id!
   this.notas
   if (changes['notas'] && changes['notas'].currentValue) {
-      console.log('Notas:', changes['notas'].currentValue);
       }
   }
 }

@@ -41,7 +41,11 @@
                 "output": "."
               }
             ],
-            "styles": ["src/theme/variables.scss", "src/global.scss"],
+            "styles": [
+              "src/theme/variables.scss",
+               "src/global.scss",
+               "intro.js/minified/introjs.min.css"
+              ],
             "scripts": []
           },
           "configurations": {

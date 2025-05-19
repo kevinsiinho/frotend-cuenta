@@ -118,6 +118,12 @@ ion-loading .loading-spinner {
   --spinner-color: $segundario-color !important; 
 }
 
+.introjs-tooltip {
+  background-color: $fondo !important; // Fondo oscuro
+  color: $segundario-color;            // Letras blancas
+}
+
+
 
 ion-checkbox{
    --border-color:#78564c;
@@ -160,7 +166,6 @@ ion-checkbox{
  color: white !important;
 }
 
-
 .diseno3{
  background-image: url(../src/assets/TarjetasFondo/fondo3.jpg);
  background-size: cover; /* Ajusta la imagen al tamaño del contenedor */
@@ -169,7 +174,6 @@ ion-checkbox{
  color:black !important;
 }
 
-
 .diseno4{
  background-image: url(../src/assets/TarjetasFondo/fondo4.jpg);
  background-size: cover; /* Ajusta la imagen al tamaño del contenedor */
@@ -177,7 +181,6 @@ ion-checkbox{
  background-repeat: no-repeat;
  color: black !important;
 }
-
 
 .diseno5{
  background-image: url(../src/assets/TarjetasFondo/fondo5.jpg);

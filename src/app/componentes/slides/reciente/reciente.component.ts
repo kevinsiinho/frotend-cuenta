@@ -73,11 +73,14 @@ export class RecienteComponent {
       this.itemc3=this.itemsC[2]
       this.itemc4=this.itemsC[3]
 
+      console.log(this.notas)
+
       if (changes['notas'] && changes['notas'].currentValue) {
-        this.notas.sort((a,b)=>{
-          return new Date(b.reciente!).getTime() - new Date(a.reciente!).getTime();
-        })
+          this.notas = this.notas
+            .sort((a, b) => new Date(b.reciente!).getTime() - new Date(a.reciente!).getTime())
+            .slice(0, 5); // muestra solo los 5 más recientes
         }
+
   }
 
    getCssVariables(color: string) {

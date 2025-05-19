@@ -5,20 +5,20 @@
     <ion-button fill="clear" class="btns2 regresar"  (click)="regresar()">
        <ion-icon name="chevron-back-outline"> </ion-icon>
     </ion-button>
-    <ion-button fill="clear" class="btns2" id="popover-button2">
+    <ion-button  fill="clear" class="btns2" id="popover-button2">
       <ion-icon name="ellipsis-vertical-outline"   slot="end"></ion-icon>
     </ion-button>
 
-    <ion-button class="btns2" *ngIf="this.item.favorito===false && this.creador===true" (click)="Favorito()" fill="clear">
+    <ion-button class="btns2 favorito" *ngIf="this.item.favorito===false && this.creador===true" (click)="Favorito()" fill="clear">
       <ion-icon name="heart-dislike-outline"></ion-icon>
     </ion-button>
 
-    <ion-button class="btns2" *ngIf="this.item.favorito===true && this.creador===true" (click)="Favorito()" fill="clear">
+    <ion-button class="btns2 favorito" *ngIf="this.item.favorito===true && this.creador===true" (click)="Favorito()" fill="clear">
       <ion-icon name="heart-sharp"></ion-icon>
     </ion-button>
     </ion-title>
   </ion-toolbar>
-  <ion-toolbar *ngIf="this.compartirUno.estado===true || this.creador===true">
+  <ion-toolbar id="estadoTarjeta" *ngIf="this.compartirUno.estado===true || this.creador===true">
     <ion-segment >
       <ion-segment-button (click)="Festado('activar')" value="true">
         <ion-label><ion-icon name="eye-outline"></ion-icon></ion-label>
@@ -45,7 +45,7 @@
             <ion-card-header>
               <ion-card-title>{{bolsillo.nombre}}
                 <ion-item [button]="true" class="btn-bolsillos-opc" [detail]="false" [id]="'popover-' + x" *ngIf="this.compartirUno.estado===true || this.creador===true" class="estado" fill="clear">
-                  <ion-icon name="settings" [style.color]="bolsillo.color" ></ion-icon>
+                  <ion-icon id="configbolsillo" name="settings" [style.color]="bolsillo.color" ></ion-icon>
                   <!--Opciones para los bolsillos-->
                   <ion-popover [trigger]="'popover-' + x" [dismissOnSelect]="true" alignment="start" size="auto">
                     <ng-template>
@@ -74,15 +74,15 @@
               <span class="right">${{formatNumberMil(bolsillo.subtotal) }}</span>
           </ion-card-subtitle>
 
-              <ion-button expand="full" [style.--background]="bolsillo.color" (click)="show(x)"><ion-icon name="eye-outline"></ion-icon></ion-button>
+              <ion-button id="ver" expand="full" [style.--background]="bolsillo.color" (click)="show(x)"><ion-icon name="eye-outline"></ion-icon></ion-button>
             </ion-card-header>
 
           <ion-card-content *ngIf="cardStates[x]===true">
-            <ion-item>
+            <ion-item >
               <ion-grid class="grid-principal">
-                <ion-row>
+                <ion-row id="verinfo">
                   <ion-col class="valor">Valor</ion-col>
-                  <ion-col class="ver">Ver</ion-col>
+                  <ion-col  class="ver">Ver</ion-col>
                 </ion-row>
               </ion-grid>
             </ion-item>
@@ -117,7 +117,7 @@
               </ion-item>
 
             </div>
-            <ion-button [style.--background]="bolsillo.color" (click)="CapturaPantalla(x)" expand="full"><ion-icon name="camera-outline"></ion-icon></ion-button>
+            <ion-button id="capture" [style.--background]="bolsillo.color" (click)="CapturaPantalla(x)" expand="full"><ion-icon name="camera-outline"></ion-icon></ion-button>
           </ion-card-content>
         </ion-card>
         <ion-reorder slot="end"></ion-reorder>
@@ -245,7 +245,7 @@
           <ion-item *ngIf="this.creador===true" [button]="true" [detail]="false" (click)="this.EditarNombreTarjeta()">Editar</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="Compartir()">Compartir</ion-item>
           <ion-item [button]="true" [detail]="false" (click)="this.EliminarTarjeta()">Eliminar Tarjeta</ion-item>
-          <ion-item [button]="true" [detail]="false" (click)="toggleReorder()">Mover bolsillos</ion-item>
+          <ion-item [button]="true" [detail]="false" (click)="toggleReorder()">Ordenar bolsillos</ion-item>
           <ion-item *ngIf="item.estadohistorial" [button]="true" [detail]="false" (click)="RutaHistorial()">Ver historial</ion-item>
 
           <ion-popover trigger="nested-trigger" [dismissOnSelect]="true" side="end">
