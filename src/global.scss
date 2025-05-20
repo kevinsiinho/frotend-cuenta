@@ -121,6 +121,13 @@ ion-loading .loading-spinner {
   color: $segundario-color;            // Letras blancas
 }
 
+img {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: auto;
+  margin-bottom: 3%;
+}
 
 
 ion-checkbox{

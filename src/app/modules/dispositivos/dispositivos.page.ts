@@ -57,7 +57,7 @@ Eliminar(id:string){
   this.ConfigService.Delete(id).then((res)=>{
     if(res===204){
       this.presentAlert("Dispositivo desvinculado exitosamente")
-      this.link.navigate(['tabs/tab2'])
+      this.link.navigate(['tabs/tab3'])
     }else{
       this.presentAlert("Error, intenta más tarde")
     }

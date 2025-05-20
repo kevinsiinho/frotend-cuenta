@@ -30,7 +30,8 @@ export class RegistrarsePage implements OnInit{
   public errorApellido:boolean = false
   public errorCel:boolean = false
   public errorpassword:boolean = false
-  public errorpassword2:boolean = false  
+  public errorpassword2:boolean = false 
+  public btnRegistrar:boolean=true 
 
   constructor(
     private alertController: AlertController,
@@ -60,7 +61,7 @@ export class RegistrarsePage implements OnInit{
     }
 
  async create(){
-
+  this.btnRegistrar=false
   await this.loading.present();
 
   if(this.user.name==="" || this.user.name===undefined){
@@ -117,14 +118,15 @@ export class RegistrarsePage implements OnInit{
     this.errorpassword2=false
     this.msnError=""
     this.user.estado="Activo"
+    this.user.codigo=0
     this.userService.Create(this.user).then((data)=>{
       if(data.status==200){
+        this.user= new User()
         this.loading.dismiss();
         this.form1=true
         this.form2=false  
         this.form3=false
         this.presentAlert("Te haz unidos a nosotros exitosamente")
-        this.user= new User()
         this.link.navigate(['/login'])
       }else{
         this.loading.dismiss();
@@ -133,6 +135,7 @@ export class RegistrarsePage implements OnInit{
 
     })
   }
+  this.btnRegistrar=true
   this.loading.dismiss();
   
   }
@@ -180,7 +183,6 @@ export class RegistrarsePage implements OnInit{
   return numeroAleatorio
 }
 
-
 VerificarCodigo(){
   this.loading.present()
   if(this.verificarCodigo==this.user.codigo){
@@ -195,11 +197,8 @@ VerificarCodigo(){
   }
 }
 
-VerPassword() {
-  this.verPassword = !this.verPassword;
-}
-
-VerPassword2() {
+FVerPassword() {
   this.verPassword2 = !this.verPassword2;
+  this.verPassword = !this.verPassword;
 }
 }

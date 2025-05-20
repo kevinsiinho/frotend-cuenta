@@ -31,7 +31,6 @@ export class UserService {
       await alert.present();
     }
 
-
   async alluser():Promise<any>{
     this.users=[]
     const options = {
@@ -138,48 +137,60 @@ async Login(login:Login){
   return response.data
   }
 
-  //mejorar esto
-  async Verificar(){
- const { value } = await Preferences.get({ key: 'token' });
+async Verificar() {
+  const { value } = await Preferences.get({ key: 'token' });
 
-   try {
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error("timeout"));
+    }, 60000); // 60,000 milisegundos = 1 minuto
+  });
+
+  const requestPromise = (async () => {
     const options = {
-      url: this.url+'/whoAmI',
-      headers: { "Content-Type": "application/json",
-                  "Authorization": 'Bearer ' + value
-               }
+      url: this.url + '/whoAmI',
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": 'Bearer ' + value
+      }
     };
 
-  const response: HttpResponse = await CapacitorHttp.get(options);
+    const response: HttpResponse = await CapacitorHttp.get(options);
 
-  if(response.status===401){
-     this.presentAlert("La sesión ha expirado, intenta iniciar sesión nuevamente")
-    this.link.navigate(['login'])
-    return false
-  }else{
-    let valor=false
-    return  this.InfoUser(response.data).then((user)=>{
-      if(user.estado=="Activo"){
-        valor=true
-      }else if(user.estado=="verificar"){
-        this.link.navigate(['/codigo/'+user.id])
-      }else{
-        this.link.navigate(['login'])
-        valor= false
+    if (response.status === 401) {
+      this.presentAlert("La sesión ha expirado, intenta iniciar sesión nuevamente");
+      this.link.navigate(['login']);
+      return false;
+    } else {
+      const user = await this.InfoUser(response.data);
+      if (user.estado === "Activo") {
+        return true;
+      } else if (user.estado === "verificar") {
+        this.link.navigate(['/codigo/' + user.id]);
+        return false;
+      } else {
+        this.link.navigate(['login']);
+        return false;
       }
-      return valor
-    })
+    }
+  })();
+try {
+  return await Promise.race([requestPromise, timeoutPromise]);
+} catch (error: unknown) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+
+  if (errorMessage === "timeout") {
+    this.presentAlert("Tiempo de espera agotado. Intenta iniciar sesión nuevamente.");
+  } else {
+    this.presentAlert("Error en el servidor. Intenta más tarde.");
   }
 
-   } catch (error) {
-    this.link.navigate(['login'])
-    this.presentAlert("Error en el servidor intenta más tarde")
-    return false
-   }
-return true
-};
+  this.link.navigate(['login']);
+  return false;
+  }
+}
 
-    async buscar(event:string){
+async buscar(event:string){
       const query = event;
       //event.target.value
       const { value } = await Preferences.get({ key: 'token' });
@@ -191,6 +202,5 @@ return true
       };
 
     const response: HttpResponse = await CapacitorHttp.get(options);
-    return response.data
-    }
-}
+    return response.data}
+  }
