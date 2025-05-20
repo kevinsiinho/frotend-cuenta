@@ -203,4 +203,4 @@ async buscar(event:string){
 
     const response: HttpResponse = await CapacitorHttp.get(options);
     return response.data}
-  }
+}
