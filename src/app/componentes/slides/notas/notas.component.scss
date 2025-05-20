@@ -19,3 +19,15 @@
 .titulo{
   margin-left: 10px;
 }
+
+ion-checkbox{
+   --border-color:#027abb;
+   --border-color-checked: white;
+   --checkmark-color:white;
+  display: flex;
+  justify-content: center;
+  width: 50%;
+  --checkbox-background-checked: black;
+  --checkbox-border-color-checked: solid 1px #027abb;
+  margin-right: 5px;
+}

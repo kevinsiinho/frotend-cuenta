@@ -109,7 +109,7 @@ ion-input{
 }
 
 ion-checkbox, .recuperarPassword{
-  padding: 2px;
+  
   color: white;
   font-size: 15px;
 }
@@ -117,7 +117,14 @@ ion-checkbox, .recuperarPassword{
 .check{
   font-size: 12px;
   float: left;
+    --border-color:#027abb;
+   --border-color-checked: white;
+   --checkmark-color:white;
+  --checkbox-background-checked: black;
+  --checkbox-border-color-checked: solid 1px #027abb; 
 }
+
+
 
 ion-button {
   --background: $segundario-color;

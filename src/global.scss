@@ -129,19 +129,6 @@ img {
   margin-bottom: 3%;
 }
 
-
-ion-checkbox{
-   --border-color:#027abb;
-   --border-color-checked: white;
-   --checkmark-color:white;
-  display: flex;
-  justify-content: center;
-  width: 50%;
-  --checkbox-background-checked: black;
-  --checkbox-border-color-checked: solid 1px #027abb;
-  margin-right: 5px;
-}
-
 .text-view{
   border-left: solid 1px rgba(124, 124, 124, 0.734);
   margin-left: 5px;

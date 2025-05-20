@@ -42,7 +42,6 @@ export class UserService {
         return response.data
   }
 
-
 async Login(login:Login){
     const options = {
       url: this.url+'/users/login/',

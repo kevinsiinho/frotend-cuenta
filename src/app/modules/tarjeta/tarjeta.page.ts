@@ -482,6 +482,9 @@ iniciarTour2() {
       if (this.item.bolsillos!.length>0 && !tourHecho2) {
         this.iniciarTour2();
       }
+    }else{
+      this.loading.dismiss();
+      this.isLoading = false;  
     }
   }
 

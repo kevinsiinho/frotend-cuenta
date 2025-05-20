@@ -96,6 +96,9 @@ async Principal(){
         this.Ordenar(value)
       }
 
+    }else{
+      this.loading.dismiss();
+      this.isLoading = false;  
     }
     this.loading.dismiss();
     this.isLoading = false;
