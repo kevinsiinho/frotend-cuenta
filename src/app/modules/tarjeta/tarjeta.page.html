@@ -112,7 +112,7 @@
                 <ion-textarea label="Comentario" class="itemInput" labelPlacement="floating" [(ngModel)]="this.deposito.comentario" [counter]="true" maxlength="60"></ion-textarea>
               </ion-item >
               <ion-item class="list-btns">
-                <ion-button class="btnoption" (click)="depositar(bolsillo,'sumar')" color="success"><ion-icon name="add-outline"></ion-icon></ion-button>
+              <ion-button class="btnoption" *ngIf="!item.estadohistorial" (click)="depositar(bolsillo,'sumar')" color="success"><ion-icon name="add-outline"></ion-icon></ion-button>
               <ion-button class="btnoption" (click)="depositar(bolsillo,'restar')" color="warning"><ion-icon name="remove-outline"></ion-icon></ion-button>
               </ion-item>
 

@@ -418,7 +418,6 @@ iniciarTour2() {
       if (this.item.estadohistorial) {
         this.bolsillo.Vinicial=true
         this.bolsilloEditar.Vinicial=true
-        console.log(this.bolsillo.Vinicial)
       }
       this.item.bolsillos = await this.bolsilloService.allbolsillo(this.id);
       
@@ -455,6 +454,7 @@ iniciarTour2() {
 
 
       this.Totalresultado = this.positivos + this.negativos;
+      this.item.total=this.Totalresultado
       const { value: orden } = await Preferences.get({ key: 'TarjetaOrden' });
       if (orden) {
         this.Ordenar(orden);
@@ -565,9 +565,11 @@ Negativo(bolsillo:Bolsillo): string {
 }
 
 total(){
-  this.positivo=0
+ /* this.positivo=0
   this.negativo=0
   this.Totalresultado=0
+  console.log(this.item.total)
+  this.item.total=0
   this.item.bolsillos!.forEach((bolsillo) =>{
       if(bolsillo.Vinicial){
         bolsillo.depositos!.forEach(depositos => {
@@ -590,7 +592,9 @@ total(){
   });
   this.Totalresultado=this.positivo+(this.negativo)
   this.item.total=this.Totalresultado
+  console.log(this.Totalresultado)
   this.Update()
+  */
 }
 
 Favorito(){
@@ -621,8 +625,10 @@ confirmEditar() {
     }else{
       this.bolsilloService.Update(this.bolsilloEditar).then((res)=>{
         if(res===204){
-          this.modalEditar.dismiss('confirm');
           this.bolsilloEditar= new Bolsillo();
+          this.modalEditar.dismiss('confirm');
+          this.total()
+          this.ngOnInit()
         }else{
           this.presentAlert("Error, intenta nuevamente");
         }
@@ -652,8 +658,9 @@ async EliminarDepositos(id:string){
                 handler: async () => {
                   //eliminando todos los depositos
                      await this.loading.present();
-                  bolsillo.depositos!.forEach((deposito:Depositos) => {
+                  bolsillo.depositos!.forEach((deposito:Depositos, i) => {
                     this.depositoServices.Delete(deposito.id!)  
+                    bolsillo.depositos?.slice(i,1)
                   });
                   this.loading.dismiss();
                   bolsillo.subtotal=0
@@ -663,6 +670,7 @@ async EliminarDepositos(id:string){
                         }
                       })
                   this.total()
+                  this.ngOnInit()
                 },
               },
             ],
@@ -806,7 +814,7 @@ EliminarDeposito(bolsillo:Bolsillo,deposito:Depositos){
             });
 
             this.bolsilloService.Update(bolsillo)
-            this.total()
+            this.ngOnInit()
           }
         });
       }
