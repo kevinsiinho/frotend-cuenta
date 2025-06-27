@@ -79,114 +79,68 @@ convertirNumeroAMes(numero: number): string {
   // Si hay historial, empieza desde el mes siguiente al último registrado
   // Completa los meses faltantes hasta el mes actual
 verificarYCompletarHistorial() {
- const hoy = new Date();
- if (hoy.getDate() === 1 && !this.item.realizado){
-  this.item.realizado=true
-};
-
-
-  if(this.item.estadohistorial &&this.item.realizado && hoy.getDate() === 1){  
-
-  const anioActual = hoy.getFullYear();
-  const mesActual = hoy.getMonth();
-
-  if (!this.item.historial) {
-    this.item.historial = [];
+  const hoy = new Date();
+  if (hoy.getDate() === 1 && !this.item.realizado) {
+    this.item.realizado = true;
   }
 
-  let ultimoAnio = -1;
-  let ultimoMes = -1;
+  if (this.item.estadohistorial && this.item.realizado && hoy.getDate() === 1) {
+    let anioActual = hoy.getFullYear();
+    let mesActual = hoy.getMonth();
 
-  // Buscar el ultimo año y mes registrados
-  for (let i = this.item.historial.length - 1; i >= 0; i--) {
-    const anio = this.item.historial[i].ano;
-    const meses = this.item.historial[i].meses;
-
-    if (meses.length > 0) {
-      ultimoAnio = Number(anio);
-      ultimoMes = this.convertirMesANumero(meses[meses.length - 1].mes);
-      break;
-    }
-  }
-
-  // Si no hay historial, empezar desde enero del año actual
-  if (ultimoAnio === -1) {
-    ultimoAnio = anioActual;
-    ultimoMes = 0; // Enero
-  } else {
-    // Empezar desde el mes siguiente al ultimo registrado
-    ultimoMes += 1;
-    if (ultimoMes > 11) {
-      ultimoMes = 0;
-      ultimoAnio++;
-    }
-  }
-
-  // Completar meses faltantes
-  let anio = Number(ultimoAnio);
-  let mes = ultimoMes;
-  while (anio < anioActual || (anio === anioActual && mes <= mesActual)) {
-    const nombreMes = this.convertirNumeroAMes(mes);
-    const esMesActual = (anio === anioActual && mes === mesActual);
-    if (esMesActual) {
-          console.log("mes actual"+esMesActual)
-        }
-    let registroAnual = this.item.historial.find(h =>Number( h.ano) === anio);
-    if (!registroAnual) {      
-      registroAnual = { ano: String(anio), meses: [] };
-      this.item.historial?.push(registroAnual!);
-      
+    // Calcular mes y año anterior
+    let mesAnterior = mesActual - 1;
+    let anioAnterior = anioActual;
+    if (mesAnterior < 0) {
+      mesAnterior = 11; // Diciembre
+      anioAnterior -= 1;
     }
 
-    const yaExiste = registroAnual?.meses.some(m => m.mes === nombreMes);
-    if (!yaExiste) {
-      const nuevoMes = new HistorialMes();
-      nuevoMes.mes = nombreMes;
-      nuevoMes.total = 0;
-      nuevoMes.depositos = [];
-      registroAnual?.meses.push(nuevoMes);
+    if (!this.item.historial) {
+      this.item.historial = [];
     }
 
-    mes++;
-    if (mes > 11) {
-      mes = 0;
-      anio++;
+    // Buscar o crear el registro anual correspondiente
+    let registroAnual = this.item.historial.find(h => Number(h.ano) === anioAnterior);
+    if (!registroAnual) {
+      registroAnual = { ano: String(anioAnterior), meses: [] };
+      this.item.historial.push(registroAnual);
     }
-  }
-    // Buscar el ultimo año y mes registrados
-  for (let i = this.item.historial.length - 1; i >= 0; i--) {
-    const anio = this.item.historial[i].ano;
-    const meses = this.item.historial[i].meses;
 
-    if (meses.length > 0) {
-      ultimoAnio = Number(anio);
-      ultimoMes = this.convertirMesANumero(meses[meses.length - 1].mes);
-      break;
+    // Nombre del mes anterior
+    const nombreMesAnterior = this.convertirNumeroAMes(mesAnterior);
+
+    // Buscar o crear el mes anterior
+    let mesHistorial = registroAnual.meses.find(m => m.mes === nombreMesAnterior);
+    if (!mesHistorial) {
+      mesHistorial = new HistorialMes();
+      mesHistorial.mes = nombreMesAnterior;
+      mesHistorial.total = 0;
+      mesHistorial.depositos = [];
+      registroAnual.meses.push(mesHistorial);
     }
-  }
-  let total=0
-  this.item.historial.forEach(element => {
-      if(Number(anio)== Number(element.ano)){
-        this.depositos.forEach(element => {
-          total=total+element.valor
-        });
-        element.meses[ultimoMes].depositos=this.depositos
-        element.meses[ultimoMes].total=total
-      }
-  });
 
-  this.item.bolsillos?.forEach((bolsillo:Bolsillo) => {
-    bolsillo.subtotal=0
-    bolsillo.depositos?.forEach(element => {
-     this.depositoServices.Delete(element.id!)
+    // Asignar depósitos al mes anterior
+    let total = 0;
+    this.depositos.forEach(element => {
+      total += element.valor;
     });
-    this.bolsilloService.Update(bolsillo)
-  });
-  this.item.realizado=false
-  this.depositos=[]
-  this.Update()
- }
- 
+    mesHistorial.depositos = this.depositos;
+    mesHistorial.total = total;
+
+    // Limpiar depósitos de los bolsillos y actualizar
+    this.item.bolsillos?.forEach((bolsillo: Bolsillo) => {
+      bolsillo.subtotal = 0;
+      bolsillo.depositos?.forEach(element => {
+        this.depositoServices.Delete(element.id!);
+      });
+      this.bolsilloService.Update(bolsillo);
+    });
+
+    this.item.realizado = false;
+    this.depositos = [];
+    this.Update();
+  }
 }
 
   public alertInputs3:any[]= [
@@ -416,8 +370,11 @@ iniciarTour2() {
 
       await this.CompartidoUNO();
       if (this.item.estadohistorial) {
-        this.bolsillo.Vinicial=true
-        this.bolsilloEditar.Vinicial=true
+        this.bolsillo.Vinicial = true;
+        this.bolsilloEditar.Vinicial = true;
+      } else {
+        this.bolsillo.Vinicial = false;
+        this.bolsilloEditar.Vinicial = false;
       }
       this.item.bolsillos = await this.bolsilloService.allbolsillo(this.id);
       
@@ -889,12 +846,13 @@ Festado(tipo:string){
 }
 
 FingresarValor(){
+  console.log("Valor bolsillo3 ",this.bolsillo.Vinicial)
     if(!this.bolsillo.Vinicial){
       this.bolsillo.Vinicial=true
     }else{
       this.bolsillo.Vinicial=false
     }
-    console.log("Valor"+this.bolsillo.Vinicial)
+    console.log("Valor bolsillo ",this.bolsillo.Vinicial)
   }
 
 FingresarValor2(){

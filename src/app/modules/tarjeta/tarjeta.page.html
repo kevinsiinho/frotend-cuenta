@@ -160,16 +160,18 @@
               maxlength="12"
             ></ion-input>
           </ion-item>
-          <ion-item>
-            <ion-toggle [enableOnOffLabels]="false" [(ngModel)]="bolsillo.Vinicial"  (click)="this.FingresarValor()">Valor Inicial</ion-toggle>
+          <ion-item *ngIf="!item.estadohistorial">
+            <ion-toggle [enableOnOffLabels]="false" [(ngModel)]="bolsillo.Vinicial">
+              Valor Inicial
+            </ion-toggle>
           </ion-item>
-          <ion-item *ngIf="this.bolsillo.Vinicial===true">
+          <ion-item *ngIf="item.estadohistorial || bolsillo.Vinicial === true">
             <ion-input
               label="Valor"
               labelPlacement="stacked"
               type="number"
               placeholder="Ingresa el valor"
-              [(ngModel)]="this.bolsillo.valor"
+              [(ngModel)]="bolsillo.valor"
             ></ion-input>
           </ion-item>
           <ion-item >
@@ -211,10 +213,16 @@
               maxlength="12"
             ></ion-input>
           </ion-item>
-          <ion-item>
-            <ion-toggle [enableOnOffLabels]="false" [(ngModel)]="bolsilloEditar.Vinicial"   (click)="this.FingresarValor2()">Valor Inicial</ion-toggle>
+
+          <!-- SOLO muestra el toggle si NO es historial -->
+          <ion-item *ngIf="!item.estadohistorial">
+            <ion-toggle [enableOnOffLabels]="false" [(ngModel)]="bolsilloEditar.Vinicial">
+              Valor Inicial
+            </ion-toggle>
           </ion-item>
-          <ion-item *ngIf="this.bolsilloEditar.Vinicial===true">
+
+          <!-- Input SIEMPRE visible si es historial, o solo si el toggle está activado -->
+          <ion-item *ngIf="item.estadohistorial || bolsilloEditar.Vinicial === true">
             <ion-input
               label="Valor"
               labelPlacement="stacked"
@@ -223,7 +231,8 @@
               [(ngModel)]="this.bolsilloEditar.valor"
             ></ion-input>
           </ion-item>
-          <ion-item >
+
+          <ion-item>
             <ion-label>Color:</ion-label>
             <input type="color" class="color" [(ngModel)]="this.bolsilloEditar.color"/>
           </ion-item>

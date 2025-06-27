@@ -77,6 +77,7 @@ async presentAlert(msn:String) {
 
     if (changes['items2'] && changes['items2'].currentValue) {
       if(await this.userService.Verificar()){
+        console.log("items2 fue recibida",this.items2)
          }
       }
   }
