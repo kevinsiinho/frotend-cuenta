@@ -138,11 +138,39 @@ async Login(login:Login){
 
 async Verificar() {
   const { value } = await Preferences.get({ key: 'token' });
+  
+  // ✅ Si no hay token, ir directo a login
+  if (!value) {
+    this.link.navigate(['login']);
+    return false;
+  }
 
+  // ✅ Verificar si el token está expirado localmente (opcional)
+  try {
+    const tokenParts = value.split('.');
+    if (tokenParts.length === 3) {
+      const payload = JSON.parse(atob(tokenParts[1]));
+      const now = Math.floor(Date.now() / 1000);
+      
+      // Si el token expiró hace más de 5 minutos, ir directo a login
+      if (payload.exp && payload.exp < (now - 300)) {
+        await Preferences.remove({ key: 'token' });
+        this.link.navigate(['login']);
+        return false;
+      }
+    }
+  } catch (e) {
+    // Si no se puede parsear el token, eliminarlo
+    await Preferences.remove({ key: 'token' });
+    this.link.navigate(['login']);
+    return false;
+  }
+
+  // ✅ Reducir timeout a 15 segundos
   const timeoutPromise = new Promise((_, reject) => {
     setTimeout(() => {
       reject(new Error("timeout"));
-    }, 60000); // 60,000 milisegundos = 1 minuto
+    }, 15000); // 15 segundos en lugar de 60
   });
 
   const requestPromise = (async () => {
@@ -157,6 +185,8 @@ async Verificar() {
     const response: HttpResponse = await CapacitorHttp.get(options);
 
     if (response.status === 401) {
+      // ✅ LIMPIAR TOKEN cuando está expirado
+      await Preferences.remove({ key: 'token' });
       this.presentAlert("La sesión ha expirado, intenta iniciar sesión nuevamente");
       this.link.navigate(['login']);
       return false;
@@ -168,24 +198,30 @@ async Verificar() {
         this.link.navigate(['/codigo/' + user.id]);
         return false;
       } else {
+        // ✅ LIMPIAR TOKEN para estados inválidos
+        await Preferences.remove({ key: 'token' });
         this.link.navigate(['login']);
         return false;
       }
     }
   })();
-try {
-  return await Promise.race([requestPromise, timeoutPromise]);
-} catch (error: unknown) {
-  const errorMessage = error instanceof Error ? error.message : String(error);
 
-  if (errorMessage === "timeout") {
-    this.presentAlert("Tiempo de espera agotado. Intenta iniciar sesión nuevamente.");
-  } else {
-    this.presentAlert("Error en el servidor. Intenta más tarde.");
-  }
+  try {
+    return await Promise.race([requestPromise, timeoutPromise]);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
 
-  this.link.navigate(['login']);
-  return false;
+    // ✅ LIMPIAR TOKEN en caso de error
+    await Preferences.remove({ key: 'token' });
+
+    if (errorMessage === "timeout") {
+      this.presentAlert("Conexión lenta. Intenta iniciar sesión nuevamente.");
+    } else {
+      this.presentAlert("Error de conexión. Intenta más tarde.");
+    }
+
+    this.link.navigate(['login']);
+    return false;
   }
 }
 

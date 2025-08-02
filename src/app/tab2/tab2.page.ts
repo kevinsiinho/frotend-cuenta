@@ -78,31 +78,31 @@ async Principal(){
     message: 'Cargando...',
   });
 
-    await this.loading.present();
+  await this.loading.present();
 
-    if(await this.userService.Verificar()){
+  // ✅ Verificación rápida antes de cargar datos
+  const isValid = await this.userService.Verificar();
+  
+  if (isValid) {
     const { value:token } = await Preferences.get({ key: 'token' });
-      if(token){
-        const data = await this.userService.Quien(token)
-        this.user = await this.userService.InfoUser(data.data)
-        this.notas= await this.notaservices.allnotas(data.data)
-        this.items= await this.itemService.allitems(data.data)
-        this.items2= await   this.itemService.compartidos(data.data)
-        //this.total()
-
-      }
-      const { value } = await Preferences.get({ key: 'IntemsOrden' });
-      if(value){
-        this.Ordenar(value)
-      }
-
-    }else{
-      this.loading.dismiss();
-      this.isLoading = false;  
+    if(token){
+      const data = await this.userService.Quien(token)
+      this.user = await this.userService.InfoUser(data.data)
+      this.notas= await this.notaservices.allnotas(data.data)
+      this.items= await this.itemService.allitems(data.data)
+      this.items2= await   this.itemService.compartidos(data.data)
     }
-    this.loading.dismiss();
-    this.isLoading = false;
+    
+    const { value } = await Preferences.get({ key: 'IntemsOrden' });
+    if(value){
+      this.Ordenar(value)
+    }
   }
+  
+  // ✅ Siempre cerrar loading
+  this.loading.dismiss();
+  this.isLoading = false;
+}
 
  async Ordenar(ordenar:string){
     await Preferences.set({

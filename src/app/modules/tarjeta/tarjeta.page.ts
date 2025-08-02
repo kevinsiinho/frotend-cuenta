@@ -122,12 +122,19 @@ verificarYCompletarHistorial() {
 
     // Asignar depósitos al mes anterior
     let total = 0;
+    const depositosCopia: Depositos[] = [];
     this.depositos.forEach(element => {
       total += element.valor;
+      // Crear copia real del depósito
+      const copia = new Depositos();
+      copia.setValues(element);
+      depositosCopia.push(copia);
     });
-    mesHistorial.depositos = this.depositos;
+    mesHistorial.depositos = depositosCopia;
     mesHistorial.total = total;
 
+    // COMENTADO PARA NO ELIMINAR DEPÓSITOS - Solo guardar en historial
+    /*
     // Limpiar depósitos de los bolsillos y actualizar
     this.item.bolsillos?.forEach((bolsillo: Bolsillo) => {
       bolsillo.subtotal = 0;
@@ -136,9 +143,11 @@ verificarYCompletarHistorial() {
       });
       this.bolsilloService.Update(bolsillo);
     });
+    */
 
     this.item.realizado = false;
-    this.depositos = [];
+    // NO vaciar this.depositos para que se mantengan en la vista
+    // this.depositos = [];
     this.Update();
   }
 }
