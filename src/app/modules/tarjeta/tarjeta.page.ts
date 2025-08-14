@@ -78,22 +78,39 @@ convertirNumeroAMes(numero: number): string {
   // Si no hay historial, empieza desde enero del año actual
   // Si hay historial, empieza desde el mes siguiente al último registrado
   // Completa los meses faltantes hasta el mes actual
+
+  // Verifica si el historial tiene datos y completa los meses faltantes
+// Ahora funciona quincenalmente: los días 1 y 15 de cada mes
 verificarYCompletarHistorial() {
   const hoy = new Date();
-  if (hoy.getDate() === 1 && !this.item.realizado) {
+  const diaActual = hoy.getDate();
+  
+  // Verificar si es día 1 o 15 y marcar como realizado
+  if ((diaActual === 1 || diaActual === 15) && !this.item.realizado) {
     this.item.realizado = true;
   }
 
-  if (this.item.estadohistorial && this.item.realizado && hoy.getDate() === 1) {
+  // Ejecutar el guardado del historial si es día 1 o 15 y no se ha realizado
+  if (this.item.estadohistorial && this.item.realizado && (diaActual === 1 || diaActual === 15)) {
     let anioActual = hoy.getFullYear();
     let mesActual = hoy.getMonth();
-
-    // Calcular mes y año anterior
-    let mesAnterior = mesActual - 1;
+    
+    // Determinar el período anterior según el día actual
+    let mesAnterior = mesActual;
     let anioAnterior = anioActual;
-    if (mesAnterior < 0) {
-      mesAnterior = 11; // Diciembre
-      anioAnterior -= 1;
+    let periodoAnterior = "";
+    
+    if (diaActual === 1) {
+      // Si es día 1, guardamos la segunda quincena del mes anterior
+      mesAnterior = mesActual - 1;
+      if (mesAnterior < 0) {
+        mesAnterior = 11; // Diciembre
+        anioAnterior -= 1;
+      }
+      periodoAnterior = "segunda";
+    } else if (diaActual === 15) {
+      // Si es día 15, guardamos la primera quincena del mes actual
+      periodoAnterior = "primera";
     }
 
     if (!this.item.historial) {
@@ -107,20 +124,21 @@ verificarYCompletarHistorial() {
       this.item.historial.push(registroAnual);
     }
 
-    // Nombre del mes anterior
-    const nombreMesAnterior = this.convertirNumeroAMes(mesAnterior);
+    // Nombre del mes
+    const nombreMes = this.convertirNumeroAMes(mesAnterior);
+    const nombreCompleto = `${nombreMes}-${periodoAnterior}`;
 
-    // Buscar o crear el mes anterior
-    let mesHistorial = registroAnual.meses.find(m => m.mes === nombreMesAnterior);
+    // Buscar o crear el período en el historial
+    let mesHistorial = registroAnual.meses.find(m => m.mes === nombreCompleto);
     if (!mesHistorial) {
       mesHistorial = new HistorialMes();
-      mesHistorial.mes = nombreMesAnterior;
+      mesHistorial.mes = nombreCompleto;
       mesHistorial.total = 0;
       mesHistorial.depositos = [];
       registroAnual.meses.push(mesHistorial);
     }
 
-    // Asignar depósitos al mes anterior
+    // Asignar depósitos al período anterior
     let total = 0;
     const depositosCopia: Depositos[] = [];
     this.depositos.forEach(element => {
