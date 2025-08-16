@@ -75,58 +75,68 @@ convertirNumeroAMes(numero: number): string {
   return this.nombreMeses[numero];
 }
   // Verifica si el historial tiene datos y completa los meses faltantes
-  // Si no hay historial, empieza desde enero del año actual
-  // Si hay historial, empieza desde el mes siguiente al último registrado
-  // Completa los meses faltantes hasta el mes actual
-
-  // Verifica si el historial tiene datos y completa los meses faltantes
-// Ahora funciona quincenalmente: los días 1 y 15 de cada mes
+  // Ahora funciona quincenalmente: los días 1 y 15 de cada mes
+  // También maneja días posteriores (16, 17, 18, etc.)
 verificarYCompletarHistorial() {
   const hoy = new Date();
   const diaActual = hoy.getDate();
   
-  // Verificar si es día 1 o 15 y marcar como realizado
-  if ((diaActual === 1 || diaActual === 15) && !this.item.realizado) {
-    this.item.realizado = true;
+  // Determinar si necesitamos procesar el historial
+  let debeGuardarHistorial = false;
+  let periodoAProcesar = "";
+  let mesAProcesar = hoy.getMonth();
+  let anioAProcesar = hoy.getFullYear();
+  
+  // Lógica para determinar qué período procesar según el día actual
+  if (diaActual >= 1 && diaActual <= 14) {
+    // Estamos en la primera quincena
+    // Verificar si ya se procesó la segunda quincena del mes anterior
+    if (!this.item.realizado) {
+      debeGuardarHistorial = true;
+      periodoAProcesar = "segunda";
+      mesAProcesar = hoy.getMonth() - 1;
+      if (mesAProcesar < 0) {
+        mesAProcesar = 11; // Diciembre
+        anioAProcesar -= 1;
+      }
+    }
+  } else if (diaActual >= 15) {
+    // Estamos en la segunda quincena o después del 15
+    // Verificar si ya se procesó la primera quincena del mes actual
+    const nombreMesActual = this.convertirNumeroAMes(hoy.getMonth());
+    const nombrePeriodoActual = `${nombreMesActual}-primera`;
+    
+    // Buscar si ya existe este período en el historial
+    const registroAnual = this.item.historial?.find(h => Number(h.ano) === hoy.getFullYear());
+    const yaExistePeriodo = registroAnual?.meses?.find(m => m.mes === nombrePeriodoActual);
+    
+    if (!yaExistePeriodo) {
+      debeGuardarHistorial = true;
+      periodoAProcesar = "primera";
+      mesAProcesar = hoy.getMonth();
+      anioAProcesar = hoy.getFullYear();
+    }
   }
 
-  // Ejecutar el guardado del historial si es día 1 o 15 y no se ha realizado
-  if (this.item.estadohistorial && this.item.realizado && (diaActual === 1 || diaActual === 15)) {
-    let anioActual = hoy.getFullYear();
-    let mesActual = hoy.getMonth();
+  // Ejecutar el guardado del historial si es necesario
+  if (this.item.estadohistorial && debeGuardarHistorial) {
     
-    // Determinar el período anterior según el día actual
-    let mesAnterior = mesActual;
-    let anioAnterior = anioActual;
-    let periodoAnterior = "";
+    console.log(`Guardando historial para: ${this.convertirNumeroAMes(mesAProcesar)}-${periodoAProcesar}`);
     
-    if (diaActual === 1) {
-      // Si es día 1, guardamos la segunda quincena del mes anterior
-      mesAnterior = mesActual - 1;
-      if (mesAnterior < 0) {
-        mesAnterior = 11; // Diciembre
-        anioAnterior -= 1;
-      }
-      periodoAnterior = "segunda";
-    } else if (diaActual === 15) {
-      // Si es día 15, guardamos la primera quincena del mes actual
-      periodoAnterior = "primera";
-    }
-
     if (!this.item.historial) {
       this.item.historial = [];
     }
 
     // Buscar o crear el registro anual correspondiente
-    let registroAnual = this.item.historial.find(h => Number(h.ano) === anioAnterior);
+    let registroAnual = this.item.historial.find(h => Number(h.ano) === anioAProcesar);
     if (!registroAnual) {
-      registroAnual = { ano: String(anioAnterior), meses: [] };
+      registroAnual = { ano: String(anioAProcesar), meses: [] };
       this.item.historial.push(registroAnual);
     }
 
-    // Nombre del mes
-    const nombreMes = this.convertirNumeroAMes(mesAnterior);
-    const nombreCompleto = `${nombreMes}-${periodoAnterior}`;
+    // Nombre del período completo
+    const nombreMes = this.convertirNumeroAMes(mesAProcesar);
+    const nombreCompleto = `${nombreMes}-${periodoAProcesar}`;
 
     // Buscar o crear el período en el historial
     let mesHistorial = registroAnual.meses.find(m => m.mes === nombreCompleto);
@@ -138,7 +148,7 @@ verificarYCompletarHistorial() {
       registroAnual.meses.push(mesHistorial);
     }
 
-    // Asignar depósitos al período anterior
+    // PRIMERO: Asignar depósitos al historial (GUARDAR)
     let total = 0;
     const depositosCopia: Depositos[] = [];
     this.depositos.forEach(element => {
@@ -151,22 +161,52 @@ verificarYCompletarHistorial() {
     mesHistorial.depositos = depositosCopia;
     mesHistorial.total = total;
 
-    // COMENTADO PARA NO ELIMINAR DEPÓSITOS - Solo guardar en historial
-    /*
-    // Limpiar depósitos de los bolsillos y actualizar
-    this.item.bolsillos?.forEach((bolsillo: Bolsillo) => {
-      bolsillo.subtotal = 0;
-      bolsillo.depositos?.forEach(element => {
-        this.depositoServices.Delete(element.id!);
-      });
-      this.bolsilloService.Update(bolsillo);
-    });
-    */
-
+    // SEGUNDO: Actualizar el item con el historial guardado
+    await this.Update();
+    
+    // TERCERO: AHORA SÍ limpiar depósitos después de confirmar que se guardó
+    try {
+      // Limpiar depósitos de los bolsillos y actualizar
+      const promesasLimpieza = this.item.bolsillos?.map(async (bolsillo: Bolsillo) => {
+        // Eliminar todos los depósitos del bolsillo
+        const promesasEliminarDepositos = bolsillo.depositos?.map(element => 
+          this.depositoServices.Delete(element.id!)
+        ) || [];
+        
+        await Promise.all(promesasEliminarDepositos);
+        
+        // Limpiar el bolsillo
+        bolsillo.subtotal = 0;
+        bolsillo.depositos = [];
+        
+        // Actualizar el bolsillo
+        return this.bolsilloService.Update(bolsillo);
+      }) || [];
+      
+      await Promise.all(promesasLimpieza);
+      
+      // Limpiar el array local de depósitos
+      this.depositos = [];
+      
+      // Marcar como realizado para este período
+      this.item.realizado = true;
+      
+      // Actualizar una vez más para guardar el estado "realizado"
+      await this.Update();
+      
+      console.log('Historial guardado y depósitos limpiados exitosamente');
+      
+    } catch (error) {
+      console.error('Error al limpiar depósitos:', error);
+      this.presentAlert("Error al limpiar los depósitos después de guardar el historial");
+    }
+  }
+  
+  // Resetear el flag "realizado" si cambiamos de período
+  if (diaActual >= 15 && periodoAProcesar === "primera") {
     this.item.realizado = false;
-    // NO vaciar this.depositos para que se mantengan en la vista
-    // this.depositos = [];
-    this.Update();
+  } else if (diaActual >= 1 && diaActual <= 14 && periodoAProcesar === "segunda") {
+    this.item.realizado = false;
   }
 }
 
