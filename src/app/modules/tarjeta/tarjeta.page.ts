@@ -77,7 +77,7 @@ convertirNumeroAMes(numero: number): string {
   // Verifica si el historial tiene datos y completa los meses faltantes
   // Ahora funciona quincenalmente: los días 1 y 15 de cada mes
   // También maneja días posteriores (16, 17, 18, etc.)
-verificarYCompletarHistorial() {
+async verificarYCompletarHistorial() {
   const hoy = new Date();
   const diaActual = hoy.getDate();
   
@@ -494,7 +494,7 @@ iniciarTour2() {
       ];
 
       this.ActualizarUltimaVez();
-      this.verificarYCompletarHistorial()
+      await this.verificarYCompletarHistorial();
       this.loading.dismiss();
       this.isLoading = false;
          
