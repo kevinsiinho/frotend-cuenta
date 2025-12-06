@@ -1,61 +1,130 @@
-<ion-header class="header" [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      <span>Inicio</span>
-      <ion-icon (click)="openPopover($event)" class="button-icon" name="ellipsis-vertical-outline"></ion-icon>
+<ion-header class="header" [translucent]="false">
+  <ion-toolbar class="header-toolbar">
+    <ion-title class="header-title">
+      <span class="title-text">Inicio</span>
     </ion-title>
-    <ion-progress-bar *ngIf="this.isLoading===true" color="warning" type="indeterminate"></ion-progress-bar>
+    <ion-buttons slot="end">
+      <ion-button (click)="openPopover($event)" class="button-icon">
+        <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-progress-bar 
+      *ngIf="this.isLoading===true" 
+      color="warning" 
+      type="indeterminate"
+      class="progress-bar">
+    </ion-progress-bar>
   </ion-toolbar>
 </ion-header>
 
-<ion-header class="header2" slot="fixed" [translucent]="true">
-  <ion-segment  [scrollable]="true">
-    <ion-segment-button (ionChange)="scrollToTop()" value="ALL" content-id="ALL">
-      <ion-label>RECIENTES</ion-label>
-    </ion-segment-button>
-    <ion-segment-button (ionChange)="scrollToTop()" value="TARJETAS" content-id="TARJETAS">
-      <ion-label>TARJETAS</ion-label>
-    </ion-segment-button>
-    <ion-segment-button (ionChange)="scrollToTop()" value="NOTAS" content-id="NOTAS">
-      <ion-label>NOTAS</ion-label>
-    </ion-segment-button>
-    <ion-segment-button (ionChange)="scrollToTop()" value="COMPARTIDAS" content-id="COMPARTIDAS">
-      <ion-label>COMPARTIDAS</ion-label>
-    </ion-segment-button>
-  </ion-segment>
+<ion-header class="header2" slot="fixed" [translucent]="false">
+  <ion-toolbar class="segment-toolbar">
+    <ion-segment class="custom-segment" [scrollable]="true" [(ngModel)]="opcionselecionada" (ionChange)="scrollToTop()">
+      <ion-segment-button 
+        value="ALL" 
+        content-id="ALL"
+        class="segment-btn">
+        <ion-icon name="time-outline" class="segment-icon"></ion-icon>
+        <ion-label class="segment-label">Recientes</ion-label>
+      </ion-segment-button>
+      <ion-segment-button 
+        value="TARJETAS" 
+        content-id="TARJETAS"
+        class="segment-btn">
+        <ion-icon name="card-outline" class="segment-icon"></ion-icon>
+        <ion-label class="segment-label">Tarjetas</ion-label>
+      </ion-segment-button>
+      <ion-segment-button 
+        value="NOTAS" 
+        content-id="NOTAS"
+        class="segment-btn">
+        <ion-icon name="document-text-outline" class="segment-icon"></ion-icon>
+        <ion-label class="segment-label">Notas</ion-label>
+      </ion-segment-button>
+      <ion-segment-button 
+        value="COMPARTIDAS" 
+        content-id="COMPARTIDAS"
+        class="segment-btn">
+        <ion-icon name="people-outline" class="segment-icon"></ion-icon>
+        <ion-label class="segment-label">Compartidas</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-refresher slot="fixed" [pullFactor]="0.5" [pullMin]="100" [pullMax]="200" (ionRefresh)="handleRefresh($event)">
-    <ion-refresher-content></ion-refresher-content>
+<ion-content [fullscreen]="true" class="main-content">
+  <ion-refresher 
+    slot="fixed" 
+    [pullFactor]="0.5" 
+    [pullMin]="100" 
+    [pullMax]="200" 
+    (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content 
+      pullingIcon="arrow-down"
+      refreshingSpinner="circles"
+      refreshingText="Actualizando...">
+    </ion-refresher-content>
   </ion-refresher>
-  <ion-segment-view>
- <!-- Slide RECIENTES -->
-  <ion-segment-content id="ALL">
-    <app-reciente [items]="this.items" [itemsC]="this.items2" [notas]="this.notas"></app-reciente>
-  </ion-segment-content>
-<!-- Slide Tarjetas -->
-<ion-segment-content class="segmen-boton" id="TARJETAS">
-  <app-tarjetas [items]="this.items" ></app-tarjetas>
-</ion-segment-content>
-<!-- Slide listas -->
-<ion-segment-content id="NOTAS">
-  <app-notas [notas]="this.notas" [user]="this.user" ></app-notas>
-</ion-segment-content>
-<!-- Slide COMPARTIDAS -->
-<ion-segment-content class="segmen-boton" id="COMPARTIDAS">
-  <app-compartidas [items2]="this.items2"></app-compartidas>
-</ion-segment-content>
-</ion-segment-view>
+  
+  <div class="segment-view" [ngSwitch]="opcionselecionada">
+    <!-- Slide RECIENTES -->
+    <div *ngSwitchCase="'ALL'" class="segment-content">
+      <app-reciente 
+        [items]="this.items" 
+        [itemsC]="this.items2" 
+        [notas]="this.notas">
+      </app-reciente>
+    </div>
+    
+    <!-- Slide Tarjetas -->
+    <div *ngSwitchCase="'TARJETAS'" class="segment-content segmen-boton">
+      <app-tarjetas [items]="this.items"></app-tarjetas>
+    </div>
+    
+    <!-- Slide listas -->
+    <div *ngSwitchCase="'NOTAS'" class="segment-content">
+      <app-notas [notas]="this.notas" [user]="this.user"></app-notas>
+    </div>
+    
+    <!-- Slide COMPARTIDAS -->
+    <div *ngSwitchCase="'COMPARTIDAS'" class="segment-content segmen-boton">
+      <app-compartidas [items2]="this.items2"></app-compartidas>
+    </div>
+  </div>
 
-<ion-popover #popover [dismissOnSelect]="true">
+  <ion-popover #popover [dismissOnSelect]="true" class="custom-popover">
     <ng-template>
-      <ion-content>
-        <ion-list>
-          <ion-item>Ordenar por </ion-item>
-          <ion-item [button]="true" (click)="Ordenar('nombre')" [detail]="false">Nombre</ion-item>
-          <ion-item [button]="true" (click)="Ordenar('favorito')" [detail]="false">Favorito</ion-item>
-          <ion-item [button]="true" (click)="Ordenar('reciente')" [detail]="false">Fecha</ion-item>
+      <ion-content class="popover-content">
+        <ion-list class="popover-list">
+          <ion-item class="popover-header" lines="none">
+            <ion-label>
+              <h2>Ordenar por</h2>
+            </ion-label>
+          </ion-item>
+          <ion-item 
+            [button]="true" 
+            (click)="Ordenar('nombre')" 
+            [detail]="false"
+            class="popover-item">
+            <ion-icon name="text-outline" slot="start" class="popover-icon"></ion-icon>
+            <ion-label>Nombre</ion-label>
+          </ion-item>
+          <ion-item 
+            [button]="true" 
+            (click)="Ordenar('favorito')" 
+            [detail]="false"
+            class="popover-item">
+            <ion-icon name="star-outline" slot="start" class="popover-icon"></ion-icon>
+            <ion-label>Favorito</ion-label>
+          </ion-item>
+          <ion-item 
+            [button]="true" 
+            (click)="Ordenar('reciente')" 
+            [detail]="false"
+            class="popover-item">
+            <ion-icon name="calendar-outline" slot="start" class="popover-icon"></ion-icon>
+            <ion-label>Fecha</ion-label>
+          </ion-item>
         </ion-list>
       </ion-content>
     </ng-template>

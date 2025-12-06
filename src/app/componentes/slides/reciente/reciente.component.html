@@ -1,7 +1,12 @@
 <div class="container">
 
-<ion-label *ngIf="this.items.length>0">Tarjetas abiertas recientemente</ion-label>
-<ion-list class="list-tarjeta" *ngIf="this.items.length>0">
+<!-- Sección Tarjetas Recientes -->
+<section class="section-container" *ngIf="this.items.length>0">
+  <div class="section-header">
+    <ion-icon name="time-outline" class="section-icon"></ion-icon>
+    <h2 class="section-title">Tarjetas abiertas recientemente</h2>
+  </div>
+  <ion-list class="list-tarjeta">
 
   <ion-item class="item-tarjeta" *ngFor="let item of items.slice(0,4)">
     <ion-card class="custom-card" [style.color]="item.colorLetra" [ngClass]="item.NombreTarjeta"  [ngStyle]="getCssVariables(item.ColorFondo!)" (click)="this.Ruta(item.id!)">
@@ -20,10 +25,17 @@
     </ion-card>
   </ion-item>
 -->
-</ion-list>
-<ion-label *ngIf="this.items.length>0">Notas abiertas recientemente</ion-label>
-<ion-list>
-  <ion-item-sliding *ngFor="let nota of this.notas">
+  </ion-list>
+</section>
+
+<!-- Sección Notas Recientes -->
+<section class="section-container" *ngIf="this.notas.length>0">
+  <div class="section-header">
+    <ion-icon name="document-text-outline" class="section-icon"></ion-icon>
+    <h2 class="section-title">Notas abiertas recientemente</h2>
+  </div>
+  <ion-list class="notes-list">
+    <ion-item-sliding *ngFor="let nota of this.notas">
     <ion-item *ngIf="nota.tipo==='lista'"  (click)="this.Verlista(true,nota)">
       <ion-label>{{ nota.titulo }}</ion-label>
      </ion-item>
@@ -39,10 +51,9 @@
         Eliminar
       </ion-item-option>
     </ion-item-options>
-  </ion-item-sliding>
-</ion-list>
-
-
+    </ion-item-sliding>
+  </ion-list>
+</section>
 
 <!--Modal1 listas items-->
 <ion-modal [isOpen]="isModalOpen">
@@ -119,10 +130,13 @@
   </ng-template>
 </ion-modal>
 
-
-
-<ion-label *ngIf="this.itemsC.length>0">Últimas Tarjetas compartidas</ion-label>
-<ion-list *ngIf="this.itemsC.length>0">
+<!-- Sección Tarjetas Compartidas -->
+<section class="section-container" *ngIf="this.itemsC.length>0">
+  <div class="section-header">
+    <ion-icon name="people-outline" class="section-icon"></ion-icon>
+    <h2 class="section-title">Últimas tarjetas compartidas</h2>
+  </div>
+  <ion-list class="shared-list">
   <ion-item *ngIf="this.itemc1">
     <ion-card class="custom-card" [style.color]="itemc1.colorLetra" [ngClass]="itemc1.NombreTarjeta"  [ngStyle]="getCssVariables(itemc1.ColorFondo!)" (click)="this.Ruta(itemc1.id!)">
       <div class="card-header">
@@ -159,13 +173,7 @@
       <div class="softk-brand">SoftK</div>
     </ion-card>
   </ion-item>
-<!--
-  <ion-item class="ver">
-    <ion-card class="custom-card ver">
-      <div class="card-header2">Ver más <ion-icon name="chevron-forward-outline"></ion-icon></div>
-    </ion-card>
-  </ion-item>
--->
-</ion-list>
+  </ion-list>
+</section>
 
 </div>

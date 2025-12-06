@@ -1,5 +1,8 @@
-ion-content{
+// Safe area para contenido
+ion-content {
   text-align: center;
+  padding-top: env(safe-area-inset-top);
+  --padding-top: env(safe-area-inset-top);
 }
 
 div{

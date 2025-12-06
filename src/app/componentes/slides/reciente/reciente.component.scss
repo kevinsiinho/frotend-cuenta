@@ -4,29 +4,72 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  padding: 10px;
+  justify-content: flex-start;
+  padding: 12px 16px 16px 16px;
   box-sizing: border-box;
+  gap: 20px;
+  margin-top: 0;
+  position: relative;
+  z-index: 1;
+}
+
+// Sección container
+.section-container {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  margin-top: 0;
+  padding-top: 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ion-border-color, rgba(0, 0, 0, 0.1));
+  position: relative;
+  z-index: 10;
+  
+  .section-icon {
+    font-size: 22px;
+    color: $principal-color;
+    
+    @media (prefers-color-scheme: dark) {
+      color: var(--ion-color-primary, #428cff);
+    }
+  }
+  
+  .section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--ion-text-color, #212529);
+    letter-spacing: -0.3px;
+    
+    @media (prefers-color-scheme: dark) {
+      color: var(--ion-text-color, #ffffff);
+    }
+  }
 }
 
 .list-tarjeta > .item-tarjeta {
-  border-radius: 5px;
+  border-radius: 12px;
   padding: 0px;
   width: 100%;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --background: transparent;
 }
 
 .list-tarjeta {
   display: grid;
-  grid-template-columns: repeat(2,1fr);
-  grid-auto-rows: minmax(100px, 100px);
-  grid-gap: 20px;
-  margin-bottom: 30px;
-  border-bottom: 2px solid;
-}
-
-ion-label{
-  margin-top: 10px;
-  margin-bottom: 5px;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: minmax(110px, auto);
+  grid-gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: none;
 }
 
 
@@ -43,26 +86,82 @@ ion-checkbox{
 }
 
 
+// Lista de notas
+.notes-list {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  
+  ion-item {
+    --background: var(--ion-item-background, transparent);
+    --border-color: var(--ion-border-color, rgba(0, 0, 0, 0.1));
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --inner-padding-end: 0;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    
+    &:active {
+      transform: scale(0.98);
+    }
+    
+    ion-label {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--ion-text-color, #212529);
+    }
+  }
+}
+
+// Lista de compartidas
+.shared-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 12px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  
+  ion-item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    --background: transparent;
+    border-radius: 12px;
+    padding: 0;
+  }
+}
+
 /*Diseño para las tarjetas*/
 .custom-card {
   width: 100%;
-  height: 90px;
-  padding: 8px;
+  height: 110px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Poppins', sans-serif;
   position: relative;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  
+  &:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
 }
 
 .card-header {
   display: flex;
   flex-direction: column;
-  margin-top: 1px;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 15px;
+  margin-top: 0;
+  justify-content: flex-start;
+  align-items: flex-start;
+  font-size: 14px;
+  gap: 8px;
 }
 
 .ver{
@@ -83,21 +182,25 @@ ion-checkbox{
 }
 
 .card-type {
-  font-size: 14px;
-  margin-top: 5px;
+  font-size: 13px;
+  margin-top: 0;
   text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .chip-icon {
-  font-size: 20px;
+  font-size: 24px;
+  margin-bottom: 4px;
 }
 
 .softk-brand {
   position: absolute;
-  bottom: 5px;
-  right: 8px;
-  font-weight: bold;
-  font-size: 15px;
-  opacity: 0.8;
+  bottom: 8px;
+  right: 12px;
+  font-weight: 600;
+  font-size: 12px;
+  opacity: 0.7;
+  letter-spacing: 0.5px;
 }
 

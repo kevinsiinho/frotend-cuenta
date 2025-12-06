@@ -1,33 +1,25 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      {{this.item.itemname}}
-    <ion-button fill="clear" class="btns2 regresar"  (click)="regresar()">
-       <ion-icon name="chevron-back-outline"> </ion-icon>
-    </ion-button>
-    <ion-button  fill="clear" class="btns2" id="popover-button2">
-      <ion-icon name="ellipsis-vertical-outline"   slot="end"></ion-icon>
-    </ion-button>
-
-    <ion-button class="btns2 favorito" *ngIf="this.item.favorito===false && this.creador===true" (click)="Favorito()" fill="clear">
-      <ion-icon name="heart-dislike-outline"></ion-icon>
-    </ion-button>
-
-    <ion-button class="btns2 favorito" *ngIf="this.item.favorito===true && this.creador===true" (click)="Favorito()" fill="clear">
-      <ion-icon name="heart-sharp"></ion-icon>
-    </ion-button>
+<ion-header class="header" [translucent]="false">
+  <ion-toolbar class="header-toolbar">
+    <ion-buttons slot="start">
+      <ion-button fill="clear" class="back-button" (click)="regresar()">
+        <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="header-title">
+      <span class="title-text">{{item.itemname}}</span>
     </ion-title>
-  </ion-toolbar>
-  <ion-toolbar id="estadoTarjeta" *ngIf="this.compartirUno.estado===true || this.creador===true">
-    <ion-segment >
-      <ion-segment-button (click)="Festado('activar')" value="true">
-        <ion-label><ion-icon name="eye-outline"></ion-icon></ion-label>
-      </ion-segment-button>
-      <ion-segment-button (click)="Festado('desactivar')"value="false">
-        <ion-label><ion-icon name="eye-off-outline"></ion-icon></ion-label>
-      </ion-segment-button>
-    </ion-segment>
-    <ion-progress-bar *ngIf="this.isLoading===true" color="warning" type="indeterminate"></ion-progress-bar>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" class="favorite-button" *ngIf="item.favorito===false && creador===true" (click)="Favorito()">
+        <ion-icon name="heart-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" class="favorite-button active" *ngIf="item.favorito===true && creador===true" (click)="Favorito()">
+        <ion-icon name="heart" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" class="menu-button" id="popover-button2">
+        <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-progress-bar *ngIf="isLoading===true" color="warning" type="indeterminate" class="progress-bar"></ion-progress-bar>
   </ion-toolbar>
 </ion-header>
 
@@ -37,246 +29,502 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-list lines="none" >
-    <ion-item [disabled]="this.item.estado">
-      <ion-reorder-group [disabled]="isDisabled" (ionItemReorder)="handleReorder($any($event))">
-        <ion-item class="item-card-principal" #capturableArea [id]="'item-' + x" *ngFor="let bolsillo of this.item.bolsillos; let x=index;">
-        <ion-card>
-            <ion-card-header>
-              <ion-card-title>{{bolsillo.nombre}}
-                <ion-item [button]="true" class="btn-bolsillos-opc" [detail]="false" [id]="'popover-' + x" *ngIf="this.compartirUno.estado===true || this.creador===true" class="estado" fill="clear">
-                  <ion-icon id="configbolsillo" name="settings" [style.color]="bolsillo.color" ></ion-icon>
-                  <!--Opciones para los bolsillos-->
-                  <ion-popover [trigger]="'popover-' + x" [dismissOnSelect]="true" alignment="start" size="auto">
-                    <ng-template>
-                      <ion-content>
-                        <ion-list>
-                          <ion-item [button]="true" [detail]="false" (click)="openModalEditar = !openModalEditar; this.EditarBolsillo(bolsillo)">Editar bolsillo</ion-item>
-                          <ion-item [button]="true" [detail]="false" (click)="EliminarItem(x)">Eliminar bolsillo</ion-item>
-                          <ion-item [button]="true" [detail]="false" (click)="EliminarDepositos(bolsillo.id!)">Eliminar depositos</ion-item>
-                        </ion-list>
-                      </ion-content>
-                    </ng-template>
-                  </ion-popover>
+  <div class="cards-container">
+    <ion-item [class.disabled-overlay]="item.estado" lines="none">
+      <ion-reorder-group [disabled]="isDisabled" (ionItemReorder)="handleReorder($any($event))" class="reorder-group">
+        <ion-item class="bolsillo-item" [class.card-disabled]="item.estado" #capturableArea [id]="'item-' + x" *ngFor="let bolsillo of item.bolsillos; let x=index;">
+          <ion-card class="bolsillo-card">
+            <ion-card-header class="bolsillo-header" [style.border-left-color]="bolsillo.color">
+              <div class="bolsillo-title-row">
+                <ion-card-title class="bolsillo-title">{{bolsillo.nombre}}</ion-card-title>
+                <div class="bolsillo-actions">
+                  <ion-button 
+                    fill="clear" 
+                    class="bolsillo-add-btn" 
+                    *ngIf="(compartirUno.estado || creador) && !item.estado"
+                    (click)="openDepositoModal(bolsillo)"
+                    title="Agregar/restar depósito">
+                    <ion-icon name="add-circle-outline" [style.color]="bolsillo.color"></ion-icon>
+                  </ion-button>
+                  <ion-button 
+                    fill="clear" 
+                    class="bolsillo-menu-btn" 
+                    [id]="'popover-' + x" 
+                    *ngIf="compartirUno.estado===true || creador===true"
+                    [disabled]="item.estado">
+                    <ion-icon name="ellipsis-horizontal-outline" [style.color]="bolsillo.color"></ion-icon>
+                  </ion-button>
+                </div>
+                
+                <!--Opciones para los bolsillos-->
+                <ion-popover [trigger]="'popover-' + x" [dismissOnSelect]="true" alignment="start" size="auto" class="bolsillo-popover">
+                  <ng-template>
+                    <ion-content>
+                      <ion-list class="popover-list">
+                        <ion-item [button]="true" [detail]="false" (click)="openModalEditar = !openModalEditar; EditarBolsillo(bolsillo)" class="popover-item">
+                          <ion-icon name="create-outline" slot="start"></ion-icon>
+                          <ion-label>Editar bolsillo</ion-label>
+                        </ion-item>
+                        <ion-item [button]="true" [detail]="false" (click)="EliminarDepositos(bolsillo.id!)" class="popover-item">
+                          <ion-icon name="trash-outline" slot="start"></ion-icon>
+                          <ion-label>Eliminar depósitos</ion-label>
+                        </ion-item>
+                        <ion-item [button]="true" [detail]="false" (click)="EliminarItem(x)" class="popover-item destructive">
+                          <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+                          <ion-label>Eliminar bolsillo</ion-label>
+                        </ion-item>
+                      </ion-list>
+                    </ion-content>
+                  </ng-template>
+                </ion-popover>
+              </div>
 
-                </ion-item>
-              </ion-card-title>
+              <!--Titulos de las cantidades-->
+              <div class="bolsillo-values" *ngIf="bolsillo.Vinicial">
+                <div class="value-row">
+                  <span class="value-label">Inicial</span>
+                  <span class="value-amount">${{formatNumberMil(bolsillo.valor!)}}</span>
+                </div>
+                <div class="value-row">
+                  <span class="value-label">Depósitos</span>
+                  <span class="value-amount">${{formatNumberMil(bolsillo.subtotal)}}</span>
+                </div>
+                <div class="value-row total-row">
+                  <span class="value-label">Total</span>
+                  <span class="value-amount total">${{formatNumberMil(bolsillo.valor!+bolsillo.subtotal)}}</span>
+                </div>
+              </div>
+              <div class="bolsillo-values" *ngIf="!bolsillo.Vinicial">
+                <div class="value-row">
+                  <span class="value-label positive">Ingresos</span>
+                  <span class="value-amount positive">${{Positivo(bolsillo)}}</span>
+                </div>
+                <div class="value-row">
+                  <span class="value-label negative">Egresos</span>
+                  <span class="value-amount negative">${{Negativo(bolsillo)}}</span>
+                </div>
+                <div class="value-row total-row">
+                  <span class="value-label">Total</span>
+                  <span class="value-amount total">${{formatNumberMil(bolsillo.subtotal)}}</span>
+                </div>
+              </div>
 
-            <!--Titulos de las cantidades-->
-            <ion-card-subtitle class="subvalores" *ngIf="bolsillo.Vinicial">
-              <span class="left">${{formatNumberMil(bolsillo.valor!)}}</span>
-              <span class="center">${{formatNumberMil(bolsillo.subtotal)}}</span>
-              <span class="right">${{formatNumberMil(bolsillo.valor!+bolsillo.subtotal) }}</span>
-            </ion-card-subtitle>
-            <ion-card-subtitle class="subvalores" *ngIf="!bolsillo.Vinicial">
-              <span class="left">${{Positivo(bolsillo)}}</span>
-              <span class="center">${{Negativo(bolsillo)}}</span>
-              <span class="right">${{formatNumberMil(bolsillo.subtotal) }}</span>
-          </ion-card-subtitle>
-
-              <ion-button id="ver" expand="full" [style.--background]="bolsillo.color" (click)="show(x)"><ion-icon name="eye-outline"></ion-icon></ion-button>
+              <ion-button 
+                expand="full" 
+                class="toggle-details-btn" 
+                [style.--background]="bolsillo.color"
+                (click)="show(x)"
+                [disabled]="false">
+                <ion-icon [name]="cardStates[x] ? 'chevron-up-outline' : 'chevron-down-outline'" slot="start"></ion-icon>
+                {{cardStates[x] ? 'Ocultar detalles' : 'Ver detalles'}}
+              </ion-button>
             </ion-card-header>
 
-          <ion-card-content *ngIf="cardStates[x]===true">
-            <ion-item >
-              <ion-grid class="grid-principal">
-                <ion-row id="verinfo">
-                  <ion-col class="valor">Valor</ion-col>
-                  <ion-col  class="ver">Ver</ion-col>
-                </ion-row>
-              </ion-grid>
-            </ion-item>
-            <ion-list>
-            <ion-item>
-              <ion-grid>
-                <ion-row *ngFor="let deposito of bolsillo.depositos; let z=index">
-                  <ion-col class="valor">${{formatNumberMil(deposito.valor)}}</ion-col>
-                  <ion-col *ngIf="this.compartirUno.estado===true || this.creador===true" class="ver btnVer">
+            <ion-card-content *ngIf="cardStates[x]===true" class="bolsillo-content">
+              <div class="depositos-section">
+                <div class="depositos-header">
+                  <span class="depositos-label">Depósitos</span>
+                </div>
+                <div class="depositos-list" *ngIf="bolsillo.depositos && bolsillo.depositos.length > 0">
+                  <div class="deposito-item" *ngFor="let deposito of bolsillo.depositos; let z=index">
+                    <div class="deposito-info">
+                      <span class="deposito-value">${{formatNumberMil(deposito.valor)}}</span>
+                      <span class="deposito-comment" *ngIf="deposito.comentario">{{deposito.comentario}}</span>
+                    </div>
                     <ion-button
-                      (click)="this.presentActionSheetEliminar(bolsillo,deposito)"
-                      [style.--background]="bolsillo.color">
-                      <ion-icon name="eye-outline"></ion-icon>
+                      fill="clear"
+                      size="small"
+                      class="delete-deposito-btn"
+                      *ngIf="(compartirUno.estado===true || creador===true) && !item.estado"
+                      (click)="presentActionSheetEliminar(bolsillo,deposito)">
+                      <ion-icon name="trash-outline"></ion-icon>
                     </ion-button>
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </ion-item>
+                  </div>
+                </div>
+                <div class="empty-depositos" *ngIf="!bolsillo.depositos || bolsillo.depositos.length === 0">
+                  <ion-icon name="receipt-outline"></ion-icon>
+                  <p>No hay depósitos registrados</p>
+                </div>
+              </div>
 
-          </ion-list>
-
-            <div class="btns" *ngIf="this.compartirUno.estado || this.creador">
-              <ion-item class="list-form">
-                <ion-input class="itemInput" type="number" [(ngModel)]="this.deposito.valor" label="Ingresa el valor" label-placement="floating"></ion-input>
-              </ion-item>
-              <ion-item class="list-form">
-                <ion-textarea label="Comentario" class="itemInput" labelPlacement="floating" [(ngModel)]="this.deposito.comentario" [counter]="true" maxlength="60"></ion-textarea>
-              </ion-item >
-              <ion-item class="list-btns">
-              <ion-button class="btnoption" *ngIf="!item.estadohistorial" (click)="depositar(bolsillo,'sumar')" color="success"><ion-icon name="add-outline"></ion-icon></ion-button>
-              <ion-button class="btnoption" (click)="depositar(bolsillo,'restar')" color="warning"><ion-icon name="remove-outline"></ion-icon></ion-button>
-              </ion-item>
-
-            </div>
-            <ion-button id="capture" [style.--background]="bolsillo.color" (click)="CapturaPantalla(x)" expand="full"><ion-icon name="camera-outline"></ion-icon></ion-button>
-          </ion-card-content>
-        </ion-card>
-        <ion-reorder slot="end"></ion-reorder>
-      </ion-item>
-    </ion-reorder-group>
+              <div class="disabled-message" *ngIf="item.estado">
+                <ion-icon name="lock-closed-outline"></ion-icon>
+                <p>La tarjeta está desactivada. Actívala desde el menú para realizar cambios.</p>
+              </div>
+              <ion-button 
+                expand="block" 
+                class="capture-btn" 
+                [style.--background]="bolsillo.color" 
+                (click)="CapturaPantalla(x)"
+                [disabled]="item.estado">
+                <ion-icon name="camera-outline" slot="start"></ion-icon>
+                Capturar pantalla
+              </ion-button>
+            </ion-card-content>
+          </ion-card>
+          <ion-reorder slot="end" class="reorder-handle"></ion-reorder>
+        </ion-item>
+      </ion-reorder-group>
     </ion-item>
-     <ion-button *ngIf="!isDisabled" expand="full" color="medium" (click)="toggleReorder()" >Cerrar</ion-button>
-    <ion-item class="msn-totales">Totales</ion-item>
-    <ion-item class="totales">
-      <span class="left">${{formatNumberMil(this.positivos)}}</span>
-      <span class="center">${{formatNumberMil(this.negativos)}}</span>
-      <span class="right">${{formatNumberMil(this.Totalresultado)}}</span>
-    </ion-item>
-  </ion-list>
+    
+    <ion-button 
+      *ngIf="!isDisabled" 
+      expand="block" 
+      fill="outline" 
+      class="close-reorder-btn" 
+      (click)="toggleReorder()">
+      <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+      Finalizar orden
+    </ion-button>
+  </div>
+  
+  <!-- Resumen total fijo -->
+  <div class="totals-card-fixed">
+    <div class="totals-content-fixed">
+      <div class="total-row-item-fixed">
+        <div class="total-item">
+          <span class="total-label-fixed positive">Ingresos</span>
+          <span class="total-amount-fixed positive">${{formatNumberMil(positivos)}}</span>
+        </div>
+        <div class="total-item">
+          <span class="total-label-fixed negative">Gastos</span>
+          <span class="total-amount-fixed negative">${{formatNumberMil(negativos)}}</span>
+        </div>
+        <div class="total-item final">
+          <span class="total-label-fixed">Total</span>
+          <span class="total-amount-fixed final">${{formatNumberMil(Totalresultado)}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <!--Modal Crear bolsillo-->
-  <ion-content class="ion-padding">
-    <ion-modal #modal [isOpen]="openModal" (willDismiss)="onWillDismiss($event)">
-      <ng-template>
-        <ion-header>
-          <ion-toolbar>
-            <ion-buttons slot="start">
-              <ion-button class="btnModals" (click)="cancel()">Cancelar</ion-button>
-            </ion-buttons>
-            <ion-title></ion-title>
-            <ion-buttons slot="end">
-              <ion-button class="btnModals" (click)="confirm()" [strong]="true">Confirmar</ion-button>
-            </ion-buttons>
-          </ion-toolbar>
-        </ion-header>
-        <ion-content class="ion-padding">
-          <ion-item>
-            <ion-input
-              label="Nombre"
-              labelPlacement="stacked"
-              type="text"
-              placeholder="Escribe aquí"
-              [(ngModel)]="this.bolsillo.nombre"
-              [counter]="true"
-              maxlength="12"
-            ></ion-input>
-          </ion-item>
-          <ion-item *ngIf="!item.estadohistorial">
-            <ion-toggle [enableOnOffLabels]="false" [(ngModel)]="bolsillo.Vinicial">
-              Valor Inicial
-            </ion-toggle>
-          </ion-item>
-          <ion-item *ngIf="item.estadohistorial || bolsillo.Vinicial === true">
-            <ion-input
-              label="Valor"
-              labelPlacement="stacked"
-              type="number"
-              placeholder="Ingresa el valor"
-              [(ngModel)]="bolsillo.valor"
-            ></ion-input>
-          </ion-item>
-          <ion-item >
-            <ion-label>Color:</ion-label>
-            <input type="color" class="color" [(ngModel)]="this.bolsillo.color"/>
-          </ion-item>
-          <ion-item>
-           </ion-item>
-        </ion-content>
-      </ng-template>
-    </ion-modal>
-  </ion-content>
+  <ion-modal #modal [isOpen]="openModal" (willDismiss)="onWillDismiss($event)" class="bolsillo-modal">
+    <ng-template>
+      <ion-header class="modal-header">
+        <ion-toolbar class="modal-toolbar">
+          <ion-buttons slot="start">
+            <ion-button fill="clear" class="modal-close-btn" (click)="cancel()">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          <ion-title class="modal-title">Nuevo bolsillo</ion-title>
+          <ion-buttons slot="end">
+            <ion-button fill="clear" class="modal-confirm-btn" (click)="confirm()" [strong]="true">
+              Guardar
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="modal-content">
+        <div class="modal-form">
+          <div class="form-field">
+            <ion-item lines="none" class="form-item">
+              <ion-label position="stacked" class="form-label">
+                <ion-icon name="pricetag-outline"></ion-icon>
+                Nombre del bolsillo
+              </ion-label>
+              <ion-input
+                type="text"
+                placeholder="Ej: Ahorros, Gastos..."
+                [(ngModel)]="bolsillo.nombre"
+                [counter]="true"
+                maxlength="12"
+                class="form-input">
+              </ion-input>
+            </ion-item>
+          </div>
+
+          <div class="form-field" *ngIf="!item.estadohistorial">
+            <ion-item lines="none" class="form-item">
+              <ion-label>
+                <div class="toggle-label">
+                  <ion-icon name="wallet-outline"></ion-icon>
+                  <span>Valor inicial</span>
+                </div>
+                <p class="toggle-description">Incluir un valor inicial para este bolsillo</p>
+              </ion-label>
+              <ion-toggle 
+                [(ngModel)]="bolsillo.Vinicial"
+                [enableOnOffLabels]="true" 
+                color="primary">
+              </ion-toggle>
+            </ion-item>
+          </div>
+
+          <div class="form-field" *ngIf="item.estadohistorial || bolsillo.Vinicial === true">
+            <ion-item lines="none" class="form-item">
+              <ion-label position="stacked" class="form-label">
+                <ion-icon name="cash-outline"></ion-icon>
+                Valor inicial
+              </ion-label>
+              <ion-input
+                type="number"
+                placeholder="Ingresa el valor"
+                [(ngModel)]="bolsillo.valor"
+                class="form-input">
+              </ion-input>
+            </ion-item>
+          </div>
+
+          <div class="form-field">
+            <ion-item lines="none" class="form-item color-picker-item">
+              <ion-label position="stacked" class="form-label">
+                <ion-icon name="color-palette-outline"></ion-icon>
+                Color del bolsillo
+              </ion-label>
+              <div class="color-picker-wrapper">
+                <input 
+                  type="color" 
+                  class="color-picker-input" 
+                  [(ngModel)]="bolsillo.color"/>
+                <div class="color-preview" [style.background]="bolsillo.color"></div>
+              </div>
+            </ion-item>
+          </div>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 
 <!--Modal editar bolsillo-->
-
-  <ion-content class="ion-padding">
-    <ion-modal #modalEditar [isOpen]="openModalEditar" (willDismiss)="onWillDismissE($event)">
-      <ng-template>
-        <ion-header class="">
-          <ion-toolbar>
-            <ion-buttons slot="start">
-              <ion-button class="btnModals" (click)="cancel2()">Cancelar</ion-button>
-            </ion-buttons>
-            <ion-title></ion-title>
-            <ion-buttons slot="end">
-              <ion-button class="btnModals" (click)="confirmEditar()" [strong]="true">Confirmar</ion-button>
-            </ion-buttons>
-          </ion-toolbar>
-        </ion-header>
-        <ion-content class="ion-padding">
-          <ion-item>
-            <ion-input
-              label="Nombre"
-              labelPlacement="stacked"
-              type="text"
-              placeholder="Escribe aquí"
-              [(ngModel)]="this.bolsilloEditar.nombre"
-              [counter]="true"
-              maxlength="12"
-            ></ion-input>
-          </ion-item>
-
-          <!-- SOLO muestra el toggle si NO es historial -->
-          <ion-item *ngIf="!item.estadohistorial">
-            <ion-toggle [enableOnOffLabels]="false" [(ngModel)]="bolsilloEditar.Vinicial">
-              Valor Inicial
-            </ion-toggle>
-          </ion-item>
-
-          <!-- Input SIEMPRE visible si es historial, o solo si el toggle está activado -->
-          <ion-item *ngIf="item.estadohistorial || bolsilloEditar.Vinicial === true">
-            <ion-input
-              label="Valor"
-              labelPlacement="stacked"
-              type="number"
-              placeholder="Ingresa el valor"
-              [(ngModel)]="this.bolsilloEditar.valor"
-            ></ion-input>
-          </ion-item>
-
-          <ion-item>
-            <ion-label>Color:</ion-label>
-            <input type="color" class="color" [(ngModel)]="this.bolsilloEditar.color"/>
-          </ion-item>
-          <ion-item>
-           </ion-item>
-        </ion-content>
-      </ng-template>
-    </ion-modal>
-  </ion-content>
-
-
-<!--Poper de las opciones en el menú-->
-  <ion-popover  trigger="popover-button2" [dismissOnSelect]="true">
+  <ion-modal #modalEditar [isOpen]="openModalEditar" (willDismiss)="onWillDismissE($event)" class="bolsillo-modal">
     <ng-template>
-      <ion-content>
-        <ion-list *ngIf="this.compartirUno.estado===true || this.creador===true">
-          <ion-item [button]="true" id="nested-trigger">Ordenar Por</ion-item>
-          <ion-item [button]="true" [detail]="false" (click)="openModal = !openModal">Nuevo</ion-item>
-          <ion-item *ngIf="this.creador===true" [button]="true" [detail]="false" (click)="this.EditarNombreTarjeta()">Editar</ion-item>
-          <ion-item [button]="true" [detail]="false" (click)="Compartir()">Compartir</ion-item>
-          <ion-item [button]="true" [detail]="false" (click)="this.EliminarTarjeta()">Eliminar Tarjeta</ion-item>
-          <ion-item [button]="true" [detail]="false" (click)="toggleReorder()">Ordenar bolsillos</ion-item>
-          <ion-item *ngIf="item.estadohistorial" [button]="true" [detail]="false" (click)="RutaHistorial()">Ver historial</ion-item>
+      <ion-header class="modal-header">
+        <ion-toolbar class="modal-toolbar">
+          <ion-buttons slot="start">
+            <ion-button fill="clear" class="modal-close-btn" (click)="cancel2()">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          <ion-title class="modal-title">Editar bolsillo</ion-title>
+          <ion-buttons slot="end">
+            <ion-button fill="clear" class="modal-confirm-btn" (click)="confirmEditar()" [strong]="true">
+              Guardar
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="modal-content">
+        <div class="modal-form">
+          <div class="form-field">
+            <ion-item lines="none" class="form-item">
+              <ion-label position="stacked" class="form-label">
+                <ion-icon name="pricetag-outline"></ion-icon>
+                Nombre del bolsillo
+              </ion-label>
+              <ion-input
+                type="text"
+                placeholder="Ej: Ahorros, Gastos..."
+                [(ngModel)]="bolsilloEditar.nombre"
+                [counter]="true"
+                maxlength="12"
+                class="form-input">
+              </ion-input>
+            </ion-item>
+          </div>
 
-          <ion-popover trigger="nested-trigger" [dismissOnSelect]="true" side="end">
+          <div class="form-field" *ngIf="!item.estadohistorial">
+            <ion-item lines="none" class="form-item">
+              <ion-label>
+                <div class="toggle-label">
+                  <ion-icon name="wallet-outline"></ion-icon>
+                  <span>Valor inicial</span>
+                </div>
+                <p class="toggle-description">Incluir un valor inicial para este bolsillo</p>
+              </ion-label>
+              <ion-toggle 
+                [(ngModel)]="bolsilloEditar.Vinicial"
+                [enableOnOffLabels]="true" 
+                color="primary">
+              </ion-toggle>
+            </ion-item>
+          </div>
+
+          <div class="form-field" *ngIf="item.estadohistorial || bolsilloEditar.Vinicial === true">
+            <ion-item lines="none" class="form-item">
+              <ion-label position="stacked" class="form-label">
+                <ion-icon name="cash-outline"></ion-icon>
+                Valor inicial
+              </ion-label>
+              <ion-input
+                type="number"
+                placeholder="Ingresa el valor"
+                [(ngModel)]="bolsilloEditar.valor"
+                class="form-input">
+              </ion-input>
+            </ion-item>
+          </div>
+
+          <div class="form-field">
+            <ion-item lines="none" class="form-item color-picker-item">
+              <ion-label position="stacked" class="form-label">
+                <ion-icon name="color-palette-outline"></ion-icon>
+                Color del bolsillo
+              </ion-label>
+              <div class="color-picker-wrapper">
+                <input 
+                  type="color" 
+                  class="color-picker-input" 
+                  [(ngModel)]="bolsilloEditar.color"/>
+                <div class="color-preview" [style.background]="bolsilloEditar.color"></div>
+              </div>
+            </ion-item>
+          </div>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+
+<!--Popover de las opciones en el menú-->
+  <ion-popover trigger="popover-button2" [dismissOnSelect]="true" class="custom-popover">
+    <ng-template>
+      <ion-content class="popover-content">
+        <ion-list *ngIf="compartirUno.estado===true || creador===true" class="popover-list">
+          <ion-item [button]="true" [detail]="false" (click)="openModal = !openModal" class="popover-item">
+            <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+            <ion-label>Nuevo bolsillo</ion-label>
+          </ion-item>
+          <ion-item *ngIf="creador===true" [button]="true" [detail]="false" (click)="EditarNombreTarjeta()" class="popover-item">
+            <ion-icon name="create-outline" slot="start"></ion-icon>
+            <ion-label>Editar tarjeta</ion-label>
+          </ion-item>
+          <ion-item [button]="true" [detail]="false" (click)="Compartir()" class="popover-item">
+            <ion-icon name="people-outline" slot="start"></ion-icon>
+            <ion-label>Compartir</ion-label>
+          </ion-item>
+          <ion-item [button]="true" [detail]="false" (click)="toggleReorder()" class="popover-item">
+            <ion-icon name="swap-vertical-outline" slot="start"></ion-icon>
+            <ion-label>Ordenar bolsillos</ion-label>
+          </ion-item>
+          <ion-item [button]="true" id="nested-trigger" class="popover-item">
+            <ion-icon name="funnel-outline" slot="start"></ion-icon>
+            <ion-label>Ordenar por</ion-label>
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          </ion-item>
+          <ion-item *ngIf="item.estadohistorial" [button]="true" [detail]="false" (click)="RutaHistorial()" class="popover-item">
+            <ion-icon name="time-outline" slot="start"></ion-icon>
+            <ion-label>Ver historial</ion-label>
+          </ion-item>
+          <ion-item *ngIf="compartirUno.estado===true || creador===true" [button]="true" [detail]="false" (click)="Festado(item.estado ? 'activar' : 'desactivar')" class="popover-item">
+            <ion-icon [name]="item.estado ? 'eye-outline' : 'eye-off-outline'" slot="start"></ion-icon>
+            <ion-label>{{item.estado ? 'Activar tarjeta' : 'Desactivar tarjeta'}}</ion-label>
+          </ion-item>
+          <ion-item [button]="true" [detail]="false" (click)="EliminarTarjeta()" class="popover-item destructive">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            <ion-label>Eliminar tarjeta</ion-label>
+          </ion-item>
+
+          <ion-popover trigger="nested-trigger" [dismissOnSelect]="true" side="end" class="nested-popover">
             <ng-template>
               <ion-content>
-                <ion-list>
-                  <ion-item>Ordenar por </ion-item>
-                  <ion-item [button]="true" class="nameSpan" (click)="Ordenar('nombre')" [detail]="false">Nombre</ion-item>
-                  <ion-item [button]="true" class="nameSpan" (click)="Ordenar('favorito')" [detail]="false">Favorito</ion-item>
+                <ion-list class="popover-list">
+                  <ion-item class="popover-header">
+                    <ion-label><strong>Ordenar por</strong></ion-label>
+                  </ion-item>
+                  <ion-item [button]="true" [detail]="false" (click)="Ordenar('nombre')" class="popover-item">
+                    <ion-icon name="text-outline" slot="start"></ion-icon>
+                    <ion-label>Nombre</ion-label>
+                  </ion-item>
+                  <ion-item [button]="true" [detail]="false" (click)="Ordenar('favorito')" class="popover-item">
+                    <ion-icon name="star-outline" slot="start"></ion-icon>
+                    <ion-label>Favorito</ion-label>
+                  </ion-item>
                 </ion-list>
               </ion-content>
             </ng-template>
           </ion-popover>
         </ion-list>
 
-        <ion-list *ngIf="this.compartirUno.estado===false">
-          <ion-item [button]="true" [detail]="false" (click)="setOpen(true)">Ver Integrantes</ion-item>
-          <ion-item [button]="true" [detail]="false" (click)="this.EliminarCompartida(this.user.id!)">Eliminar compartida</ion-item>
+        <ion-list *ngIf="compartirUno.estado===false" class="popover-list">
+          <ion-item [button]="true" [detail]="false" (click)="setOpen(true)" class="popover-item">
+            <ion-icon name="people-outline" slot="start"></ion-icon>
+            <ion-label>Ver integrantes</ion-label>
+          </ion-item>
+          <ion-item [button]="true" [detail]="false" (click)="EliminarCompartida(user.id!)" class="popover-item destructive">
+            <ion-icon name="log-out-outline" slot="start"></ion-icon>
+            <ion-label>Eliminar compartida</ion-label>
+          </ion-item>
         </ion-list>
-
       </ion-content>
     </ng-template>
   </ion-popover>
+
+  <!--Modal Agregar/Restar Depósito-->
+  <ion-modal #modalDeposito [isOpen]="openModalDeposito" (willDismiss)="onWillDismissDeposito($event)" class="deposito-modal">
+    <ng-template>
+      <ion-header class="modal-header">
+        <ion-toolbar class="modal-toolbar">
+          <ion-buttons slot="start">
+            <ion-button fill="clear" class="modal-close-btn" (click)="cancelDeposito()">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          <ion-title class="modal-title">Agregar depósito</ion-title>
+          <ion-buttons slot="end"></ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="modal-content">
+        <div class="modal-form">
+          <div class="form-field">
+            <ion-item lines="none" class="form-item">
+              <ion-label position="stacked" class="form-label">
+                <ion-icon name="cash-outline"></ion-icon>
+                Valor
+              </ion-label>
+              <ion-input 
+                type="number" 
+                [(ngModel)]="deposito.valor" 
+                placeholder="Ingresa el valor" 
+                class="form-input"
+                autofocus>
+              </ion-input>
+            </ion-item>
+          </div>
+
+          <div class="form-field">
+            <ion-item lines="none" class="form-item">
+              <ion-label position="stacked" class="form-label">
+                <ion-icon name="chatbubble-outline"></ion-icon>
+                Comentario (opcional)
+              </ion-label>
+              <ion-textarea 
+                [(ngModel)]="deposito.comentario" 
+                placeholder="Agrega un comentario..."
+                [counter]="true" 
+                maxlength="60"
+                rows="2"
+                class="form-textarea">
+              </ion-textarea>
+            </ion-item>
+          </div>
+
+          <div class="action-buttons-modal">
+            <ion-button 
+              expand="block" 
+              *ngIf="!item.estadohistorial && selectedBolsillo" 
+              (click)="depositar(selectedBolsillo!, 'sumar')" 
+              class="add-btn-modal"
+              [style.--background]="selectedBolsillo?.color || '#027abb'"
+              [disabled]="!deposito?.valor || (deposito?.valor ?? 0) <= 0">
+              <ion-icon name="add-outline" slot="start"></ion-icon>
+              Agregar
+            </ion-button>
+            <ion-button 
+              expand="block" 
+              *ngIf="selectedBolsillo"
+              (click)="depositar(selectedBolsillo!, 'restar')" 
+              class="subtract-btn-modal"
+              color="warning"
+              [disabled]="!deposito?.valor || (deposito?.valor ?? 0) <= 0">
+              <ion-icon name="remove-outline" slot="start"></ion-icon>
+              Restar
+            </ion-button>
+          </div>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 
 </ion-content>

@@ -232,4 +232,13 @@ async ngOnChanges(changes: SimpleChanges) {
   if (changes['notas'] && changes['notas'].currentValue) {
       }
   }
+
+  getCompletedItemsCount(): number {
+    if (!this.UpdateList.items) return 0;
+    return this.UpdateList.items.filter(item => item.estado).length;
+  }
+
+  hasCompletedItems(): boolean {
+    return this.getCompletedItemsCount() > 0;
+  }
 }

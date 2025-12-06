@@ -1,64 +1,139 @@
-  <div class="ion-page" id="main-content">
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button></ion-menu-button>
-        </ion-buttons>
-        <ion-title>Información</ion-title>
-    <ion-progress-bar *ngIf="this.isLoading===true" color="warning" type="indeterminate"></ion-progress-bar>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content class="ion-padding">
-    <ion-list>
-      <ion-item>
-          <h1>{{this.user.name}} {{this.user.nickname}}</h1>
-      </ion-item>
-      <ion-item>
-        <ion-icon class="icon-ultima" name="time-outline"></ion-icon>
-        <label>{{this.user.ultimaVez}}</label>
-    </ion-item>
-    </ion-list>
-      <ion-list>
-        <ion-item class="mis-datos">
-          <ion-accordion-group #accordionGroup>
-            <ion-accordion value="first">
-              <ion-item slot="header" color="light">
-                <ion-label>Mis datos</ion-label>
-              </ion-item>
-              <div class="ion-padding" slot="content">
-                <ion-item>
-                   <ion-label><span>ID: </span> {{this.user.id}}</ion-label>
-                </ion-item>
-                <ion-item>
-                  <ion-label><span>Nombres: </span> {{this.user.name}}</ion-label>
-                </ion-item>
-                <ion-item>
-                  <ion-label>Apellidos: {{this.user.nickname}}</ion-label>
-                </ion-item>
-                <ion-item>
-                  <ion-label><span>Email: </span>{{this.user.email}} </ion-label>
-                </ion-item>
-                <ion-item>
-                  <ion-label><span>Celular: </span> {{this.user.cel}} </ion-label>
-                </ion-item>
-              </div>
-            </ion-accordion>
-          </ion-accordion-group>
-        </ion-item>
-        <ion-item *ngFor="let item of this.menu" [routerLink]="[item.link]">
-          <ion-icon class="item-icono" slot="start" name={{item.icono}}></ion-icon>
-          <label>{{item.name}}</label>
-          <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
-        </ion-item>
-        <ion-item>
-          <ion-icon class="item-icono" slot="start" name="analytics-outline"></ion-icon>
-          <ion-toggle [enableOnOffLabels]="true" (click)="VerGuia()">Activar guía</ion-toggle>
-        </ion-item>
-        <ion-item>
-          <ion-input label="Versión" value="2.0" [disabled]="true"></ion-input>
-        </ion-item>
-        <ion-button fill="clear" class="salir" (click)="salir()" expand="full">Salir</ion-button>
-      </ion-list>
+<div class="ion-page" id="main-content">
+  <ion-header class="header">
+    <ion-toolbar class="header-toolbar">
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title class="header-title">
+        <span class="title-text">Información</span>
+      </ion-title>
+      <ion-progress-bar 
+        *ngIf="isLoading===true" 
+        color="warning" 
+        type="indeterminate"
+        class="progress-bar">
+      </ion-progress-bar>
+    </ion-toolbar>
+  </ion-header>
 
-    </ion-content>
-  </div>
+  <ion-content [fullscreen]="true" class="main-content">
+    <div class="profile-container">
+      <!-- Perfil del usuario -->
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="avatar-circle">
+            <ion-icon name="person" class="avatar-icon"></ion-icon>
+          </div>
+          <h1 class="profile-name">{{user.name}} {{user.nickname}}</h1>
+          <div class="last-seen">
+            <ion-icon name="time-outline" class="time-icon"></ion-icon>
+            <span class="last-seen-text">{{user.ultimaVez || 'Nunca'}}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mis datos -->
+      <div class="section-card">
+        <ion-accordion-group #accordionGroup>
+          <ion-accordion value="first">
+            <ion-item slot="header" class="accordion-header">
+              <ion-icon name="person-circle-outline" slot="start" class="accordion-icon"></ion-icon>
+              <ion-label class="accordion-label">Mis datos</ion-label>
+            </ion-item>
+            <div class="accordion-content" slot="content">
+              <div class="data-item">
+                <div class="data-label">
+                  <ion-icon name="finger-print-outline"></ion-icon>
+                  <span>ID</span>
+                </div>
+                <div class="data-value">{{user.id}}</div>
+              </div>
+              <div class="data-item">
+                <div class="data-label">
+                  <ion-icon name="person-outline"></ion-icon>
+                  <span>Nombres</span>
+                </div>
+                <div class="data-value">{{user.name}}</div>
+              </div>
+              <div class="data-item">
+                <div class="data-label">
+                  <ion-icon name="people-outline"></ion-icon>
+                  <span>Apellidos</span>
+                </div>
+                <div class="data-value">{{user.nickname}}</div>
+              </div>
+              <div class="data-item">
+                <div class="data-label">
+                  <ion-icon name="mail-outline"></ion-icon>
+                  <span>Email</span>
+                </div>
+                <div class="data-value">{{user.email}}</div>
+              </div>
+              <div class="data-item">
+                <div class="data-label">
+                  <ion-icon name="call-outline"></ion-icon>
+                  <span>Celular</span>
+                </div>
+                <div class="data-value">{{user.cel || 'No registrado'}}</div>
+              </div>
+            </div>
+          </ion-accordion>
+        </ion-accordion-group>
+      </div>
+
+      <!-- Menú de opciones -->
+      <div class="menu-section">
+        <ion-item 
+          *ngFor="let item of menu" 
+          [routerLink]="[item.link]" 
+          class="menu-item"
+          button
+          detail="true">
+          <ion-icon [name]="item.icono" slot="start" class="menu-icon"></ion-icon>
+          <ion-label class="menu-label">{{item.name}}</ion-label>
+          <ion-icon name="chevron-forward-outline" slot="end" class="chevron-icon"></ion-icon>
+        </ion-item>
+      </div>
+
+      <!-- Opciones adicionales -->
+      <div class="options-section">
+        <div class="option-item">
+          <ion-item lines="none" class="toggle-item">
+            <ion-icon name="analytics-outline" slot="start" class="option-icon"></ion-icon>
+            <ion-label>
+              <div class="option-name">Activar guía</div>
+              <div class="option-desc">Muestra las guías de uso en la aplicación</div>
+            </ion-label>
+            <ion-toggle 
+              [enableOnOffLabels]="true" 
+              (ionChange)="VerGuia()"
+              color="primary">
+            </ion-toggle>
+          </ion-item>
+        </div>
+
+        <div class="version-item">
+          <ion-item lines="none">
+            <ion-icon name="information-circle-outline" slot="start" class="version-icon"></ion-icon>
+            <ion-label>
+              <div class="version-label">Versión de la aplicación</div>
+            </ion-label>
+            <div slot="end" class="version-value">2.5</div>
+          </ion-item>
+        </div>
+      </div>
+
+      <!-- Botón de salir -->
+      <div class="logout-section">
+        <ion-button 
+          fill="solid" 
+          class="logout-button" 
+          (click)="salir()" 
+          expand="block">
+          <ion-icon name="log-out-outline" slot="start"></ion-icon>
+          Cerrar Sesión
+        </ion-button>
+      </div>
+    </div>
+  </ion-content>
+</div>

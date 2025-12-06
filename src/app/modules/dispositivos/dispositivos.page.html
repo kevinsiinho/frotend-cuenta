@@ -1,45 +1,95 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-item  class="btn-back" [button]="true" [detail]="false" (click)="regresar()"> <ion-icon name="chevron-back-outline"> </ion-icon></ion-item>
-    <ion-title>Dispositivos</ion-title>
+<ion-header class="header">
+  <ion-toolbar class="header-toolbar">
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="regresar()" class="back-button">
+        <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="header-title">
+      <span class="title-text">Dispositivos</span>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-list>
-    <ion-item *ngFor="let cel of this.devices; let x=index;">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>Dispositivo {{(x+1)}}</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-list>
-            <ion-item>
-              <ion-input label="MARCA:" value={{cel.manufacturer}} [disabled]="true"></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-input label="MODELO:" value={{cel.model}} [disabled]="true"></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-input label="ISO:" value={{cel.operatingSystem}} [disabled]="true"></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-input label="VERSIÓN:" value={{cel.osVersion}} [disabled]="true"></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-input label="PLATAFORMA:" value={{cel.platform}} [disabled]="true"></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-input label="FECHA INICIO:" value={{cel.fecha}} [disabled]="true"></ion-input>
-            </ion-item>
-            <ion-button fill="clear" class="eliminar" expand="full" (click)="this.Eliminar(cel.id!)">Eliminar</ion-button>
-          </ion-list>
-        </ion-card-content>
-      </ion-card>
-    </ion-item>
+<ion-content [fullscreen]="true" class="main-content">
+  <div class="devices-container">
+    <div class="devices-header" *ngIf="devices && devices.length > 0">
+      <ion-icon name="phone-portrait-outline" class="header-icon"></ion-icon>
+      <h2 class="header-title">Dispositivos registrados</h2>
+      <p class="header-subtitle">Gestiona los dispositivos asociados a tu cuenta</p>
+    </div>
 
-  </ion-list>
+    <div class="empty-state" *ngIf="!devices || devices.length === 0">
+      <ion-icon name="phone-portrait-outline" class="empty-icon"></ion-icon>
+      <p class="empty-text">No hay dispositivos registrados</p>
+    </div>
 
-  <div class="abajo"></div>
-  <div class="abajo2"></div>
+    <div class="devices-list" *ngIf="devices && devices.length > 0">
+      <div class="device-card" *ngFor="let cel of devices; let x=index;">
+        <div class="device-header">
+          <div class="device-number">
+            <ion-icon name="phone-portrait"></ion-icon>
+            <span>Dispositivo {{x+1}}</span>
+          </div>
+          <ion-button 
+            fill="clear" 
+            class="delete-button" 
+            (click)="Eliminar(cel.id!)"
+            color="danger">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+
+        <div class="device-info">
+          <div class="info-row">
+            <div class="info-label">
+              <ion-icon name="phone-portrait-outline"></ion-icon>
+              <span>Marca</span>
+            </div>
+            <div class="info-value">{{cel.manufacturer || 'N/A'}}</div>
+          </div>
+
+          <div class="info-row">
+            <div class="info-label">
+              <ion-icon name="phone-portrait-outline"></ion-icon>
+              <span>Modelo</span>
+            </div>
+            <div class="info-value">{{cel.model || 'N/A'}}</div>
+          </div>
+
+          <div class="info-row">
+            <div class="info-label">
+              <ion-icon name="logo-android"></ion-icon>
+              <span>Sistema Operativo</span>
+            </div>
+            <div class="info-value">{{cel.operatingSystem || 'N/A'}}</div>
+          </div>
+
+          <div class="info-row">
+            <div class="info-label">
+              <ion-icon name="code-working-outline"></ion-icon>
+              <span>Versión</span>
+            </div>
+            <div class="info-value">{{cel.osVersion || 'N/A'}}</div>
+          </div>
+
+          <div class="info-row">
+            <div class="info-label">
+              <ion-icon name="desktop-outline"></ion-icon>
+              <span>Plataforma</span>
+            </div>
+            <div class="info-value">{{cel.platform || 'N/A'}}</div>
+          </div>
+
+          <div class="info-row">
+            <div class="info-label">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>Fecha de registro</span>
+            </div>
+            <div class="info-value">{{cel.fecha || 'N/A'}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </ion-content>

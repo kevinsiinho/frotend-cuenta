@@ -1,5 +1,6 @@
 @import 'src/global.scss';
 
+// Safe area para contenido sin header visible
 .codigo-principal{
   --background: transparent;
   display: flex;
@@ -9,6 +10,12 @@
   position: relative;
   margin: 0;
   padding: 0;
+  padding-top: env(safe-area-inset-top);
+}
+
+ion-content {
+  padding-top: env(safe-area-inset-top);
+  --padding-top: env(safe-area-inset-top);
 }
 
 .form {

@@ -1,40 +1,76 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-item  class="btn-back" [button]="true" [detail]="false" (click)="regresar()"> <ion-icon name="chevron-back-outline"> </ion-icon></ion-item>
-    <ion-title>Modificar Información</ion-title>
+<ion-header class="header">
+  <ion-toolbar class="header-toolbar">
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="regresar()" class="back-button">
+        <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="header-title">
+      <span class="title-text">Modificar Información</span>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  
-    <ion-list class="form">
-      <div class="inputs" >
-        <ion-label>Nombres:</ion-label>
+<ion-content [fullscreen]="true" class="main-content">
+  <div class="form-container">
+    <div class="form-header">
+      <ion-icon name="person-circle-outline" class="header-icon"></ion-icon>
+      <h2 class="form-title">Actualiza tus datos personales</h2>
+      <p class="form-subtitle">Modifica la información de tu perfil</p>
+    </div>
+
+    <div class="form-content">
+      <div class="field-group">
+        <label class="field-label" for="name">
+          <ion-icon name="person-outline"></ion-icon>
+          <span>Nombres</span>
+        </label>
         <ion-input
+          id="name"
           type="text"
-          [(ngModel)]="this.user.name"
-          placeholder="Escribe aquí"
-          ></ion-input>
-      </div>
-      <div class="inputs" >
-        <ion-label>Apellidos:</ion-label>
-        <ion-input
-          type="text"
-          [(ngModel)]="this.user.nickname"
-          placeholder="Escribe aquí"
-          ></ion-input>
-      </div>
-      <div class="inputs" >
-        <ion-label>Celular:</ion-label>
-        <ion-input
-          type="text"
-          [(ngModel)]="this.user.cel"
-          placeholder="Escribe aquí"
-          ></ion-input>
+          [(ngModel)]="user.name"
+          placeholder="Ingresa tus nombres"
+          class="styled-input">
+        </ion-input>
       </div>
 
-      <ion-button class="btn-ingresar"  (click)="actualizar()" expand="block">Ingresar</ion-button>
-    </ion-list>
+      <div class="field-group">
+        <label class="field-label" for="nickname">
+          <ion-icon name="people-outline"></ion-icon>
+          <span>Apellidos</span>
+        </label>
+        <ion-input
+          id="nickname"
+          type="text"
+          [(ngModel)]="user.nickname"
+          placeholder="Ingresa tus apellidos"
+          class="styled-input">
+        </ion-input>
+      </div>
 
+      <div class="field-group">
+        <label class="field-label" for="cel">
+          <ion-icon name="call-outline"></ion-icon>
+          <span>Celular</span>
+        </label>
+        <ion-input
+          id="cel"
+          type="tel"
+          [(ngModel)]="user.cel"
+          placeholder="Ingresa tu número de celular"
+          class="styled-input">
+        </ion-input>
+      </div>
 
+      <div class="button-container">
+        <ion-button 
+          class="save-button" 
+          (click)="actualizar()" 
+          expand="block">
+          <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+          Guardar Cambios
+        </ion-button>
+      </div>
+    </div>
+  </div>
 </ion-content>

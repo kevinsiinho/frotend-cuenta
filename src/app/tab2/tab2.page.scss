@@ -1,33 +1,406 @@
 @import '../../global.scss';
 
-.button-icon {
-  float: right;
-  cursor: pointer;
-}
-
-.button{
-  font-size: 18px;
-  height: 45px;
-  width: 100%;
-}
-
-ion-segment-button{
-  --color-checked:#027abb;
-   &:hover {
-    --color: black;
-    background-color:$fondo;
-      transition: background-color 0.3s;
+// Safe area para los headers (hay dos headers en tab2)
+ion-header {
+  padding-top: env(safe-area-inset-top);
+  background: var(--ion-background-color);
+  position: relative;
+  
+  // Extender el fondo hacia arriba para llenar el safe area
+  &::before {
+    content: '';
+    position: absolute;
+    top: calc(-1 * env(safe-area-inset-top));
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top);
+    background: inherit;
+    z-index: -1;
+  }
+  
+  &.header {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid var(--ion-border-color, rgba(0, 0, 0, 0.1));
+    
+    ion-toolbar {
+      padding-top: 0;
+      min-height: calc(56px + env(safe-area-inset-top));
+      
+      &.header-toolbar {
+        --background: var(--ion-background-color, #ffffff);
+        --color: var(--ion-text-color, #000000);
+      }
     }
+  }
+  
+  &.header2 {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid var(--ion-border-color, rgba(0, 0, 0, 0.1));
+    z-index: 10;
+    
+    ion-toolbar {
+      &.segment-toolbar {
+        --background: var(--ion-background-color, #ffffff);
+        --padding-start: 0;
+        --padding-end: 0;
+      }
+    }
+  }
 }
 
+// Ajustar contenido para safe area (considerando dos headers)
+ion-content {
+  --padding-top: 0;
+  padding-top: 0;
+  
+  &.main-content {
+    --background: var(--ion-background-color, #f5f7fa);
+  }
+}
 
-.segmen-boton{
+// Estilos para el título del header
+.header-title {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 16px;
+  
+  .title-text {
+    font-size: 24px;
+    font-weight: 700;
+    color: $principal-color;
+    letter-spacing: -0.5px;
+    
+    @media (prefers-color-scheme: dark) {
+      color: var(--ion-text-color, #ffffff);
+    }
+  }
+}
+
+.button-icon {
+  --color: $principal-color;
+  --padding-start: 8px;
+  --padding-end: 8px;
+  margin: 0;
+  
+  ion-icon {
+    font-size: 24px;
+    transition: all 0.3s ease;
+  }
+  
+  &:hover {
+    --background: rgba(var(--ion-color-primary-rgb, 2, 122, 187), 0.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    --color: var(--ion-text-color, #ffffff);
+    
+    &:hover {
+      --background: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+
+.progress-bar {
+  --progress-background: #027abb;
+  height: 3px;
+}
+
+// Segment buttons mejorados
+.custom-segment {
+  --background: transparent;
+  padding: 8px 12px;
+  
+  ion-segment-button {
+    --color: var(--ion-color-medium, #6c757d);
+    --color-checked: $principal-color;
+    --indicator-color: $principal-color;
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --border-radius: 12px;
+    --indicator-height: 3px;
+    min-height: 48px;
+    margin: 0 4px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    &.segment-btn {
+      position: relative;
+      
+      &:hover {
+        background-color: rgba(var(--ion-color-primary-rgb, 2, 122, 187), 0.1);
+      }
+      
+      &::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%) scaleX(0);
+        width: 80%;
+        height: 3px;
+        background: $principal-color;
+        border-radius: 3px 3px 0 0;
+        transition: transform 0.3s ease;
+      }
+      
+      &.segment-button-checked::before {
+        transform: translateX(-50%) scaleX(1);
+      }
+    }
+    
+    .segment-icon {
+      font-size: 20px;
+      margin-bottom: 4px;
+      transition: all 0.3s ease;
+      color: var(--ion-color-medium, #6c757d);
+    }
+    
+    .segment-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: none;
+      letter-spacing: 0.3px;
+      margin-top: 4px;
+      color: var(--ion-color-medium, #6c757d);
+    }
+    
+    &.segment-button-checked {
+      --color: $principal-color;
+      font-weight: 700;
+      
+      .segment-icon {
+        transform: scale(1.1);
+        color: $principal-color;
+      }
+      
+      .segment-label {
+        color: $principal-color;
+      }
+      
+      @media (prefers-color-scheme: dark) {
+        --color: var(--ion-color-primary, #428cff);
+        
+        .segment-icon,
+        .segment-label {
+          color: var(--ion-color-primary, #428cff);
+        }
+        
+        &::before {
+          background: var(--ion-color-primary, #428cff);
+        }
+      }
+    }
+  }
+}
+
+// Segment view
+.segment-view {
+  padding: 0;
+  padding-top: calc(env(safe-area-inset-top) + 56px + 48px);
+  background: var(--ion-background-color, #f5f7fa);
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 1;
+  min-height: calc(100vh - env(safe-area-inset-top) - 56px - 48px);
+  
+  > div {
+    display: block !important;
+    width: 100%;
+    height: auto;
+    min-height: calc(100vh - env(safe-area-inset-top) - 56px - 48px);
+    visibility: visible !important;
+    opacity: 1 !important;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+  
+  // Asegurar que todos los casos del ngSwitch sean visibles cuando estén activos
+  > [ng-reflect-ng-switch-case],
+  > [ng-reflect-ng-switch-case] {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
+
+.segment-content {
+  animation: fadeIn 0.3s ease-in-out;
+  padding: 0;
+  margin: 0;
+  min-height: 100%;
+  display: block;
+  width: 100%;
+  position: relative;
+  
+  // Ajustes para componentes que tienen ion-content como raíz
+  ::ng-deep ion-content {
+    --padding-top: 0 !important;
+    --padding-start: 0 !important;
+    --padding-end: 0 !important;
+    --padding-bottom: 0 !important;
+    height: 100% !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    
+    &.container {
+      padding: 12px 16px 80px 16px !important;
+      display: block !important;
+      visibility: visible !important;
+      height: auto !important;
+      min-height: calc(100vh - env(safe-area-inset-top) - 56px - 48px - 8px) !important;
+    }
+  }
+  
+}
+
+// Específicamente para NOTAS - estilos adicionales
+.segment-view > div[ng-reflect-ng-switch-case="NOTAS"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  
+  ::ng-deep app-notas {
+    display: block !important;
+    visibility: visible !important;
+    
+    ion-content.container {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      height: auto !important;
+      min-height: 100% !important;
+    }
+  }
+  
+  // Ajustes específicos para compartidas
+  &.segmen-boton {
+    ::ng-deep .compartidas {
+      height: auto !important;
+      min-height: 100vh;
+      display: block !important;
+      visibility: visible !important;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.segmen-boton {
   display: flex;
   justify-content: center;
+  align-items: flex-start;
+  padding: 16px;
+  box-sizing: border-box;
+  
+  // Ajustes para el componente de tarjetas
+  ::ng-deep ion-card {
+    margin: 8px auto;
+  }
+  
+  // Ajustes para el componente de compartidas
+  ::ng-deep .compartidas {
+    width: 100%;
+  }
 }
 
-.slide-tarjetas{
+// Popover mejorado
+.custom-popover {
+  --width: 280px;
+  --border-radius: 16px;
+  --background: var(--ion-background-color, #ffffff);
+  
+  .popover-content {
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+    --background: var(--ion-background-color, #ffffff);
+  }
+  
+  .popover-list {
+    background: transparent;
+    padding: 0;
+    
+    .popover-header {
+      --background: transparent;
+      --padding-start: 20px;
+      --padding-end: 20px;
+      --padding-top: 12px;
+      --padding-bottom: 8px;
+      
+      ion-label h2 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ion-color-medium, #6c757d);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+    }
+    
+    .popover-item {
+      --background: transparent;
+      --padding-start: 20px;
+      --padding-end: 20px;
+      --min-height: 48px;
+      --inner-padding-end: 0;
+      transition: background-color 0.2s ease;
+      
+      &:hover {
+        --background: rgba(var(--ion-color-primary-rgb, 2, 122, 187), 0.1);
+      }
+      
+      &:active {
+        --background: rgba(var(--ion-color-primary-rgb, 2, 122, 187), 0.15);
+      }
+      
+      ion-label {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--ion-text-color, #212529);
+        margin-left: 12px;
+      }
+      
+      .popover-icon {
+        font-size: 20px;
+        color: $principal-color;
+        margin-right: 0;
+        
+        @media (prefers-color-scheme: dark) {
+          color: var(--ion-color-primary, #428cff);
+        }
+      }
+    }
+  }
+}
+
+.slide-tarjetas {
   margin: auto;
   display: flex;
   justify-content: center;
+}
+
+// Responsive
+@media (max-width: 360px) {
+  .segment-label {
+    font-size: 11px !important;
+  }
+  
+  .segment-icon {
+    font-size: 18px !important;
+  }
 }

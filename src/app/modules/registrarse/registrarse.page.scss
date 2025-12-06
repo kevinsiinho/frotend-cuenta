@@ -1,5 +1,11 @@
 @import 'src/global.scss';
 
+// Safe area para contenido sin header visible
+ion-content {
+  padding-top: env(safe-area-inset-top);
+  --padding-top: env(safe-area-inset-top);
+}
+
 .form {
   position: absolute;
   top: 50%;

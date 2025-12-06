@@ -38,7 +38,7 @@ export class Tab2Page implements OnInit{
 
 
  //lista de opciones y opción selecionada
- public listopciones:string[] = ['ALL','TARJETAS','LISTAS','COMPARTIDOS'];
+ public listopciones:string[] = ['ALL','TARJETAS','NOTAS','COMPARTIDAS'];
  public opcionselecionada: string = this.listopciones[0];
 
 constructor(
@@ -127,7 +127,9 @@ async Principal(){
 
 
 scrollToTop() {
-  this.content.scrollToTop(300); // 300ms para suavizar el desplazamiento
+  if (this.content) {
+    this.content.scrollToTop(300); // 300ms para suavizar el desplazamiento
+  }
 }
 
 async total() {

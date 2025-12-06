@@ -237,5 +237,44 @@ async buscar(event:string){
       };
 
     const response: HttpResponse = await CapacitorHttp.get(options);
-    return response.data}
+    return response.data
+  }
+
+  async refreshToken(): Promise<boolean> {
+    try {
+      const { value } = await Preferences.get({ key: 'token' });
+      
+      if (!value) {
+        return false;
+      }
+
+      const options = {
+        url: this.url + '/users/refresh-token',
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": 'Bearer ' + value
+        }
+      };
+
+      const response: HttpResponse = await CapacitorHttp.post(options);
+
+      if (response.status === 200 || response.status === 201) {
+        // Actualizar el token en Preferences
+        const newToken = response.data?.token || response.data?.access_token || response.data;
+        
+        if (typeof newToken === 'string') {
+          await Preferences.set({ key: 'token', value: newToken });
+          return true;
+        } else if (newToken && typeof newToken === 'object' && newToken.token) {
+          await Preferences.set({ key: 'token', value: newToken.token });
+          return true;
+        }
+      }
+
+      return false;
+    } catch (error) {
+      console.error('Error al renovar el token:', error);
+      return false;
+    }
+  }
 }

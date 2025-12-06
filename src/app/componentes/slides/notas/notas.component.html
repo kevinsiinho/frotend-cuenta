@@ -1,24 +1,64 @@
   <ion-content class="container">
 
-    <ion-list>
-      <ion-item-sliding *ngFor="let nota of this.notas">
-        <ion-item *ngIf="nota.tipo==='lista'"  (click)="this.Verlista(true,nota)">
-          <ion-label>{{ nota.titulo }}</ion-label>
-         </ion-item>
-        <ion-item *ngIf="nota.tipo==='nota'" (click)="this.VerNota(true,nota)">
-          <ion-label>{{ nota.titulo }}</ion-label>
-        </ion-item>
-
-        <ion-item-options side="end" expand="full">
-          <ion-item-option color="warning" (click)="this.LinkCompartir(nota.id!)">
-            Compartir
-          </ion-item-option>
-          <ion-item-option color="danger" (click)="this.Eliminar(nota.id!)">
-            Eliminar
-          </ion-item-option>
-        </ion-item-options>
-      </ion-item-sliding>
-    </ion-list>
+    <!-- Grid estilo Google Keep -->
+    <div class="notes-grid">
+      <div *ngFor="let nota of notas" 
+           class="note-card"
+           [class.note-card-list]="nota.tipo === 'lista'"
+           [class.note-card-note]="nota.tipo === 'nota'"
+           (click)="nota.tipo === 'lista' ? Verlista(true, nota) : VerNota(true, nota)">
+        
+        <!-- Header de la nota -->
+        <div class="note-header" *ngIf="nota.titulo">
+          <h3 class="note-title">{{ nota.titulo }}</h3>
+        </div>
+        
+        <!-- Contenido de nota simple -->
+        <div class="note-content" *ngIf="nota.tipo === 'nota' && nota.texto">
+          <p class="note-text">{{ nota.texto }}</p>
+        </div>
+        
+        <!-- Contenido de lista -->
+        <div class="note-list-content" *ngIf="nota.tipo === 'lista' && nota.items && nota.items.length > 0">
+          <div class="list-item" 
+               *ngFor="let item of nota.items.slice(0, 3)"
+               [class.completed]="item.estado">
+            <ion-icon name="checkbox-outline" *ngIf="!item.estado" class="list-icon unchecked"></ion-icon>
+            <ion-icon name="checkbox" *ngIf="item.estado" class="list-icon checked"></ion-icon>
+            <span class="list-item-text">{{ item.texto }}</span>
+          </div>
+          <div class="more-items" *ngIf="nota.items.length > 3">
+            +{{ nota.items.length - 3 }} más
+          </div>
+        </div>
+        
+        <!-- Footer con acciones -->
+        <div class="note-footer">
+          <button class="note-action-btn" 
+                  (click)="LinkCompartir(nota.id!); $event.stopPropagation()"
+                  *ngIf="nota.compartir && nota.compartir.length === 0">
+            <ion-icon name="share-outline"></ion-icon>
+          </button>
+          <button class="note-action-btn shared" 
+                  (click)="LinkCompartir(nota.id!); $event.stopPropagation()"
+                  *ngIf="nota.compartir && nota.compartir.length > 0">
+            <ion-icon name="people-outline"></ion-icon>
+            <span>{{ nota.compartir.length }}</span>
+          </button>
+          <button class="note-action-btn delete" 
+                  (click)="Eliminar(nota.id!); $event.stopPropagation()">
+            <ion-icon name="trash-outline"></ion-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mensaje si no hay notas -->
+    <div class="empty-state" *ngIf="notas.length === 0">
+      <ion-icon name="document-text-outline"></ion-icon>
+      <p>No tienes notas aún</p>
+      <p class="empty-hint">Toca el botón + para crear una nueva</p>
+    </div>
 
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button color="dark">
@@ -35,68 +75,136 @@
   </ion-fab>
 
 <!--Modal1 listas items-->
-<ion-modal [isOpen]="isModalOpen">
+<ion-modal [isOpen]="isModalOpen" class="list-modal">
   <ng-template>
-    <ion-header>
-      <ion-toolbar>
+    <ion-header class="modal-header">
+      <ion-toolbar class="modal-toolbar">
+        <ion-title class="modal-title">Lista</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="setOpen(false,'')">Cerrar</ion-button>
+          <ion-button fill="clear" (click)="setOpen(false,'')" class="close-btn">
+            <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+          </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content class="ion-padding" *ngIf="this.Lregistrar">
-      <div>
-        <ion-input placeholder="Título" [(ngModel)]="this.nota.titulo" [counter]="true" maxlength="30"></ion-input>
-      </div>
-      <div>
-        <ion-item>
-          <ion-textarea placeholder="Agregar item" autoGrow="true" [(ngModel)]="this.item.texto"></ion-textarea>
-          <ion-button fill="clear" color="success" (click)="this.agregarItem()"><ion-icon name="checkmark-outline"></ion-icon></ion-button>
-        </ion-item>
-        <ion-item *ngFor="let item of this.nota.items">
-          <ion-checkbox value={{item.estado}}></ion-checkbox>
-          <ion-textarea value={{item.texto}} autoGrow="true"></ion-textarea>
-          <ion-button fill="clear" color="danger"><ion-icon name="close-outline"></ion-icon></ion-button>
-        </ion-item>
+    <ion-content class="list-modal-content" *ngIf="Lregistrar">
+      <div class="modal-body">
+        <div class="title-input-wrapper">
+          <ion-input 
+            class="modal-title-input" 
+            placeholder="Título de la lista" 
+            [(ngModel)]="nota.titulo" 
+            [counter]="true" 
+            maxlength="30">
+          </ion-input>
+        </div>
+        
+        <div class="add-item-section">
+          <div class="add-item-input-wrapper">
+            <ion-textarea 
+              class="add-item-input" 
+              placeholder="Agregar item..." 
+              autoGrow="true" 
+              [(ngModel)]="item.texto"
+              rows="1">
+            </ion-textarea>
+            <ion-button 
+              fill="clear" 
+              class="add-item-btn" 
+              (click)="agregarItem()"
+              [disabled]="!item.texto || item.texto.trim() === ''">
+              <ion-icon name="add-circle" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+
+        <div class="items-list" *ngIf="nota.items && nota.items.length > 0">
+          <div class="list-item-row" *ngFor="let item of nota.items; let i = index">
+            <ion-checkbox [checked]="item.estado" [value]="item.estado"></ion-checkbox>
+            <ion-textarea 
+              class="item-text-input" 
+              [(ngModel)]="item.texto" 
+              autoGrow="true"
+              rows="1">
+            </ion-textarea>
+            <ion-button fill="clear" class="delete-item-btn" (click)="nota.items!.splice(i, 1)">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
       </div>
     </ion-content>
 
     <!--Actualizar la lista-->
-    <ion-content class="ion-padding" *ngIf="this.Lactualizar">
-      <div>
-        <ion-input placeholder="Título" [(ngModel)]="this.UpdateList.titulo" [counter]="true" maxlength="30"></ion-input>
-      </div>
-      <div>
-        <ion-item>
-          <ion-textarea placeholder="Agregar item" autoGrow="true" [(ngModel)]="this.Acitem.texto"></ion-textarea>
-          <ion-button fill="clear" color="success" (click)="this.ActualizarItem()"><ion-icon name="checkmark-outline"></ion-icon></ion-button>
-        </ion-item>
-        <ng-container *ngFor="let item of this.UpdateList.items; let i = index">
-          <ion-item *ngIf="!item.estado">
-            <ion-checkbox  (click)="this.CambioEstado(i, true)" [checked]="false"></ion-checkbox>
-            <ion-textarea class="text-view" [(ngModel)]="item.texto" autoGrow="true"></ion-textarea>
-            <ion-button fill="clear" color="danger" (click)="this.EliminarItem(i)">
-              <ion-icon name="close-outline"></ion-icon>
+    <ion-content class="list-modal-content" *ngIf="Lactualizar">
+      <div class="modal-body">
+        <div class="title-input-wrapper">
+          <ion-input 
+            class="modal-title-input" 
+            placeholder="Título de la lista" 
+            [(ngModel)]="UpdateList.titulo" 
+            [counter]="true" 
+            maxlength="30">
+          </ion-input>
+        </div>
+        
+        <div class="add-item-section">
+          <div class="add-item-input-wrapper">
+            <ion-textarea 
+              class="add-item-input" 
+              placeholder="Agregar item..." 
+              autoGrow="true" 
+              [(ngModel)]="Acitem.texto"
+              rows="1">
+            </ion-textarea>
+            <ion-button 
+              fill="clear" 
+              class="add-item-btn" 
+              (click)="ActualizarItem()"
+              [disabled]="!Acitem.texto || Acitem.texto.trim() === ''">
+              <ion-icon name="add-circle" slot="icon-only"></ion-icon>
             </ion-button>
-          </ion-item>
-        </ng-container>
+          </div>
+        </div>
 
+        <div class="items-list">
+          <ng-container *ngFor="let item of UpdateList.items; let i = index">
+            <div class="list-item-row" *ngIf="!item.estado">
+              <ion-checkbox [checked]="false" (ionChange)="CambioEstado(i, true)"></ion-checkbox>
+              <ion-textarea 
+                class="item-text-input" 
+                [(ngModel)]="item.texto" 
+                autoGrow="true"
+                rows="1">
+              </ion-textarea>
+              <ion-button fill="clear" class="delete-item-btn" (click)="EliminarItem(i)">
+                <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+          </ng-container>
+        </div>
 
-        <ion-accordion-group>
+        <ion-accordion-group class="completed-items-accordion" *ngIf="hasCompletedItems()">
           <ion-accordion value="first">
-            <ion-item slot="header" color="light">
-              <ion-label>Items completados</ion-label>
+            <ion-item slot="header" class="accordion-header">
+              <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
+              <ion-label>Items completados ({{ getCompletedItemsCount() }})</ion-label>
             </ion-item>
-            <div class="ion-padding" slot="content">
-              <ng-container *ngFor="let item of this.UpdateList.items; let i = index">
-                <ion-item *ngIf="item.estado">
-                  <ion-checkbox (click)="this.CambioEstado(i, false)" [checked]="true"></ion-checkbox>
-                  <ion-textarea class="text-view" [(ngModel)]="item.texto" autoGrow="true"></ion-textarea>
-                  <ion-button fill="clear" color="danger" (click)="this.EliminarItem(i)">
-                    <ion-icon name="close-outline"></ion-icon>
+            <div class="accordion-content" slot="content">
+              <ng-container *ngFor="let item of UpdateList.items; let i = index">
+                <div class="list-item-row completed" *ngIf="item.estado">
+                  <ion-checkbox [checked]="true" (ionChange)="CambioEstado(i, false)"></ion-checkbox>
+                  <ion-textarea 
+                    class="item-text-input completed-text" 
+                    [(ngModel)]="item.texto" 
+                    autoGrow="true"
+                    rows="1">
+                  </ion-textarea>
+                  <ion-button fill="clear" class="delete-item-btn" (click)="EliminarItem(i)">
+                    <ion-icon name="close-outline" slot="icon-only"></ion-icon>
                   </ion-button>
-                </ion-item>
+                </div>
               </ng-container>
             </div>
           </ion-accordion>
@@ -106,28 +214,56 @@
   </ng-template>
 </ion-modal>
 
-<!--Modal2-->
-<ion-modal [isOpen]="isModalOpen2">
+<!--Modal2 Nota simple-->
+<ion-modal [isOpen]="isModalOpen2" class="note-modal">
   <ng-template>
-    <ion-header>
-      <ion-toolbar>
-        <ion-input *ngIf="this.Nregistrar" class="titulo" slot="start" placeholder="Título" [(ngModel)]="this.nota.titulo"></ion-input>
-        <ion-input *ngIf="this.Nactualizar" class="titulo" slot="start" placeholder="Título" [(ngModel)]="this.UpdateNote.titulo"></ion-input>
+    <ion-header class="modal-header">
+      <ion-toolbar class="modal-toolbar">
+        <div class="title-input-container">
+          <ion-input 
+            *ngIf="Nregistrar" 
+            class="modal-title-input-inline" 
+            placeholder="Título (opcional)" 
+            [(ngModel)]="nota.titulo">
+          </ion-input>
+          <ion-input 
+            *ngIf="Nactualizar" 
+            class="modal-title-input-inline" 
+            placeholder="Título (opcional)" 
+            [(ngModel)]="UpdateNote.titulo">
+          </ion-input>
+        </div>
         <ion-buttons slot="end">
-          <ion-button (click)="setOpen2(false)">Cerrar</ion-button>
+          <ion-button fill="clear" (click)="setOpen2(false)" class="close-btn">
+            <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+          </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content *ngIf="this.Nregistrar" class="ion-padding">
-      <div class="div-texto">
-        <ion-textarea placeholder="Escribe aquí..."(ngModelChange)="guardarNota()" [(ngModel)]="this.nota.texto" class="texto" autoGrow="true"></ion-textarea>
+    <ion-content class="note-modal-content" *ngIf="Nregistrar">
+      <div class="note-text-wrapper">
+        <ion-textarea 
+          class="note-textarea" 
+          placeholder="Escribe aquí..." 
+          (ngModelChange)="guardarNota()" 
+          [(ngModel)]="nota.texto" 
+          autoGrow="true"
+          rows="10">
+        </ion-textarea>
       </div>
     </ion-content>
 
-    <ion-content class="ion-padding" *ngIf="this.Nactualizar">
-      <div class="div-texto">
-        <ion-textarea placeholder="Escribe aquí..."(ngModelChange)="guardarNota()" [(ngModel)]="this.UpdateNote.texto" class="texto" autoGrow="true"></ion-textarea>
+    <ion-content class="note-modal-content" *ngIf="Nactualizar">
+      <div class="note-text-wrapper">
+        <ion-textarea 
+          class="note-textarea" 
+          placeholder="Escribe aquí..." 
+          (ngModelChange)="guardarNota()" 
+          [(ngModel)]="UpdateNote.texto" 
+          autoGrow="true"
+          rows="10">
+        </ion-textarea>
       </div>
     </ion-content>
 

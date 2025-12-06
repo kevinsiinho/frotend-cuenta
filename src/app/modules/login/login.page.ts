@@ -7,6 +7,7 @@ import { UserService } from 'src/app/servicios/user/user.service';
 import { User } from 'src/app/clases/user/user';
 import { ConfiguracionesService } from 'src/app/servicios/configuraciones/configuraciones.service';
 import { InfoDevice } from 'src/app/clases/device/device';
+import { PermisosService } from 'src/app/servicios/permisos/permisos.service';
 
 
 @Component({
@@ -34,23 +35,51 @@ export class LoginPage implements OnInit{
     public userService: UserService,
     public link:Router,
     private loadingController: LoadingController,
-     private ConfigService:ConfiguracionesService
+    private ConfigService:ConfiguracionesService,
+    private permisosService: PermisosService
     ) { }
 
-  async presentAlert(msn:String) {
-    const alert = await this.alertController.create({
-      header: 'Mensaje',
-      message: ''+msn,
-      buttons: ['ACEPTAR'],
+  async presentAlert(msn:String): Promise<void> {
+    return new Promise(async (resolve) => {
+      const alert = await this.alertController.create({
+        header: 'Mensaje',
+        message: ''+msn,
+        buttons: [{
+          text: 'ACEPTAR',
+          handler: () => {
+            resolve();
+          }
+        }],
+      });
+      await alert.present();
+      // También resolver cuando se cierre el alert (por si se cierra de otra forma)
+      alert.onDidDismiss().then(() => {
+        resolve();
+      });
     });
-    await alert.present();
   }
 
 async ngOnInit() {
     await Preferences.remove({ key: 'token' });
-     this.InfoCel= await this.ConfigService.getDeviceInfo()
-     const result2 = await Preferences.get({ key: 'select' });
-     this.recordaremail = Boolean(JSON.parse(result2.value!))
+    
+    // Preparar permisos (se solicitarán automáticamente cuando se necesiten)
+    await this.permisosService.solicitarPermisosDispositivo();
+    await this.permisosService.solicitarPermisosAlmacenamiento();
+    
+    // Obtener información del dispositivo
+    // Nota: Device.getInfo() y Device.getId() generalmente no requieren permisos
+    // pero si falla, continuamos sin la info del dispositivo
+    try {
+      this.InfoCel = await this.ConfigService.getDeviceInfo();
+      console.log("Información del dispositivo obtenida:", this.InfoCel);
+    } catch (error) {
+      console.error("Error al obtener información del dispositivo:", error);
+      // Continuar aunque falle, la info del dispositivo es opcional para el login
+      // Si es necesario, se puede intentar de nuevo más tarde
+    }
+    
+    const result2 = await Preferences.get({ key: 'select' });
+    this.recordaremail = Boolean(JSON.parse(result2.value!))
 
     if (this.recordaremail) {
       const result = await Preferences.get({ key: 'email' });
@@ -120,8 +149,8 @@ async ngOnInit() {
           });
           this.login= new Login ()
         //Verificando el estado de la cuenta
-        this.userService.Quien(res.data.token).then((res)=>{
-          this.userService.InfoUser(res.data).then((info:User)=>{
+        this.userService.Quien(res.data.token).then(async (res)=>{
+          this.userService.InfoUser(res.data).then(async (info:User)=>{
             const fecha= new Date();
             const dia = fecha.getDate();
             const mes = fecha.getMonth() + 1; // Los meses empiezan desde 0, por lo que sumamos 1
@@ -130,7 +159,25 @@ async ngOnInit() {
             this.InfoCel.IdUser=info.id
             this.InfoCel.fecha=info.ultimaVez
             this.userService.Update(info)
-            this.loading.dismiss();
+            // NO cerrar el loading aquí, esperar a verificar el dispositivo
+            
+            // Verificar que tengamos el ID del dispositivo antes de continuar
+            if (!this.InfoCel.id) {
+              console.warn("No se pudo obtener el ID del dispositivo, intentando obtenerlo nuevamente...");
+              try {
+                const deviceInfo = await this.ConfigService.getDeviceInfo();
+                this.InfoCel.id = deviceInfo.id;
+                this.InfoCel = { ...this.InfoCel, ...deviceInfo };
+              } catch (error) {
+                console.error("Error al obtener ID del dispositivo:", error);
+                // Continuar sin verificar el dispositivo, permitir el login de todas formas
+                this.loading.dismiss();
+                await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
+                this.link.navigate(['tabs/tab2']);
+                return;
+              }
+            }
+            
             this.ConfigService.Get(this.InfoCel.id!).then(async (res)=>{
               if(res===0){
                 newDevice=true
@@ -139,33 +186,62 @@ async ngOnInit() {
               }
               //sino el dispositivo no esta registrado
             if(newDevice){
-              this.presentAlert(info.name+", estas ingresando desde un Dispositivo no registrado previamente")
+              // Cerrar loading antes de mostrar el alert
+              this.loading.dismiss();
+              // Esperar a que el usuario cierre el alert antes de continuar
+              await this.presentAlert(info.name+", estas ingresando desde un Dispositivo no registrado previamente")
+              // Mostrar loading mientras se registra el dispositivo
+              this.loading = await this.loadingController.create({
+                message: 'Registrando dispositivo...',
+              });
+              await this.loading.present();
               this.ConfigService.Create(this.InfoCel).then(async (res)=>{
                 if(res.status===200){
-                  console.log("Registrado")
+                  console.log("Dispositivo registrado exitosamente")
+                  await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
+                  this.loading.dismiss();
                   this.link.navigate(['tabs/tab2'])
                 }else{
-                  console.log(res)
+                  console.log("Error al registrar dispositivo:", res)
+                  this.loading.dismiss();
+                  await this.presentAlert("Error al registrar el dispositivo. Por favor intenta nuevamente.")
                 }
+              }).catch(async (error) => {
+                console.error("Error al crear dispositivo:", error);
+                this.loading.dismiss();
+                await this.presentAlert("Error al registrar el dispositivo. Por favor intenta nuevamente.")
               })
               return
             }else if(info.estado=="Activo"){
               //Verificando que el dispositivo alla sido agregado
               await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
+              this.loading.dismiss();
               this.link.navigate(['tabs/tab2'])
               return
             }else if(info.estado=="pendiente"){
               //para recuperar la contraseña
+              this.loading.dismiss();
             }else if(info.estado=="verificar"){
+              this.loading.dismiss();
               this.link.navigate(['/codigo/'+info.id])
               return
             }else if(info.estado=="suspendida"){
               //poner para cuando sea suspendida
+              this.loading.dismiss();
               return
             }else if(info.estado=="desactivada"){
-              this.presentAlert("Tu cuenta ha sido bloqueado por uso inadecuado, si consideras que hay un error por favor comunicate con atención al usuario.")
+              this.loading.dismiss();
+              await this.presentAlert("Tu cuenta ha sido bloqueado por uso inadecuado, si consideras que hay un error por favor comunicate con atención al usuario.")
               return
             }
+            }).catch(async (error) => {
+              console.error("Error al verificar dispositivo:", error);
+              this.loading.dismiss();
+              // Continuar con el flujo normal si falla la verificación del dispositivo
+              if(info.estado=="Activo"){
+                await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
+                this.link.navigate(['tabs/tab2'])
+              }
             })
           })
         })

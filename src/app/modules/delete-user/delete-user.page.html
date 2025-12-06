@@ -1,27 +1,69 @@
-<ion-header [translucent]="true" *ngIf="!cargar">
-  <ion-toolbar>
-    <ion-item  class="btn-back" [button]="true" [detail]="false" (click)="regresar()"> <ion-icon name="chevron-back-outline"> </ion-icon></ion-item>
-    <ion-title>Eliminar cuenta</ion-title>
+<ion-header class="header" *ngIf="!cargar">
+  <ion-toolbar class="header-toolbar">
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="regresar()" class="back-button">
+        <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="header-title">
+      <span class="title-text">Eliminar Cuenta</span>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content [fullscreen]="true">
 
-<ion-content [fullscreen]="true" *ngIf="!cargar">
-  <ion-list>
-    <div class="texto">
-      <p>¿Estás seguro de que deseas proceder con la eliminación definitivamente de tu cuenta?</p>
-      <p>Si estás seguro presionar eliminar mi cuenta</p>
+<ion-content [fullscreen]="true" class="main-content" *ngIf="!cargar">
+  <div class="delete-container">
+    <div class="warning-card">
+      <div class="warning-icon-wrapper">
+        <ion-icon name="warning" class="warning-icon"></ion-icon>
+      </div>
+      
+      <h2 class="warning-title">¿Eliminar tu cuenta?</h2>
+      
+      <div class="warning-content">
+        <p class="warning-text">
+          Esta acción es <strong>permanente e irreversible</strong>. Si eliminas tu cuenta:
+        </p>
+        
+        <ul class="warning-list">
+          <li>
+            <ion-icon name="close-circle"></ion-icon>
+            <span>Se perderán todos tus datos</span>
+          </li>
+          <li>
+            <ion-icon name="close-circle"></ion-icon>
+            <span>Se eliminarán todas tus tarjetas y notas</span>
+          </li>
+          <li>
+            <ion-icon name="close-circle"></ion-icon>
+            <span>No podrás recuperar el acceso</span>
+          </li>
+        </ul>
+        
+        <div class="confirm-box">
+          <p class="confirm-text">
+            Si estás completamente seguro de que deseas continuar, presiona el botón para eliminar tu cuenta.
+          </p>
+        </div>
+      </div>
+
+      <div class="button-container">
+        <ion-button 
+          expand="block" 
+          color="danger" 
+          class="delete-button"
+          (click)="Eliminar()">
+          <ion-icon name="trash-outline" slot="start"></ion-icon>
+          Eliminar mi cuenta permanentemente
+        </ion-button>
+      </div>
     </div>
-
-      <ion-button expand="block" color="danger" (click)="Eliminar()">Eliminar mi cuenta</ion-button>
-
-  </ion-list>
-  <div class="abajo"></div>
-  <div class="abajo2"></div>
+  </div>
 </ion-content>
 
-<ion-content [fullscreen]="true" *ngIf="cargar">
-  <div class="centrado">
-    <ion-progress-bar color="light" type="indeterminate"></ion-progress-bar>
+<ion-content [fullscreen]="true" class="loading-content" *ngIf="cargar">
+  <div class="loading-container">
+    <ion-progress-bar color="danger" type="indeterminate"></ion-progress-bar>
+    <p class="loading-text">Eliminando cuenta...</p>
   </div>
 </ion-content>

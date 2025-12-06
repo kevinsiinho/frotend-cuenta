@@ -1,16 +1,31 @@
 @import '../../../global.scss';
 
+// Safe area para el header
+ion-header {
+  padding-top: env(safe-area-inset-top);
+  background: var(--ion-background-color);
+  
+  ion-toolbar {
+    padding-top: env(safe-area-inset-top);
+    min-height: calc(56px + env(safe-area-inset-top));
+    
+    ion-title {
+      font-size: 20px;
+    }
+  }
+}
+
+// Ajustar contenido para safe area
+ion-content {
+  --padding-top: calc(env(safe-area-inset-top) + 56px);
+  padding-top: env(safe-area-inset-top);
+}
+
 .tarjeta{
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 20px;
-}
-
-
-ion-header ion-toolbar ion-title{
-  
-  font-size: 20px;
 }
 
 .btns2{

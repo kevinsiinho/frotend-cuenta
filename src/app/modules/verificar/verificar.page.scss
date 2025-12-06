@@ -1,0 +1,19 @@
+@import '../../../global.scss';
+
+// Safe area para el header (si se activa en el futuro)
+ion-header {
+  padding-top: env(safe-area-inset-top);
+  background: var(--ion-background-color);
+  
+  ion-toolbar {
+    padding-top: env(safe-area-inset-top);
+    min-height: calc(56px + env(safe-area-inset-top));
+  }
+}
+
+// Ajustar contenido para safe area
+ion-content {
+  --padding-top: calc(env(safe-area-inset-top) + 56px);
+  padding-top: env(safe-area-inset-top);
+}
+

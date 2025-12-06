@@ -1,8 +1,22 @@
 @import "../../../global.scss";
 
+// Safe area para el header
+ion-header {
+  padding-top: env(safe-area-inset-top);
+  background: #027abb;
+  
+  ion-toolbar {
+    padding-top: env(safe-area-inset-top);
+    min-height: calc(56px + env(safe-area-inset-top));
+  }
+}
 
-ion-content{
+// Ajustar contenido para safe area
+ion-content {
   --background: #027abb !important;
+  --padding-top: calc(env(safe-area-inset-top) + 56px);
+  padding-top: env(safe-area-inset-top);
+  
   .header{
     ion-avatar{
       display: flex;

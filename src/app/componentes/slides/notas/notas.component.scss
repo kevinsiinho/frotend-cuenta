@@ -1,33 +1,559 @@
 @import '../../../../global.scss';
 
-.div-texto{
-  height: auto;
-}
-
-.texto{
-  margin-top: 5px;
+ion-content.container {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
   height: 100%;
+  padding: 12px 16px 120px 16px !important;
+  --padding-top: 0 !important;
+  --padding-start: 16px !important;
+  --padding-end: 16px !important;
+  --padding-bottom: 120px !important;
+  position: relative;
+  --background: var(--ion-background-color, #f5f7fa);
+  
+  @media (prefers-color-scheme: dark) {
+    --background: var(--ion-background-color, #121212);
+  }
+  
+  // Asegurar que el fab button tenga espacio
+  ion-fab {
+    bottom: calc(env(safe-area-inset-bottom) + 80px) !important;
+    right: 16px !important;
+    z-index: 1000;
+  }
 }
 
-.text-view{
-  border-left: solid 1px rgba(124, 124, 124, 0.734);
-  margin-left: 5px;
-  padding: 3px;
+// Grid estilo Google Keep
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-auto-rows: min-content;
+  gap: 16px;
+  padding: 8px 0;
+  
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    gap: 12px;
+  }
 }
 
-
-.titulo{
-  margin-left: 10px;
-}
-
-ion-checkbox{
-   --border-color:#027abb;
-   --border-color-checked: white;
-   --checkmark-color:white;
+// Card de nota
+.note-card {
+  background: var(--ion-item-background, #ffffff);
+  border-radius: 8px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.2s ease;
+  cursor: pointer;
   display: flex;
+  flex-direction: column;
+  min-height: 80px;
+  position: relative;
+  
+  @media (prefers-color-scheme: dark) {
+    background: var(--ion-item-background, #1e1e1e);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+  
+  &:hover {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    transform: translateY(-2px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  }
+}
+
+// Header de la nota
+.note-header {
+  margin-bottom: 8px;
+  
+  .note-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--ion-text-color, #212529);
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    
+    @media (prefers-color-scheme: dark) {
+      color: var(--ion-text-color, #ffffff);
+    }
+  }
+}
+
+// Contenido de nota simple
+.note-content {
+  flex: 1;
+  margin-bottom: 8px;
+  
+  .note-text {
+    font-size: 14px;
+    color: var(--ion-text-color, #424242);
+    line-height: 1.5;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 8;
+    line-clamp: 8;
+    -webkit-box-orient: vertical;
+    
+    @media (prefers-color-scheme: dark) {
+      color: var(--ion-text-color, #b0b0b0);
+    }
+  }
+}
+
+// Contenido de lista
+.note-list-content {
+  flex: 1;
+  margin-bottom: 8px;
+  
+  .list-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+    
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+    
+    &.completed {
+      opacity: 0.6;
+      
+      .list-item-text {
+        text-decoration: line-through;
+      }
+    }
+    
+    .list-icon {
+      font-size: 18px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      
+      &.unchecked {
+        color: var(--ion-color-medium, #92949c);
+      }
+      
+      &.checked {
+        color: $principal-color;
+        
+        @media (prefers-color-scheme: dark) {
+          color: var(--ion-color-primary, #428cff);
+        }
+      }
+    }
+    
+    .list-item-text {
+      flex: 1;
+      color: var(--ion-text-color, #424242);
+      
+      @media (prefers-color-scheme: dark) {
+        color: var(--ion-text-color, #b0b0b0);
+      }
+    }
+  }
+  
+  .more-items {
+    font-size: 12px;
+    color: var(--ion-color-medium, #92949c);
+    margin-top: 8px;
+    font-style: italic;
+  }
+}
+
+// Footer con acciones
+.note-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid var(--ion-border-color, rgba(0, 0, 0, 0.1));
+  
+  .note-action-btn {
+    background: transparent;
+    border: none;
+    padding: 6px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: var(--ion-color-medium, #92949c);
+    
+    ion-icon {
+      font-size: 18px;
+    }
+    
+    span {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    &:hover {
+      background-color: rgba(var(--ion-color-primary-rgb, 2, 122, 187), 0.1);
+    }
+    
+    &.shared {
+      color: $principal-color;
+      
+      @media (prefers-color-scheme: dark) {
+        color: var(--ion-color-primary, #428cff);
+      }
+    }
+    
+    &.delete {
+      color: var(--ion-color-danger, #eb445a);
+      
+      &:hover {
+        background-color: rgba(var(--ion-color-danger-rgb, 235, 68, 90), 0.1);
+      }
+    }
+  }
+}
+
+// Estado vacío
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  width: 50%;
-  --checkbox-background-checked: black;
-  --checkbox-border-color-checked: solid 1px #027abb;
-  margin-right: 5px;
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--ion-color-medium, #92949c);
+  
+  ion-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+  
+  p {
+    font-size: 16px;
+    margin: 8px 0;
+    color: var(--ion-text-color, #6c757d);
+    
+    &.empty-hint {
+      font-size: 14px;
+      opacity: 0.7;
+    }
+  }
+}
+
+// Estilos de modales mejorados
+
+// Modal de lista
+.list-modal {
+  --width: 100%;
+  --max-width: 600px;
+  --height: 90%;
+  --border-radius: 16px 16px 0 0;
+  --box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  --background: var(--ion-background-color, #ffffff);
+  
+  @media (prefers-color-scheme: dark) {
+    --background: var(--ion-background-color, #1e1e1e);
+  }
+}
+
+.modal-toolbar {
+  --background: transparent;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  --min-height: 64px;
+  
+  .modal-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ion-text-color, #212529);
+    
+    @media (prefers-color-scheme: dark) {
+      color: var(--ion-text-color, #ffffff);
+    }
+  }
+  
+  .close-btn {
+    --color: var(--ion-text-color, #424242);
+    --padding-start: 8px;
+    --padding-end: 8px;
+    
+    ion-icon {
+      font-size: 24px;
+    }
+  }
+}
+
+.title-input-container {
+  flex: 1;
+  margin: 0 16px;
+}
+
+.modal-title-input-inline {
+  --padding-start: 0;
+  --padding-end: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ion-text-color, #212529);
+  
+  @media (prefers-color-scheme: dark) {
+    color: var(--ion-text-color, #ffffff);
+  }
+}
+
+.list-modal-content,
+.note-modal-content {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+.modal-body {
+  padding: 20px 16px;
+}
+
+.title-input-wrapper {
+  margin-bottom: 20px;
+}
+
+.modal-title-input {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  font-size: 24px;
+  font-weight: 600;
+  --background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--ion-text-color, #212529);
+  
+  @media (prefers-color-scheme: dark) {
+    color: var(--ion-text-color, #ffffff);
+  }
+}
+
+.add-item-section {
+  margin-bottom: 20px;
+}
+
+.add-item-input-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: var(--ion-item-background, #f5f5f5);
+  border-radius: 8px;
+  padding: 8px;
+  transition: background-color 0.2s ease;
+  
+  @media (prefers-color-scheme: dark) {
+    background: var(--ion-item-background, #2a2a2a);
+  }
+  
+  &:focus-within {
+    background: var(--ion-item-background, #eeeeee);
+    
+    @media (prefers-color-scheme: dark) {
+      background: var(--ion-item-background, #333333);
+    }
+  }
+  
+  .add-item-input {
+    flex: 1;
+    --padding-start: 8px;
+    --padding-end: 8px;
+    font-size: 16px;
+    --background: transparent;
+    --color: var(--ion-text-color, #424242);
+    
+    @media (prefers-color-scheme: dark) {
+      --color: var(--ion-text-color, #b0b0b0);
+    }
+  }
+  
+  .add-item-btn {
+    --color: $principal-color;
+    --padding-start: 4px;
+    --padding-end: 4px;
+    
+    &[disabled] {
+      --color: var(--ion-color-medium, #92949c);
+      opacity: 0.5;
+    }
+    
+    ion-icon {
+      font-size: 28px;
+    }
+  }
+}
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.list-item-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: var(--ion-item-background, #ffffff);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  
+  @media (prefers-color-scheme: dark) {
+    background: var(--ion-item-background, #1e1e1e);
+  }
+  
+  &:hover {
+    background: var(--ion-item-background, #f9f9f9);
+    
+    @media (prefers-color-scheme: dark) {
+      background: var(--ion-item-background, #252525);
+    }
+  }
+  
+  &.completed {
+    opacity: 0.7;
+    
+    .item-text-input.completed-text {
+      text-decoration: line-through;
+    }
+  }
+  
+  ion-checkbox {
+    --size: 24px;
+    --checkbox-background-checked: $principal-color;
+    --checkbox-border-color: var(--ion-color-medium, #92949c);
+    --checkbox-border-color-checked: $principal-color;
+    --checkmark-color: #ffffff;
+    margin-top: 4px;
+    flex-shrink: 0;
+    
+    @media (prefers-color-scheme: dark) {
+      --checkbox-background-checked: var(--ion-color-primary, #428cff);
+      --checkbox-border-color-checked: var(--ion-color-primary, #428cff);
+    }
+  }
+  
+  .item-text-input {
+    flex: 1;
+    --padding-start: 0;
+    --padding-end: 0;
+    font-size: 16px;
+    --background: transparent;
+    --color: var(--ion-text-color, #424242);
+    min-height: 24px;
+    
+    @media (prefers-color-scheme: dark) {
+      --color: var(--ion-text-color, #b0b0b0);
+    }
+    
+    &.completed-text {
+      color: var(--ion-color-medium, #92949c);
+      text-decoration: line-through;
+    }
+  }
+  
+  .delete-item-btn {
+    --color: var(--ion-color-danger, #eb445a);
+    --padding-start: 4px;
+    --padding-end: 4px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    
+    &:hover {
+      opacity: 1;
+    }
+    
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+}
+
+.completed-items-accordion {
+  margin-top: 20px;
+  
+  .accordion-header {
+    --background: var(--ion-item-background, #f5f5f5);
+    --border-radius: 8px;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    
+    @media (prefers-color-scheme: dark) {
+      --background: var(--ion-item-background, #2a2a2a);
+    }
+    
+    ion-icon {
+      color: $principal-color;
+      
+      @media (prefers-color-scheme: dark) {
+        color: var(--ion-color-primary, #428cff);
+      }
+    }
+  }
+  
+  .accordion-content {
+    padding: 12px 16px;
+  }
+}
+
+// Modal de nota simple
+.note-modal {
+  --width: 100%;
+  --max-width: 700px;
+  --height: 85%;
+  --border-radius: 16px 16px 0 0;
+  --box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.note-text-wrapper {
+  padding: 20px 16px;
+  min-height: 100%;
+}
+
+.note-textarea {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  --background: transparent;
+  --color: var(--ion-text-color, #212529);
+  width: 100%;
+  border: none;
+  resize: none;
+  
+  @media (prefers-color-scheme: dark) {
+    --color: var(--ion-text-color, #ffffff);
+  }
+  
+  &::placeholder {
+    color: var(--ion-color-medium, #92949c);
+    opacity: 0.6;
+  }
 }

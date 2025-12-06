@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController, AlertController, IonContent, IonModal, LoadingController } from '@ionic/angular';
 import { OverlayEventDetail } from '@ionic/core';
@@ -53,9 +53,11 @@ export class TarjetaPage implements OnInit {
   openModal = false;
   openModalEditar = false;
   openModal2 = false;
+  openModalDeposito = false;
   isModalOpen = false;
   public btnEliminar=true;
   public isDisabled = true;
+  public selectedBolsillo: Bolsillo | null = null;
   public positivo:number=0
   public positivos:number=0
   public negativos:number=0
@@ -239,7 +241,8 @@ async verificarYCompletarHistorial() {
     private loadingController: LoadingController,
     private actionSheetController: ActionSheetController,
     private bolsilloService: BolsillosService,
-    private depositoServices:DepositosService
+    private depositoServices:DepositosService,
+    private cdr: ChangeDetectorRef
   ) { }
 
 //tour o guia
@@ -435,6 +438,11 @@ iniciarTour2() {
 
       this.id = this.router.snapshot.paramMap.get('id')!;
       this.item = await this.itemService.GetItem(this.id);
+
+      // Asegurar que el estado esté definido (false = activado por defecto)
+      if (this.item.estado === undefined || this.item.estado === null) {
+        this.item.estado = false; // false = activado, true = desactivado
+      }
 
       await this.CompartidoUNO();
       if (this.item.estadohistorial) {
@@ -882,18 +890,50 @@ RutaHistorial(){
             bolsillo.subtotal=bolsillo.subtotal+deposito.valor
           });
         }
-        this.bolsilloService.Update(bolsillo)
-        this.total()
-        this.ngOnInit()
+        this.bolsilloService.Update(bolsillo).then(() => {
+          this.total()
+          this.ngOnInit()
+          
+          // Cerrar el modal después de agregar
+          this.openModalDeposito = false;
+          this.selectedBolsillo = null;
+          this.deposito = new Depositos();
+          
+          // Recargar la página para actualizar todo
+          setTimeout(() => {
+            window.location.reload();
+          }, 300);
+        })
       })
 
       //this.NewNotification("ha añadido un nuevo valor de $"+this.deposito.valor)
 
-      this.deposito= new Depositos();
-
     }else{
       this.presentAlert("Debes ingresar un valor.");
     }
+  }
+  
+  openDepositoModal(bolsillo: Bolsillo) {
+    this.selectedBolsillo = bolsillo;
+    this.deposito = new Depositos();
+    this.cdr.detectChanges();
+    this.openModalDeposito = true;
+    // Forzar detección de cambios después de abrir el modal
+    setTimeout(() => {
+      this.cdr.detectChanges();
+    }, 100);
+  }
+  
+  cancelDeposito() {
+    this.openModalDeposito = false;
+    this.selectedBolsillo = null;
+    this.deposito = new Depositos();
+  }
+  
+  onWillDismissDeposito(event: any) {
+    this.openModalDeposito = false;
+    this.selectedBolsillo = null;
+    this.deposito = new Depositos();
   }
 
 /*Modal añadir tarjeta*/
