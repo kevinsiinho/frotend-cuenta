@@ -506,8 +506,8 @@
               *ngIf="!item.estadohistorial && selectedBolsillo" 
               (click)="depositar(selectedBolsillo!, 'sumar')" 
               class="add-btn-modal"
-              [style.--background]="selectedBolsillo?.color || '#027abb'"
-              [disabled]="!deposito?.valor || (deposito?.valor ?? 0) <= 0">
+              [style.--background]="selectedBolsillo.color || '#027abb'"
+              [disabled]="!deposito.valor || (deposito.valor ?? 0) <= 0">
               <ion-icon name="add-outline" slot="start"></ion-icon>
               Agregar
             </ion-button>
@@ -517,7 +517,7 @@
               (click)="depositar(selectedBolsillo!, 'restar')" 
               class="subtract-btn-modal"
               color="warning"
-              [disabled]="!deposito?.valor || (deposito?.valor ?? 0) <= 0">
+              [disabled]="!deposito.valor || (deposito.valor ?? 0) <= 0">
               <ion-icon name="remove-outline" slot="start"></ion-icon>
               Restar
             </ion-button>
