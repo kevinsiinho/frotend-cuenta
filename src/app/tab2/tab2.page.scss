@@ -39,6 +39,9 @@ ion-header {
     z-index: 10;
     
     ion-toolbar {
+      padding-top: 0;
+      min-height: calc(48px + env(safe-area-inset-top));
+      
       &.segment-toolbar {
         --background: var(--ion-background-color, #ffffff);
         --padding-start: 0;
@@ -50,8 +53,11 @@ ion-header {
 
 // Ajustar contenido para safe area (considerando dos headers)
 ion-content {
-  --padding-top: 0;
-  padding-top: 0;
+  --padding-top: calc(env(safe-area-inset-top) + 56px + 48px);
+  
+  @supports (padding-top: env(safe-area-inset-top)) {
+    padding-top: env(safe-area-inset-top);
+  }
   
   &.main-content {
     --background: var(--ion-background-color, #f5f7fa);

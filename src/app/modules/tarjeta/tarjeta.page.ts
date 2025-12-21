@@ -648,6 +648,7 @@ this.link.navigate(['/editar-tarjeta/',this.id])
 
 async EditarBolsillo(bolsillo:Bolsillo) {
   this.bolsilloEditar=bolsillo
+  await this.modalEditar.present();
 }
 
 confirmEditar() {
@@ -656,10 +657,10 @@ confirmEditar() {
     if(this.bolsilloEditar.Vinicial && this.bolsilloEditar.valor!<1){
       this.presentAlert("Ingresa el valor inicial");
     }else{
-      this.bolsilloService.Update(this.bolsilloEditar).then((res)=>{
+        this.bolsilloService.Update(this.bolsilloEditar).then((res)=>{
         if(res===204){
-          this.bolsilloEditar= new Bolsillo();
           this.modalEditar.dismiss('confirm');
+          this.bolsilloEditar= new Bolsillo();
           this.total()
           this.ngOnInit()
         }else{
@@ -894,9 +895,7 @@ RutaHistorial(){
           this.total()
           this.ngOnInit()
           
-          // Cerrar el modal después de agregar
-          this.openModalDeposito = false;
-          this.selectedBolsillo = null;
+          // Limpiar el depósito después de agregar
           this.deposito = new Depositos();
           
           // Recargar la página para actualizar todo
@@ -913,39 +912,98 @@ RutaHistorial(){
     }
   }
   
-  openDepositoModal(bolsillo: Bolsillo) {
-    this.selectedBolsillo = bolsillo;
-    this.deposito = new Depositos();
-    this.cdr.detectChanges();
-    this.openModalDeposito = true;
-    // Forzar detección de cambios después de abrir el modal
-    setTimeout(() => {
-      this.cdr.detectChanges();
-    }, 100);
+  public depositoAlertInputs = [
+    {
+      name: 'valor',
+      type: 'number',
+      placeholder: 'Valor',
+      min: 0.01,
+      value: ''
+    },
+    {
+      name: 'comentario',
+      type: 'textarea',
+      placeholder: 'Comentario (opcional)',
+      attributes: {
+        maxlength: 60
+      },
+      value: ''
+    }
+  ];
+
+  getDepositoAlertButtons(bolsillo: Bolsillo) {
+    const buttons: any[] = [
+      {
+        text: 'Cancelar',
+        role: 'cancel'
+      }
+    ];
+    
+    if (!this.item.estadohistorial) {
+      buttons.push({
+        text: 'Agregar',
+        cssClass: 'alert-button-agregar',
+        handler: (data: any) => {
+          return this.handleDepositoAlert(data, bolsillo, 'sumar');
+        }
+      });
+    }
+    
+    buttons.push({
+      text: 'Restar',
+      cssClass: 'alert-button-restar',
+      handler: (data: any) => {
+        return this.handleDepositoAlert(data, bolsillo, 'restar');
+      }
+    });
+    
+    return buttons;
   }
-  
-  cancelDeposito() {
-    this.openModalDeposito = false;
-    this.selectedBolsillo = null;
+
+  handleDepositoAlert(data: any, bolsillo: Bolsillo, tipo: string): boolean {
+    const valor = parseFloat(data.valor);
+    
+    if (!valor || valor <= 0) {
+      this.presentAlert("Debes ingresar un valor válido.");
+      return false;
+    }
+    
+    // Crear el depósito
     this.deposito = new Depositos();
+    this.deposito.valor = valor;
+    this.deposito.comentario = data.comentario || '';
+    
+    // Llamar a la función depositar
+    this.depositar(bolsillo, tipo);
+    
+    return true;
   }
-  
-  onWillDismissDeposito(event: any) {
-    this.openModalDeposito = false;
-    this.selectedBolsillo = null;
-    this.deposito = new Depositos();
+
+  onDepositoAlertDismiss(event: any, bolsillo: Bolsillo) {
+    // Este método se puede usar para limpiar si es necesario
   }
 
 /*Modal añadir tarjeta*/
 @ViewChild('modal', { static: false }) modal!: IonModal;
 @ViewChild('modalEditar', { static: false }) modalEditar!: IonModal;
 
+initBolsillo() {
+  this.bolsillo = new Bolsillo();
+}
+
+async openBolsilloModal() {
+  this.bolsillo = new Bolsillo();
+  await this.modal.present();
+}
+
 cancel() {
   this.modal.dismiss(null, 'cancel');
+  this.bolsillo = new Bolsillo();
 }
 
 cancel2() {
   this.modalEditar.dismiss(null, 'cancel');
+  this.bolsilloEditar = new Bolsillo();
 }
 
 Festado(tipo:string){
@@ -1000,12 +1058,14 @@ confirm() {
 
   onWillDismiss(event: Event) {
     const ev = event as CustomEvent<OverlayEventDetail<string>>;
+    this.bolsillo = new Bolsillo();
     if (ev.detail.role === 'confirm') {
     }
   }
 
   onWillDismissE(event: Event) {
     const ev = event as CustomEvent<OverlayEventDetail<string>>;
+    this.bolsilloEditar = new Bolsillo();
     if (ev.detail.role === 'confirm') {
     }
   }

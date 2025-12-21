@@ -60,6 +60,10 @@ ion-content {
   --padding-bottom: calc(env(safe-area-inset-bottom) + 24px);
   --background: var(--ion-background-color, #f5f7fa);
   
+  @supports (padding-top: env(safe-area-inset-top)) {
+    padding-top: env(safe-area-inset-top);
+  }
+  
   @media (prefers-color-scheme: dark) {
     --background: var(--ion-background-color, #121212);
   }

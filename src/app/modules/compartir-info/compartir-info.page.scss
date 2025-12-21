@@ -6,7 +6,7 @@ ion-header {
   background: #027abb;
   
   ion-toolbar {
-    padding-top: env(safe-area-inset-top);
+    padding-top: 0;
     min-height: calc(56px + env(safe-area-inset-top));
   }
 }
@@ -15,7 +15,10 @@ ion-header {
 ion-content {
   --background: #027abb !important;
   --padding-top: calc(env(safe-area-inset-top) + 56px);
-  padding-top: env(safe-area-inset-top);
+  
+  @supports (padding-top: env(safe-area-inset-top)) {
+    padding-top: env(safe-area-inset-top);
+  }
   
   .header{
     ion-avatar{

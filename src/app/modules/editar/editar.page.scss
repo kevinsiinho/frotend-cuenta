@@ -6,7 +6,7 @@ ion-header {
   background: var(--ion-background-color);
   
   ion-toolbar {
-    padding-top: env(safe-area-inset-top);
+    padding-top: 0;
     min-height: calc(56px + env(safe-area-inset-top));
     
     ion-title {
@@ -18,7 +18,10 @@ ion-header {
 // Ajustar contenido para safe area
 ion-content {
   --padding-top: calc(env(safe-area-inset-top) + 56px);
-  padding-top: env(safe-area-inset-top);
+  
+  @supports (padding-top: env(safe-area-inset-top)) {
+    padding-top: env(safe-area-inset-top);
+  }
 }
 
 .tarjeta{

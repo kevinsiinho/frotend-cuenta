@@ -66,6 +66,10 @@ ion-content {
   &.main-content {
     padding-top: calc(env(safe-area-inset-top) + 56px + 8px);
   }
+  
+  @supports (padding-top: env(safe-area-inset-top)) {
+    padding-top: env(safe-area-inset-top);
+  }
 }
 
 .principal {
