@@ -1,4 +1,5 @@
-<ion-header class="header" [translucent]="false">
+<!-- Un solo header compacto: título + segmento pegados, sin espacio extra -->
+<ion-header class="header-inicio" [translucent]="false">
   <ion-toolbar class="header-toolbar">
     <ion-title class="header-title">
       <span class="title-text">Inicio</span>
@@ -15,36 +16,21 @@
       class="progress-bar">
     </ion-progress-bar>
   </ion-toolbar>
-</ion-header>
-
-<ion-header class="header2" slot="fixed" [translucent]="false">
   <ion-toolbar class="segment-toolbar">
     <ion-segment class="custom-segment" [scrollable]="true" [(ngModel)]="opcionselecionada" (ionChange)="scrollToTop()">
-      <ion-segment-button 
-        value="ALL" 
-        content-id="ALL"
-        class="segment-btn">
+      <ion-segment-button value="ALL" content-id="ALL" class="segment-btn">
         <ion-icon name="time-outline" class="segment-icon"></ion-icon>
         <ion-label class="segment-label">Recientes</ion-label>
       </ion-segment-button>
-      <ion-segment-button 
-        value="TARJETAS" 
-        content-id="TARJETAS"
-        class="segment-btn">
+      <ion-segment-button value="TARJETAS" content-id="TARJETAS" class="segment-btn">
         <ion-icon name="card-outline" class="segment-icon"></ion-icon>
         <ion-label class="segment-label">Tarjetas</ion-label>
       </ion-segment-button>
-      <ion-segment-button 
-        value="NOTAS" 
-        content-id="NOTAS"
-        class="segment-btn">
+      <ion-segment-button value="NOTAS" content-id="NOTAS" class="segment-btn">
         <ion-icon name="document-text-outline" class="segment-icon"></ion-icon>
         <ion-label class="segment-label">Notas</ion-label>
       </ion-segment-button>
-      <ion-segment-button 
-        value="COMPARTIDAS" 
-        content-id="COMPARTIDAS"
-        class="segment-btn">
+      <ion-segment-button value="COMPARTIDAS" content-id="COMPARTIDAS" class="segment-btn">
         <ion-icon name="people-outline" class="segment-icon"></ion-icon>
         <ion-label class="segment-label">Compartidas</ion-label>
       </ion-segment-button>

@@ -33,43 +33,91 @@ $fondo-color: #e1e5e7ee;
 $color-error:#e5c2c0;
 $color-letra:black;
 $fondo: rgba(210, 233, 239, 0.635);
-//Estilos de diseños
 
+// =============================================================================
+// LAYOUT GLOBAL — Misma apariencia en todos los tipos de pantalla (celulares)
+// =============================================================================
+// Usa variables CSS para notch, bordes redondeados y altura dinámica.
+// Así se ve igual en pantallas con notch, sin notch, pequeñas o grandes.
+// =============================================================================
+
+:root {
+  --ion-background-color: #f1ededde;
+  /* Zona segura: notch / barra de estado (top/bottom); bordes laterales más pegados a los bordes */
+  --app-safe-top: max(env(safe-area-inset-top), 12px);
+  --app-safe-bottom: max(env(safe-area-inset-bottom), 12px);
+  --app-safe-left: max(env(safe-area-inset-left), 4px);
+  --app-safe-right: max(env(safe-area-inset-right), 4px);
+  /* Altura útil para contenido (evita cortes con barra de navegación del sistema) */
+  --app-height: 100dvh;
+  --app-min-height: 100vh;
+}
 
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%;
+  width: 100%;
+  min-height: var(--app-min-height);
+  height: var(--app-height);
   font-family: 'Poppins', sans-serif;
+  box-sizing: border-box;
+  -webkit-text-size-adjust: 100%;
 }
 
-ion-header{
- border-bottom: 1px solid rgba(8, 8, 8, 0.922);
- // Safe area para dispositivos con notch/pantalla completa
- // El padding-top se aplicará en cada componente específico
- // Asegurar que el header tenga posición relativa para que el fondo se extienda
- position: relative;
- 
- // Extender el fondo del header hacia arriba para llenar el safe area
- &::before {
-   content: '';
-   position: absolute;
-   top: calc(-1 * env(safe-area-inset-top));
-   left: 0;
-   right: 0;
-   height: env(safe-area-inset-top);
-   background: inherit;
-   z-index: -1;
- }
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-// Asegurar que el header respete el safe area y llene el espacio
-// Los estilos específicos se aplican en cada página para mayor control
-
-
-:root {
-	--ion-background-color: #f1ededde;
+ion-app {
+  min-height: var(--app-min-height);
+  height: var(--app-height);
 }
+
+/* Header: mismo margen superior en todas las pantallas */
+ion-header {
+  border-bottom: 1px solid rgba(8, 8, 8, 0.922);
+  position: relative;
+  padding-top: var(--app-safe-top);
+  padding-left: var(--app-safe-left);
+  padding-right: var(--app-safe-right);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: calc(-1 * env(safe-area-inset-top, 0px));
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top, 0px);
+    background: inherit;
+    z-index: -1;
+  }
+}
+
+/* Contenido: mismo padding en todas las pantallas */
+ion-content {
+  --padding-top: var(--app-safe-top);
+  --padding-bottom: var(--app-safe-bottom);
+  --padding-start: var(--app-safe-left);
+  --padding-end: var(--app-safe-right);
+}
+
+/* Toolbar dentro del header: alineado con la zona segura */
+ion-toolbar {
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: var(--app-safe-left);
+  --padding-end: var(--app-safe-right);
+  padding-top: 0;
+  min-height: 44px;
+}
+
+/* Páginas sin header (ej. login): el primer bloque respeta la zona segura */
+ion-content::part(background) {
+  padding-top: var(--app-safe-top);
+  padding-bottom: var(--app-safe-bottom);
+}
+
+// Estilos de diseños (resto de la app)
 
 // Estilos mejorados para alertas
 ion-alert {

@@ -5,10 +5,10 @@ ion-content.container {
   visibility: visible !important;
   opacity: 1 !important;
   height: 100%;
-  padding: 12px 16px 120px 16px !important;
+  padding: 0 12px 120px 12px !important;
   --padding-top: 0 !important;
-  --padding-start: 16px !important;
-  --padding-end: 16px !important;
+  --padding-start: 12px !important;
+  --padding-end: 12px !important;
   --padding-bottom: 120px !important;
   position: relative;
   --background: var(--ion-background-color, #f5f7fa);

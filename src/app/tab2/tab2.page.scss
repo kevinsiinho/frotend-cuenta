@@ -1,78 +1,71 @@
 @import '../../global.scss';
 
-// Safe area para los headers (hay dos headers en tab2)
-ion-header {
-  padding-top: env(safe-area-inset-top);
+// Un solo header compacto: safe area solo una vez, dos toolbars pegados (mínimo para que el contenido salga arriba)
+$header-toolbar-height: 40px;
+$segment-toolbar-height: 32px;
+
+// Forzar header compacto (sobreescribe global)
+ion-header.header-inicio {
+  padding-top: 0 !important;
+  padding-left: var(--app-safe-left) !important;
+  padding-right: var(--app-safe-right) !important;
   background: var(--ion-background-color);
   position: relative;
-  
-  // Extender el fondo hacia arriba para llenar el safe area
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--ion-border-color, rgba(0, 0, 0, 0.1));
+
   &::before {
     content: '';
     position: absolute;
-    top: calc(-1 * env(safe-area-inset-top));
+    top: calc(-1 * env(safe-area-inset-top, 0px));
     left: 0;
     right: 0;
-    height: env(safe-area-inset-top);
+    height: env(safe-area-inset-top, 0px);
     background: inherit;
     z-index: -1;
   }
-  
-  &.header {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid var(--ion-border-color, rgba(0, 0, 0, 0.1));
-    
-    ion-toolbar {
-      padding-top: 0;
-      min-height: calc(56px + env(safe-area-inset-top));
-      
-      &.header-toolbar {
-        --background: var(--ion-background-color, #ffffff);
-        --color: var(--ion-text-color, #000000);
-      }
-    }
+
+  > ion-toolbar.header-toolbar {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    min-height: calc(#{$header-toolbar-height} + env(safe-area-inset-top, 0px)) !important;
+    --min-height: calc(#{$header-toolbar-height} + env(safe-area-inset-top, 0px));
+    --background: var(--ion-background-color, #ffffff);
+    --color: var(--ion-text-color, #000000);
   }
-  
-  &.header2 {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-bottom: 1px solid var(--ion-border-color, rgba(0, 0, 0, 0.1));
-    z-index: 10;
-    
-    ion-toolbar {
-      padding-top: 0;
-      min-height: calc(48px + env(safe-area-inset-top));
-      
-      &.segment-toolbar {
-        --background: var(--ion-background-color, #ffffff);
-        --padding-start: 0;
-        --padding-end: 0;
-      }
-    }
+
+  > ion-toolbar.segment-toolbar {
+    padding-top: 0 !important;
+    min-height: #{$segment-toolbar-height} !important;
+    --min-height: #{$segment-toolbar-height};
+    --padding-top: 0;
+    --padding-bottom: 0;
+    --padding-start: 0;
+    --padding-end: 0;
+    --background: var(--ion-background-color, #ffffff);
   }
 }
 
-// Ajustar contenido para safe area (considerando dos headers)
-ion-content {
-  --padding-top: calc(env(safe-area-inset-top) + 56px + 48px);
-  
-  @supports (padding-top: env(safe-area-inset-top)) {
-    padding-top: env(safe-area-inset-top);
-  }
-  
-  &.main-content {
-    --background: var(--ion-background-color, #f5f7fa);
-  }
+// Forzar contenido pegado al header (sobreescribe global)
+ion-content.main-content {
+  --padding-top: calc(env(safe-area-inset-top, 0px) + #{$header-toolbar-height} + #{$segment-toolbar-height}) !important;
+  --background: var(--ion-background-color, #f5f7fa);
 }
 
-// Estilos para el título del header
+// Forzar que el primer bloque de contenido no tenga margen superior
+ion-content.main-content .segment-view {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+// Estilos para el título del header (menos padding lateral = más pegados a los bordes)
 .header-title {
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 0 16px;
+  padding: 0 8px;
   
   .title-text {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
     color: $principal-color;
     letter-spacing: -0.5px;
@@ -85,8 +78,8 @@ ion-content {
 
 .button-icon {
   --color: $principal-color;
-  --padding-start: 8px;
-  --padding-end: 8px;
+  --padding-start: 4px;
+  --padding-end: 4px;
   margin: 0;
   
   ion-icon {
@@ -116,21 +109,22 @@ ion-content {
   height: 3px;
 }
 
-// Segment buttons mejorados
+// Segment buttons compactos para caber en el toolbar de 32px
 .custom-segment {
   --background: transparent;
-  padding: 8px 12px;
-  
+  padding: 0 4px;
+  min-height: #{$segment-toolbar-height};
+
   ion-segment-button {
     --color: var(--ion-color-medium, #6c757d);
     --color-checked: $principal-color;
     --indicator-color: $principal-color;
-    --padding-start: 12px;
-    --padding-end: 12px;
-    --border-radius: 12px;
-    --indicator-height: 3px;
-    min-height: 48px;
-    margin: 0 4px;
+    --padding-start: 4px;
+    --padding-end: 4px;
+    --border-radius: 8px;
+    --indicator-height: 2px;
+    min-height: 28px;
+    margin: 0 1px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     
     &.segment-btn {
@@ -159,18 +153,18 @@ ion-content {
     }
     
     .segment-icon {
-      font-size: 20px;
-      margin-bottom: 4px;
+      font-size: 16px;
+      margin-bottom: 0;
       transition: all 0.3s ease;
       color: var(--ion-color-medium, #6c757d);
     }
-    
+
     .segment-label {
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 600;
       text-transform: none;
-      letter-spacing: 0.3px;
-      margin-top: 4px;
+      letter-spacing: 0;
+      margin-top: 0;
       color: var(--ion-color-medium, #6c757d);
     }
     
@@ -203,22 +197,22 @@ ion-content {
   }
 }
 
-// Segment view
+// Segment view: contenido pegado al segment (sin espacio vacío)
 .segment-view {
   padding: 0;
-  padding-top: calc(env(safe-area-inset-top) + 56px + 48px);
+  padding-top: 0;
   background: var(--ion-background-color, #f5f7fa);
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
   z-index: 1;
-  min-height: calc(100vh - env(safe-area-inset-top) - 56px - 48px);
-  
+  min-height: calc(100vh - env(safe-area-inset-top, 0px) - #{$header-toolbar-height} - #{$segment-toolbar-height});
+
   > div {
     display: block !important;
     width: 100%;
     height: auto;
-    min-height: calc(100vh - env(safe-area-inset-top) - 56px - 48px);
+    min-height: calc(100vh - env(safe-area-inset-top, 0px) - #{$header-toolbar-height} - #{$segment-toolbar-height});
     visibility: visible !important;
     opacity: 1 !important;
     padding-top: 0 !important;
@@ -256,11 +250,11 @@ ion-content {
     position: relative !important;
     
     &.container {
-      padding: 12px 16px 80px 16px !important;
+      padding: 0 12px 80px 12px !important;
       display: block !important;
       visibility: visible !important;
       height: auto !important;
-      min-height: calc(100vh - env(safe-area-inset-top) - 56px - 48px - 8px) !important;
+      min-height: calc(100vh - env(safe-area-inset-top, 0px) - #{$header-toolbar-height} - #{$segment-toolbar-height}) !important;
     }
   }
   
@@ -311,7 +305,7 @@ ion-content {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 16px;
+  padding: 0 12px 16px 12px;
   box-sizing: border-box;
   
   // Ajustes para el componente de tarjetas

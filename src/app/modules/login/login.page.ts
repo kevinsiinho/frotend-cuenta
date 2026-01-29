@@ -184,35 +184,35 @@ async ngOnInit() {
               }else{
                 this.InfoCel2 = res
               }
-              //sino el dispositivo no esta registrado
-            if(newDevice){
-              // Cerrar loading antes de mostrar el alert
-              this.loading.dismiss();
-              // Esperar a que el usuario cierre el alert antes de continuar
-              await this.presentAlert(info.name+", estas ingresando desde un Dispositivo no registrado previamente")
-              // Mostrar loading mientras se registra el dispositivo
-              this.loading = await this.loadingController.create({
-                message: 'Registrando dispositivo...',
-              });
-              await this.loading.present();
-              this.ConfigService.Create(this.InfoCel).then(async (res)=>{
-                if(res.status===200){
-                  console.log("Dispositivo registrado exitosamente")
-                  await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
-                  this.loading.dismiss();
-                  this.link.navigate(['tabs/tab2'])
-                }else{
-                  console.log("Error al registrar dispositivo:", res)
-                  this.loading.dismiss();
-                  await this.presentAlert("Error al registrar el dispositivo. Por favor intenta nuevamente.")
-                }
-              }).catch(async (error) => {
-                console.error("Error al crear dispositivo:", error);
+              // Verificación de dispositivo nuevo COMENTADA: evitaba iniciar sesión y dejaba cargando
+              // if(newDevice){
+              //   this.loading.dismiss();
+              //   await this.presentAlert(info.name+", estas ingresando desde un Dispositivo no registrado previamente")
+              //   this.loading = await this.loadingController.create({ message: 'Registrando dispositivo...', });
+              //   await this.loading.present();
+              //   this.ConfigService.Create(this.InfoCel).then(async (res)=>{
+              //     if(res.status===200){
+              //       await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
+              //       this.loading.dismiss();
+              //       this.link.navigate(['tabs/tab2'])
+              //     }else{
+              //       this.loading.dismiss();
+              //       await this.presentAlert("Error al registrar el dispositivo. Por favor intenta nuevamente.")
+              //     }
+              //   }).catch(async (error) => {
+              //     this.loading.dismiss();
+              //     await this.presentAlert("Error al registrar el dispositivo. Por favor intenta nuevamente.")
+              //   })
+              //   return
+              // }
+              if(newDevice){
+                // Dispositivo nuevo: ir directo a la app sin registrar ni alert
+                await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
                 this.loading.dismiss();
-                await this.presentAlert("Error al registrar el dispositivo. Por favor intenta nuevamente.")
-              })
-              return
-            }else if(info.estado=="Activo"){
+                this.link.navigate(['tabs/tab2']);
+                return;
+              }
+              if(info.estado=="Activo"){
               //Verificando que el dispositivo alla sido agregado
               await Preferences.set({ key: 'ultimaActividad', value: ahora.toString() });
               this.loading.dismiss();

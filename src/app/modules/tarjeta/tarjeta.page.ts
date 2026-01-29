@@ -76,6 +76,11 @@ convertirMesANumero(nombre: string): number {
 convertirNumeroAMes(numero: number): string {
   return this.nombreMeses[numero];
 }
+
+  /** trackBy para la lista de bolsillos: evita que los botones/popovers dejen de funcionar al re-renderizar. */
+  trackByBolsilloId(_index: number, bolsillo: Bolsillo): string {
+    return bolsillo.id ?? `${_index}`;
+  }
   // Verifica si el historial tiene datos y completa los meses faltantes
   // Ahora funciona quincenalmente: los días 1 y 15 de cada mes
   // También maneja días posteriores (16, 17, 18, etc.)
@@ -493,6 +498,8 @@ iniciarTour2() {
         this.Ordenar(orden);
       }
 
+      // Mantener cardStates con el mismo número de bolsillos para que los botones no fallen
+      this.cardStates = this.item.bolsillos!.map(() => false);
 
       this.alertInputs2 = [
         {
@@ -525,6 +532,25 @@ ActualizarUltimaVez(){
   this.item.reciente= new Date()
   this.Update()
 }
+
+  /** Actualiza totales tras un depósito sin llamar Verificar() ni recargar (evita logout). */
+  refreshTotalsAfterDeposit(): void {
+    this.positivos = 0;
+    this.negativos = 0;
+    this.item.bolsillos?.forEach(bolsillo => {
+      bolsillo.depositos?.forEach(deposito => {
+        if (deposito.valor > 0) this.positivos += deposito.valor;
+        else if (deposito.valor < 0) this.negativos += deposito.valor;
+      });
+      if (bolsillo.Vinicial && bolsillo.valor != null) {
+        if (bolsillo.valor > 0) this.positivos += bolsillo.valor;
+        else if (bolsillo.valor < 0) this.negativos += bolsillo.valor;
+      }
+    });
+    this.Totalresultado = this.positivos + this.negativos;
+    this.item.total = this.Totalresultado;
+    this.Update();
+  }
 
   async CompartidoUNO(){
     const { value } = await Preferences.get({ key: 'token' });
@@ -650,6 +676,39 @@ async EditarBolsillo(bolsillo:Bolsillo) {
   this.bolsilloEditar=bolsillo
   await this.modalEditar.present();
 }
+
+  /** Abre el menú de opciones del bolsillo por código (evita que el popover por trigger falle). */
+  async openBolsilloMenu(bolsillo: Bolsillo, index: number): Promise<void> {
+    if (this.item.estado) return;
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Opciones del bolsillo',
+      cssClass: 'bolsillo-menu-actions',
+      buttons: [
+        {
+          text: 'Editar bolsillo',
+          icon: 'create-outline',
+          handler: () => this.EditarBolsillo(bolsillo),
+        },
+        {
+          text: 'Eliminar depósitos',
+          icon: 'trash-outline',
+          handler: () => this.EliminarDepositos(bolsillo.id!),
+        },
+        {
+          text: 'Eliminar bolsillo',
+          icon: 'close-circle-outline',
+          role: 'destructive',
+          handler: () => this.EliminarItem(index),
+        },
+        {
+          text: 'Cancelar',
+          icon: 'close-outline',
+          role: 'cancel',
+        },
+      ],
+    });
+    await actionSheet.present();
+  }
 
 confirmEditar() {
   if(this.bolsilloEditar.nombre!="" && this.bolsilloEditar.color!=null){
@@ -892,16 +951,10 @@ RutaHistorial(){
           });
         }
         this.bolsilloService.Update(bolsillo).then(() => {
-          this.total()
-          this.ngOnInit()
-          
-          // Limpiar el depósito después de agregar
+          this.total();
+          // Actualizar totales sin volver a llamar Verificar() (evita logout)
+          this.refreshTotalsAfterDeposit();
           this.deposito = new Depositos();
-          
-          // Recargar la página para actualizar todo
-          setTimeout(() => {
-            window.location.reload();
-          }, 300);
         })
       })
 
@@ -981,6 +1034,17 @@ RutaHistorial(){
 
   onDepositoAlertDismiss(event: any, bolsillo: Bolsillo) {
     // Este método se puede usar para limpiar si es necesario
+  }
+
+  /** Abre el alert de agregar/restar depósito por código (evita que el trigger por ID falle). */
+  async openDepositoAlert(bolsillo: Bolsillo): Promise<void> {
+    if (this.item.estado) return;
+    const alert = await this.alertController.create({
+      header: 'Agregar depósito',
+      inputs: this.depositoAlertInputs as any,
+      buttons: this.getDepositoAlertButtons(bolsillo),
+    });
+    await alert.present();
   }
 
 /*Modal añadir tarjeta*/

@@ -1,11 +1,13 @@
 @import '../../global.scss';
 
-// Safe area para el tab bar inferior (pantallas completas)
+// Safe area para el tab bar inferior; bordes laterales más pegados (igual que headers)
 ion-tab-bar {
   border-top: solid 1px $tercero-color;
   padding-bottom: env(safe-area-inset-bottom);
   --padding-bottom: env(safe-area-inset-bottom);
   margin-bottom: env(safe-area-inset-bottom);
+  --padding-start: var(--app-safe-left);
+  --padding-end: var(--app-safe-right);
 }
 
 ion-tab-button.tab-selected {

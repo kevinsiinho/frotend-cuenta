@@ -32,7 +32,7 @@
   <div class="cards-container">
     <ion-item [class.disabled-overlay]="item.estado" lines="none">
       <ion-reorder-group [disabled]="isDisabled" (ionItemReorder)="handleReorder($any($event))" class="reorder-group">
-        <ion-item class="bolsillo-item" [class.card-disabled]="item.estado" #capturableArea [id]="'item-' + x" *ngFor="let bolsillo of item.bolsillos; let x=index;">
+        <ion-item class="bolsillo-item" [class.card-disabled]="item.estado" #capturableArea [id]="'item-' + x" *ngFor="let bolsillo of item.bolsillos; let x=index; trackBy: trackByBolsilloId">
           <ion-card class="bolsillo-card">
             <ion-card-header class="bolsillo-header" [style.border-left-color]="bolsillo.color">
               <div class="bolsillo-title-row">
@@ -42,50 +42,22 @@
                     fill="clear" 
                     class="bolsillo-add-btn" 
                     *ngIf="(compartirUno.estado || creador) && !item.estado"
-                    [id]="'deposito-trigger-' + x"
+                    (click)="openDepositoAlert(bolsillo)"
+                    type="button"
                     title="Agregar/restar depósito">
                     <ion-icon name="add-circle-outline" [style.color]="bolsillo.color"></ion-icon>
                   </ion-button>
-                  
-                  <!-- Alert para agregar/restar depósito -->
-                  <ion-alert
-                    [trigger]="'deposito-trigger-' + x"
-                    header="Agregar depósito"
-                    [buttons]="getDepositoAlertButtons(bolsillo)"
-                    [inputs]="depositoAlertInputs"
-                    (didDismiss)="onDepositoAlertDismiss($event, bolsillo)">
-                  </ion-alert>
                   <ion-button 
                     fill="clear" 
                     class="bolsillo-menu-btn" 
-                    [id]="'popover-' + x" 
                     *ngIf="compartirUno.estado===true || creador===true"
-                    [disabled]="item.estado">
+                    [disabled]="item.estado"
+                    (click)="openBolsilloMenu(bolsillo, x)"
+                    type="button"
+                    title="Opciones del bolsillo">
                     <ion-icon name="ellipsis-horizontal-outline" [style.color]="bolsillo.color"></ion-icon>
                   </ion-button>
                 </div>
-                
-                <!--Opciones para los bolsillos-->
-                <ion-popover [trigger]="'popover-' + x" [dismissOnSelect]="true" alignment="start" size="auto" class="bolsillo-popover">
-                  <ng-template>
-                    <ion-content>
-                      <ion-list class="popover-list">
-                        <ion-item [button]="true" [detail]="false" (click)="EditarBolsillo(bolsillo)" class="popover-item">
-                          <ion-icon name="create-outline" slot="start"></ion-icon>
-                          <ion-label>Editar bolsillo</ion-label>
-                        </ion-item>
-                        <ion-item [button]="true" [detail]="false" (click)="EliminarDepositos(bolsillo.id!)" class="popover-item">
-                          <ion-icon name="trash-outline" slot="start"></ion-icon>
-                          <ion-label>Eliminar depósitos</ion-label>
-                        </ion-item>
-                        <ion-item [button]="true" [detail]="false" (click)="EliminarItem(x)" class="popover-item destructive">
-                          <ion-icon name="close-circle-outline" slot="start"></ion-icon>
-                          <ion-label>Eliminar bolsillo</ion-label>
-                        </ion-item>
-                      </ion-list>
-                    </ion-content>
-                  </ng-template>
-                </ion-popover>
               </div>
 
               <!--Titulos de las cantidades-->
