@@ -44,8 +44,8 @@ export class Items {
       this.ColorFondo=item.ColorFondo
       this.bolsillos=item.bolsillos
       this.historial=item.historial
-      this.estadohistorial=item.estadohistorial
-      this.diahistorial=item.diahistorial
-      this.realizado=item.realizado
+        this.estadohistorial=item.estadohistorial
+        this.diahistorial=item.diahistorial
+        this.realizado=item.realizado
     }
 }

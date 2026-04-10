@@ -11,7 +11,10 @@ export class Bolsillo {
     creado?:Date
     idItem!:string
     idCreador!:string
-    estado?:string
+    /** Otros usos en BD (boolean); no usar para excluir del total. */
+    estado?: boolean
+    /** Si true: bolsillo desactivado — no suma en totales y se restringen depósitos (persistido en BD). */
+    ocultarBolsillo?: boolean
     depositos?:Depositos[]
     setValues(item:any){
       this.id=item.id
@@ -25,7 +28,7 @@ export class Bolsillo {
       this.idItem=item.idItem
       this.idCreador=item.idCreador
       this.estado=item.estado
-      this.Vinicial=item.Vinicial
+      this.ocultarBolsillo=item.ocultarBolsillo === true
       this.depositos=item.depositos
     }
 }

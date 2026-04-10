@@ -57,6 +57,8 @@ export class TarjetaPage implements OnInit {
   isModalOpen = false;
   public btnEliminar=true;
   public isDisabled = true;
+  /** Preferencia por dispositivo: ocultar en la lista los bolsillos con `ocultarBolsillo === true`. */
+  public ocultarBolsillosInactivosEnLista = false;
   public selectedBolsillo: Bolsillo | null = null;
   public positivo:number=0
   public positivos:number=0
@@ -81,142 +83,318 @@ convertirNumeroAMes(numero: number): string {
   trackByBolsilloId(_index: number, bolsillo: Bolsillo): string {
     return bolsillo.id ?? `${_index}`;
   }
-  // Verifica si el historial tiene datos y completa los meses faltantes
-  // Ahora funciona quincenalmente: los días 1 y 15 de cada mes
-  // También maneja días posteriores (16, 17, 18, etc.)
-async verificarYCompletarHistorial() {
-  const hoy = new Date();
-  const diaActual = hoy.getDate();
-  
-  // Determinar si necesitamos procesar el historial
-  let debeGuardarHistorial = false;
-  let periodoAProcesar = "";
-  let mesAProcesar = hoy.getMonth();
-  let anioAProcesar = hoy.getFullYear();
-  
-  // Lógica para determinar qué período procesar según el día actual
-  if (diaActual >= 1 && diaActual <= 14) {
-    // Estamos en la primera quincena
-    // Verificar si ya se procesó la segunda quincena del mes anterior
-    mesAProcesar = hoy.getMonth() - 1;
-    if (mesAProcesar < 0) {
-      mesAProcesar = 11; // Diciembre
-      anioAProcesar -= 1;
-    }
-    
-    const nombreMesAnterior = this.convertirNumeroAMes(mesAProcesar);
-    const nombrePeriodoAnterior = `${nombreMesAnterior}-segunda`;
-    
-    // Buscar si ya existe este período en el historial
-    const registroAnual = this.item.historial?.find(h => Number(h.ano) === anioAProcesar);
-    const yaExistePeriodo = registroAnual?.meses?.find(m => m.mes === nombrePeriodoAnterior);
-    
-    if (!yaExistePeriodo && this.depositos.length > 0) {
-      debeGuardarHistorial = true;
-      periodoAProcesar = "segunda";
-    }
-  } else if (diaActual >= 15) {
-    // Estamos en la segunda quincena o después del 15
-    // Verificar si ya se procesó la primera quincena del mes actual
-    const nombreMesActual = this.convertirNumeroAMes(hoy.getMonth());
-    const nombrePeriodoActual = `${nombreMesActual}-primera`;
-    
-    // Buscar si ya existe este período en el historial
-    const registroAnual = this.item.historial?.find(h => Number(h.ano) === hoy.getFullYear());
-    const yaExistePeriodo = registroAnual?.meses?.find(m => m.mes === nombrePeriodoActual);
-    
-    if (!yaExistePeriodo && this.depositos.length > 0) {
-      debeGuardarHistorial = true;
-      periodoAProcesar = "primera";
-      mesAProcesar = hoy.getMonth();
-      anioAProcesar = hoy.getFullYear();
-    }
+
+  /** Incluido en ingresos/gastos/total de la tarjeta si no está desactivado. */
+  /** Bolsillo contable y editable: `ocultarBolsillo` en BD no es true. */
+  bolsilloActivo(b: Bolsillo | undefined | null): boolean {
+    if (!b) return false;
+    return b.ocultarBolsillo !== true;
   }
 
-  // Ejecutar el guardado del historial si es necesario
-  if (this.item.estadohistorial && debeGuardarHistorial) {
-    
-    console.log(`Guardando historial para: ${this.convertirNumeroAMes(mesAProcesar)}-${periodoAProcesar}`);
-    
+  /**
+   * Oculta en la lista los bolsillos desactivados (`ocultarBolsillo`) si la preferencia local está activa.
+   * En modo reordenar (`!isDisabled`) se muestran todos para poder moverlos.
+   */
+  mostrarBolsilloEnLista(b: Bolsillo): boolean {
+    if (this.bolsilloActivo(b)) return true;
+    if (!this.isDisabled) return true;
+    return this.ocultarBolsillosInactivosEnLista !== true;
+  }
+
+  private ocultarBolsillosListaPrefsKey(): string {
+    return `ocultarBolsInactivosLista_${this.id}`;
+  }
+
+  /**
+   * Qué período cerraría el historial automático según la fecha (días 1–14 → 2.ª del mes anterior; día 15+ → 1.ª del mes actual).
+   */
+  private resolverPeriodoSegunCalendario(hoy: Date): {
+    nombreCompleto: string;
+    anioAProcesar: number;
+    mesAProcesar: number;
+    periodoAProcesar: string;
+  } {
+    const diaActual = hoy.getDate();
+    let mesAProcesar: number;
+    let anioAProcesar: number;
+    let periodoAProcesar: string;
+
+    if (diaActual >= 1 && diaActual <= 14) {
+      mesAProcesar = hoy.getMonth() - 1;
+      anioAProcesar = hoy.getFullYear();
+      if (mesAProcesar < 0) {
+        mesAProcesar = 11;
+        anioAProcesar -= 1;
+      }
+      periodoAProcesar = 'segunda';
+    } else {
+      mesAProcesar = hoy.getMonth();
+      anioAProcesar = hoy.getFullYear();
+      periodoAProcesar = 'primera';
+    }
+
+    const nombreMes = this.convertirNumeroAMes(mesAProcesar);
+    const nombreCompleto = `${nombreMes}-${periodoAProcesar}`;
+    return { nombreCompleto, anioAProcesar, mesAProcesar, periodoAProcesar };
+  }
+
+  /**
+   * Etiqueta y cierre manual «como hoy»: en días 1–14, si la 2.ª del mes anterior ya está en historial,
+   * el foco pasa a la 1.ª del mes actual (p. ej. 9 abr → «abril-primera», no «marzo-segunda»).
+   * El automático sigue usando `resolverPeriodoSegunCalendario` para no dejar períodos atrasados sin cerrar.
+   */
+  private resolverPeriodoParaMenuYcierreManual(hoy: Date): {
+    nombreCompleto: string;
+    anioAProcesar: number;
+    mesAProcesar: number;
+    periodoAProcesar: string;
+  } {
+    const dia = hoy.getDate();
+    const mes = hoy.getMonth();
+    const anio = hoy.getFullYear();
+
+    if (dia >= 15) {
+      const periodoAProcesar = 'primera';
+      return {
+        nombreCompleto: `${this.convertirNumeroAMes(mes)}-primera`,
+        anioAProcesar: anio,
+        mesAProcesar: mes,
+        periodoAProcesar,
+      };
+    }
+
+    let mesAnt = mes - 1;
+    let anioAnt = anio;
+    if (mesAnt < 0) {
+      mesAnt = 11;
+      anioAnt -= 1;
+    }
+    const nombreSegundaAnt = `${this.convertirNumeroAMes(mesAnt)}-segunda`;
+    const segundaCerrada = this.periodoYaExisteEnHistorial(nombreSegundaAnt, anioAnt);
+
+    if (!segundaCerrada) {
+      return {
+        nombreCompleto: nombreSegundaAnt,
+        anioAProcesar: anioAnt,
+        mesAProcesar: mesAnt,
+        periodoAProcesar: 'segunda',
+      };
+    }
+
+    return {
+      nombreCompleto: `${this.convertirNumeroAMes(mes)}-primera`,
+      anioAProcesar: anio,
+      mesAProcesar: mes,
+      periodoAProcesar: 'primera',
+    };
+  }
+
+  private periodoYaExisteEnHistorial(nombreCompleto: string, anioAProcesar: number): boolean {
+    const registroAnual = this.item.historial?.find(h => Number(h.ano) === anioAProcesar);
+    return !!registroAnual?.meses?.find(m => m.mes === nombreCompleto);
+  }
+
+  private historialPausaPreferencesKey(): string {
+    return `historialAutoPausaHasta_${this.id}`;
+  }
+
+  /** Pausa general (`general`) o pausa hasta fecha (valor ISO guardado antes). */
+  private async historialAutoEstaPausado(): Promise<boolean> {
+    const { value } = await Preferences.get({ key: this.historialPausaPreferencesKey() });
+    if (!value) return false;
+    if (value === 'general') return true;
+    const t = new Date(value).getTime();
+    return !Number.isNaN(t) && Date.now() < t;
+  }
+
+  /** Recalcula totales de la tarjeta solo con saldos iniciales (depósitos ya vacíos en memoria). */
+  private recalcularTotalesTarjetaTrasHistorial(): void {
+    this.depositos = [];
+    this.positivos = 0;
+    this.negativos = 0;
+    this.item.bolsillos?.forEach(bolsillo => {
+      bolsillo.depositos = [];
+      bolsillo.subtotal = 0;
+      if (!this.bolsilloActivo(bolsillo)) return;
+      if (this.bolsilloUsaValorInicial(bolsillo)) {
+        const v = Number(bolsillo.valor);
+        if (!Number.isNaN(v) && v > 0) this.positivos += v;
+        else if (!Number.isNaN(v) && v < 0) this.negativos += v;
+      }
+    });
+    this.Totalresultado = this.positivos + this.negativos;
+    this.item.total = this.Totalresultado;
+  }
+
+  /**
+   * Copia depósitos al historial, borra depósitos en servidor, pone subtotales en 0 y actualiza total de la tarjeta.
+   */
+  private async ejecutarCierreHistorialInterno(desc: {
+    nombreCompleto: string;
+    anioAProcesar: number;
+    mesAProcesar: number;
+  }): Promise<void> {
     if (!this.item.historial) {
       this.item.historial = [];
     }
 
-    // Buscar o crear el registro anual correspondiente
-    let registroAnual = this.item.historial.find(h => Number(h.ano) === anioAProcesar);
+    let registroAnual = this.item.historial.find(h => Number(h.ano) === desc.anioAProcesar);
     if (!registroAnual) {
-      registroAnual = { ano: String(anioAProcesar), meses: [] };
+      registroAnual = { ano: String(desc.anioAProcesar), meses: [] };
       this.item.historial.push(registroAnual);
     }
 
-    // Nombre del período completo
-    const nombreMes = this.convertirNumeroAMes(mesAProcesar);
-    const nombreCompleto = `${nombreMes}-${periodoAProcesar}`;
-
-    // Verificar una vez más si ya existe (doble verificación por seguridad)
-    let mesHistorial = registroAnual.meses.find(m => m.mes === nombreCompleto);
-    if (mesHistorial) {
-      console.log(`El período ${nombreCompleto} ya existe. No se sobrescribirá.`);
-      return; // SALIR SIN HACER NADA para evitar sobrescribir
+    const existente = registroAnual.meses.find(m => m.mes === desc.nombreCompleto);
+    if (existente) {
+      console.log(`El período ${desc.nombreCompleto} ya existe. No se sobrescribe.`);
+      return;
     }
-    
-    // Crear el nuevo período en el historial
-    mesHistorial = new HistorialMes();
-    mesHistorial.mes = nombreCompleto;
+
+    const mesHistorial = new HistorialMes();
+    mesHistorial.mes = desc.nombreCompleto;
     mesHistorial.total = 0;
     mesHistorial.depositos = [];
     registroAnual.meses.push(mesHistorial);
 
-    // GUARDAR los depósitos actuales (crear copias)
     let total = 0;
     const depositosCopia: Depositos[] = [];
     this.depositos.forEach(element => {
       total += element.valor;
-      // Crear copia real del depósito
       const copia = new Depositos();
       copia.setValues(element);
       depositosCopia.push(copia);
     });
-    
-    // ASIGNAR los depósitos copiados al nuevo período
     mesHistorial.depositos = depositosCopia;
     mesHistorial.total = total;
 
-    // ACTUALIZAR el item con el historial guardado
+    console.log(`Guardando historial: ${desc.nombreCompleto}`);
+
     await this.Update();
-    
-    // LIMPIAR depósitos después de confirmar que se guardó
+
     try {
-      // Limpiar depósitos de los bolsillos y actualizar
-      const promesasLimpieza = this.item.bolsillos?.map(async (bolsillo: Bolsillo) => {
-        // Eliminar todos los depósitos del bolsillo
-        const promesasEliminarDepositos = bolsillo.depositos?.map(element => 
-          this.depositoServices.Delete(element.id!)
-        ) || [];
-        
-        await Promise.all(promesasEliminarDepositos);
-        
-        // Limpiar el bolsillo
-        bolsillo.subtotal = 0;
-        bolsillo.depositos = [];
-        
-        // Actualizar el bolsillo
-        return this.bolsilloService.Update(bolsillo);
-      }) || [];
-      
+      const promesasLimpieza =
+        this.item.bolsillos?.map(async (bolsillo: Bolsillo) => {
+          const promesasEliminarDepositos =
+            bolsillo.depositos?.map(element => this.depositoServices.Delete(element.id!)) || [];
+          await Promise.all(promesasEliminarDepositos);
+          bolsillo.subtotal = 0;
+          bolsillo.depositos = [];
+          return this.bolsilloService.Update(bolsillo);
+        }) || [];
       await Promise.all(promesasLimpieza);
-      
-      // Limpiar el array local de depósitos
-      this.depositos = [];
-      
-      console.log('Historial guardado y depósitos limpiados exitosamente');
-      
+
+      this.recalcularTotalesTarjetaTrasHistorial();
+      await this.Update();
+      this.cdr.detectChanges();
+      console.log('Historial guardado, depósitos limpiados y totales actualizados');
     } catch (error) {
       console.error('Error al limpiar depósitos:', error);
-      this.presentAlert("Error al limpiar los depósitos después de guardar el historial");
+      this.presentAlert('Error al limpiar los depósitos después de guardar el historial');
     }
   }
-}
+
+  /** Cierre automático al abrir la tarjeta (respeta pausa). */
+  async verificarYCompletarHistorial() {
+    if (!this.item.estadohistorial) return;
+    if (await this.historialAutoEstaPausado()) {
+      console.log('Historial automático en pausa hasta la fecha programada en el dispositivo');
+      return;
+    }
+
+    const desc = this.resolverPeriodoSegunCalendario(new Date());
+    if (this.periodoYaExisteEnHistorial(desc.nombreCompleto, desc.anioAProcesar)) return;
+    if (this.depositos.length === 0) return;
+
+    await this.ejecutarCierreHistorialInterno(desc);
+  }
+
+  async manualCierreHistorialPeriodo(desc: {
+    nombreCompleto: string;
+    anioAProcesar: number;
+    mesAProcesar: number;
+  }): Promise<void> {
+    if (!this.item.estadohistorial) return;
+    if (this.periodoYaExisteEnHistorial(desc.nombreCompleto, desc.anioAProcesar)) {
+      await this.presentAlert(`El período «${desc.nombreCompleto}» ya está en el historial. No se repite el cierre.`);
+      return;
+    }
+    if (this.depositos.length === 0) {
+      await this.presentAlert('No hay depósitos para cerrar en este período.');
+      return;
+    }
+
+    const loading = await this.loadingController.create({ message: 'Cerrando período...' });
+    await loading.present();
+    try {
+      await this.ejecutarCierreHistorialInterno(desc);
+      await this.presentAlert(
+        `Período «${desc.nombreCompleto}» guardado en el historial. Los depósitos actuales se vaciaron y los totales quedaron solo con saldo inicial.`
+      );
+    } catch {
+      await this.presentAlert('No se pudo completar el cierre. Revisa la conexión e inténtalo de nuevo.');
+    } finally {
+      loading.dismiss();
+    }
+  }
+
+  async openHistorialQuincenaMenu(): Promise<void> {
+    if (!this.item.estadohistorial || !this.creador) return;
+
+    const pausado = await this.historialAutoEstaPausado();
+    const { value: pausaVal } = await Preferences.get({ key: this.historialPausaPreferencesKey() });
+    let pausaTxt = 'Automático activo';
+    if (pausado) {
+      if (pausaVal === 'general') {
+        pausaTxt = 'Automático en pausa';
+      } else if (pausaVal) {
+        const t = new Date(pausaVal).getTime();
+        pausaTxt =
+          !Number.isNaN(t) && Date.now() < t
+            ? `Automático en pausa hasta ${new Date(pausaVal).toLocaleString()}`
+            : 'Automático en pausa';
+      }
+    }
+
+    const descManual = this.resolverPeriodoParaMenuYcierreManual(new Date());
+    const subHeader = `${pausaTxt} · Cierre sugerido: «${descManual.nombreCompleto}»`;
+
+    const sheet = await this.actionSheetController.create({
+      header: 'Historial quincenal',
+      subHeader,
+      buttons: [
+        {
+          text: `Cerrar «${descManual.nombreCompleto}»`,
+          icon: 'calendar-outline',
+          handler: () => {
+            void this.manualCierreHistorialPeriodo(descManual);
+          },
+        },
+        {
+          text: 'Pausar automático',
+          icon: 'pause-outline',
+          handler: async () => {
+            await Preferences.set({
+              key: this.historialPausaPreferencesKey(),
+              value: 'general',
+            });
+            await this.presentAlert(
+              'El cierre automático queda en pausa hasta que pulses Reanudar. Puedes usar el cierre sugerido del menú cuando quieras.'
+            );
+          },
+        },
+        {
+          text: 'Reanudar automático',
+          icon: 'play-outline',
+          handler: async () => {
+            await Preferences.remove({ key: this.historialPausaPreferencesKey() });
+            await this.presentAlert('Cierre automático reanudado.');
+          },
+        },
+        { text: 'Cancelar', role: 'cancel', icon: 'close-outline' },
+      ],
+    });
+    await sheet.present();
+  }
   
   public alertInputs3:any[]= [
     {
@@ -337,6 +515,9 @@ iniciarTour2() {
 }
 
   toggleReorder() {
+    if (!this.masDeUnBolsillo) {
+      return;
+    }
     this.isDisabled = !this.isDisabled;
     if (this.isDisabled) {
       this.item.bolsillos!.forEach(element => {
@@ -444,6 +625,9 @@ iniciarTour2() {
       this.id = this.router.snapshot.paramMap.get('id')!;
       this.item = await this.itemService.GetItem(this.id);
 
+      const { value: ocLista } = await Preferences.get({ key: this.ocultarBolsillosListaPrefsKey() });
+      this.ocultarBolsillosInactivosEnLista = ocLista === 'true' || ocLista === '1';
+
       // Asegurar que el estado esté definido (false = activado por defecto)
       if (this.item.estado === undefined || this.item.estado === null) {
         this.item.estado = false; // false = activado, true = desactivado
@@ -466,33 +650,7 @@ iniciarTour2() {
       const todosLosDepositos = await this.depositoServices.alldepositos(this.id);
       this.depositos = todosLosDepositos;
 
-      this.positivos = 0;
-      this.negativos = 0;
-
-      this.depositos.forEach(deposito => {
-        if (deposito.valor > 0) {
-          this.positivos += deposito.valor;
-        } else if (deposito.valor < 0) {
-          this.negativos += deposito.valor;
-        }
-      });
-
-
-      // Distribuir depósitos a cada bolsillo
-      this.item.bolsillos?.forEach(bolsillo => {
-        bolsillo.depositos = this.depositos.filter(dep => dep.idBolsillo === bolsillo.id);
-        if(bolsillo.Vinicial){
-          if (bolsillo.valor! > 0) {
-            this.positivos += bolsillo.valor!
-          } else if (bolsillo.valor! < 0) {
-            this.negativos += bolsillo.valor!
-          }
-        }
-      });
-
-
-      this.Totalresultado = this.positivos + this.negativos;
-      this.item.total=this.Totalresultado
+      this.aplicarTotalesTarjeta();
       const { value: orden } = await Preferences.get({ key: 'TarjetaOrden' });
       if (orden) {
         this.Ordenar(orden);
@@ -500,6 +658,9 @@ iniciarTour2() {
 
       // Mantener cardStates con el mismo número de bolsillos para que los botones no fallen
       this.cardStates = this.item.bolsillos!.map(() => false);
+      if (!this.masDeUnBolsillo) {
+        this.isDisabled = true;
+      }
 
       this.alertInputs2 = [
         {
@@ -533,23 +694,64 @@ ActualizarUltimaVez(){
   this.Update()
 }
 
-  /** Actualiza totales tras un depósito sin llamar Verificar() ni recargar (evita logout). */
-  refreshTotalsAfterDeposit(): void {
+  /** Ingresos, gastos y total de la tarjeta solo con bolsillos activos. */
+  aplicarTotalesTarjeta(): void {
+    this.item.bolsillos?.forEach(bolsillo => {
+      bolsillo.depositos = this.depositos.filter(dep => dep.idBolsillo === bolsillo.id);
+    });
     this.positivos = 0;
     this.negativos = 0;
+    this.depositos.forEach(deposito => {
+      const b = this.item.bolsillos?.find(x => x.id === deposito.idBolsillo);
+      if (!this.bolsilloActivo(b)) return;
+      if (deposito.valor > 0) this.positivos += deposito.valor;
+      else if (deposito.valor < 0) this.negativos += deposito.valor;
+    });
     this.item.bolsillos?.forEach(bolsillo => {
-      bolsillo.depositos?.forEach(deposito => {
-        if (deposito.valor > 0) this.positivos += deposito.valor;
-        else if (deposito.valor < 0) this.negativos += deposito.valor;
-      });
-      if (bolsillo.Vinicial && bolsillo.valor != null) {
-        if (bolsillo.valor > 0) this.positivos += bolsillo.valor;
-        else if (bolsillo.valor < 0) this.negativos += bolsillo.valor;
+      if (!this.bolsilloActivo(bolsillo)) return;
+      if (this.bolsilloUsaValorInicial(bolsillo)) {
+        const v = Number(bolsillo.valor);
+        if (v > 0) this.positivos += v;
+        else if (v < 0) this.negativos += v;
       }
     });
     this.Totalresultado = this.positivos + this.negativos;
     this.item.total = this.Totalresultado;
+  }
+
+  /** Actualiza totales tras un depósito sin llamar Verificar() ni recargar (evita logout). */
+  refreshTotalsAfterDeposit(): void {
+    this.aplicarTotalesTarjeta();
     this.Update();
+  }
+
+  async toggleOcultarBolsillosInactivos(): Promise<void> {
+    this.ocultarBolsillosInactivosEnLista = !this.ocultarBolsillosInactivosEnLista;
+    await Preferences.set({
+      key: this.ocultarBolsillosListaPrefsKey(),
+      value: this.ocultarBolsillosInactivosEnLista ? 'true' : 'false',
+    });
+    this.cdr.detectChanges();
+  }
+
+  async toggleBolsilloActivo(b: Bolsillo): Promise<void> {
+    const prevOcultar = b.ocultarBolsillo === true;
+    const eraActivo = this.bolsilloActivo(b);
+    b.ocultarBolsillo = eraActivo ? true : false;
+    try {
+      const res = await this.bolsilloService.Update(b);
+      if (res === 204) {
+        this.aplicarTotalesTarjeta();
+        await this.Update();
+        this.cdr.detectChanges();
+      } else {
+        b.ocultarBolsillo = prevOcultar;
+        await this.presentAlert('No se pudo actualizar el bolsillo.');
+      }
+    } catch {
+      b.ocultarBolsillo = prevOcultar;
+      await this.presentAlert('Error al actualizar el bolsillo.');
+    }
   }
 
   async CompartidoUNO(){
@@ -569,9 +771,57 @@ ActualizarUltimaVez(){
     })
   }
 
-  formatNumberMil(value: number | undefined | null): string {
-    if (typeof value !== 'number') return '0';
-    return value.toLocaleString();
+  formatNumberMil(value: number | string | undefined | null): string {
+    if (value == null || value === '') return '0';
+    const n = typeof value === 'number' ? value : Number(value);
+    if (Number.isNaN(n)) return '0';
+    return n.toLocaleString();
+  }
+
+  /**
+   * Tarjeta con historial exige saldo inicial en el formulario, pero el toggle Vinicial puede quedar en false
+   * y guardarse solo `valor`. Sin esto la tarjeta usa la vista Ingresos/Egresos (solo depósitos) y el total sale $0.
+   */
+  bolsilloUsaValorInicial(b: Bolsillo): boolean {
+    if (b.Vinicial === true) return true;
+    if (!this.item.estadohistorial || b.valor == null) return false;
+    const v = Number(b.valor);
+    return !Number.isNaN(v) && v !== 0;
+  }
+
+  totalInicialMasDepositos(b: Bolsillo): number {
+    const v = Number(b.valor ?? 0);
+    const s = Number(b.subtotal ?? 0);
+    return (Number.isNaN(v) ? 0 : v) + (Number.isNaN(s) ? 0 : s);
+  }
+
+  get masDeUnBolsillo(): boolean {
+    return (this.item.bolsillos?.length ?? 0) > 1;
+  }
+
+  /** Monto de saldo inicial del bolsillo (campo `valor` en API). */
+  private saldoInicialOrdenNum(b: Bolsillo): number {
+    const v = Number(b.valor ?? 0);
+    return Number.isNaN(v) ? 0 : v;
+  }
+
+  /** Suma de movimientos en depósitos (usa la lista cargada si existe; si no, `subtotal`). */
+  private sumaDepositosOrdenNum(b: Bolsillo): number {
+    if (b.depositos != null && b.depositos.length > 0) {
+      let t = 0;
+      for (const d of b.depositos) {
+        const v = Number(d.valor ?? 0);
+        if (!Number.isNaN(v)) t += v;
+      }
+      return t;
+    }
+    const s = Number(b.subtotal ?? 0);
+    return Number.isNaN(s) ? 0 : s;
+  }
+
+  /** Saldo total coherente con depósitos en memoria + saldo inicial. */
+  private saldoParaOrden(b: Bolsillo): number {
+    return this.saldoInicialOrdenNum(b) + this.sumaDepositosOrdenNum(b);
   }
 
 /*
@@ -690,6 +940,13 @@ async EditarBolsillo(bolsillo:Bolsillo) {
           handler: () => this.EditarBolsillo(bolsillo),
         },
         {
+          text: this.bolsilloActivo(bolsillo) ? 'Desactivar bolsillo' : 'Activar bolsillo',
+          icon: this.bolsilloActivo(bolsillo) ? 'eye-off-outline' : 'eye-outline',
+          handler: () => {
+            void this.toggleBolsilloActivo(bolsillo);
+          },
+        },
+        {
           text: 'Eliminar depósitos',
           icon: 'trash-outline',
           handler: () => this.EliminarDepositos(bolsillo.id!),
@@ -712,22 +969,30 @@ async EditarBolsillo(bolsillo:Bolsillo) {
 
 confirmEditar() {
   if(this.bolsilloEditar.nombre!="" && this.bolsilloEditar.color!=null){
-    this.bolsilloEditar.Vinicial=Boolean(this.bolsilloEditar.Vinicial)
-    if(this.bolsilloEditar.Vinicial && this.bolsilloEditar.valor!<1){
-      this.presentAlert("Ingresa el valor inicial");
-    }else{
-        this.bolsilloService.Update(this.bolsilloEditar).then((res)=>{
-        if(res===204){
-          this.modalEditar.dismiss('confirm');
-          this.bolsilloEditar= new Bolsillo();
-          this.total()
-          this.ngOnInit()
-        }else{
-          this.presentAlert("Error, intenta nuevamente");
-        }
-      })
+    if (this.item.estadohistorial) {
+      if (this.bolsilloEditar.valor == null || Number(this.bolsilloEditar.valor) < 1) {
+        this.presentAlert("Ingresa el saldo inicial");
+        return;
+      }
+      this.bolsilloEditar.Vinicial = true;
+    } else {
+      this.bolsilloEditar.Vinicial = Boolean(this.bolsilloEditar.Vinicial);
+      if (this.bolsilloEditar.Vinicial && (this.bolsilloEditar.valor == null || Number(this.bolsilloEditar.valor) < 1)) {
+        this.presentAlert("Ingresa el saldo inicial");
+        return;
+      }
     }
-  }else{
+    this.bolsilloService.Update(this.bolsilloEditar).then((res)=>{
+      if(res===204){
+        this.modalEditar.dismiss('confirm');
+        this.bolsilloEditar= new Bolsillo();
+        this.total()
+        this.ngOnInit()
+      }else{
+        this.presentAlert("Error, intenta nuevamente");
+      }
+    })
+  } else {
     this.presentAlert("Error, verifica los datos e intenta nuevamente");
   }
 }
@@ -1039,6 +1304,10 @@ RutaHistorial(){
   /** Abre el alert de agregar/restar depósito por código (evita que el trigger por ID falle). */
   async openDepositoAlert(bolsillo: Bolsillo): Promise<void> {
     if (this.item.estado) return;
+    if (!this.bolsilloActivo(bolsillo)) {
+      await this.presentAlert('Este bolsillo está desactivado. Actívalo desde el menú del bolsillo para agregar o restar depósitos.');
+      return;
+    }
     const alert = await this.alertController.create({
       header: 'Agregar depósito',
       inputs: this.depositoAlertInputs as any,
@@ -1053,6 +1322,9 @@ RutaHistorial(){
 
 initBolsillo() {
   this.bolsillo = new Bolsillo();
+  if (this.item.estadohistorial) {
+    this.bolsillo.Vinicial = true;
+  }
 }
 
 async openBolsilloModal() {
@@ -1096,25 +1368,34 @@ FingresarValor2(){
 
 confirm() {
     if(this.bolsillo.nombre!="" && this.bolsillo.color!=null){
-      this.bolsillo.Vinicial=Boolean(this.bolsillo.Vinicial)
-      if(this.bolsillo.Vinicial && this.bolsillo.valor!<1){
-        this.presentAlert("Ingresa el valor inicial");
-      }else{
-        this.bolsillo.subtotal=0;
-        this.bolsillo.creado=new Date()
-        this.bolsillo.idItem=this.item.id!
-        this.bolsillo.posicion=this.item.bolsillos!.length+1
-      this.item.bolsillos!.push(this.bolsillo);
-        this.bolsilloService.Create(this.bolsillo).then((res)=>{
-          if(res.status===200){
-            this.modal.dismiss('confirm');
-            this.bolsillo= new Bolsillo();
-            this.ngOnInit()
-          }else{
-            this.presentAlert("Error, intenta nuevamente");
-          }
-        })
+      if (this.item.estadohistorial) {
+        if (this.bolsillo.valor == null || Number(this.bolsillo.valor) < 1) {
+          this.presentAlert("Ingresa el saldo inicial");
+          return;
+        }
+        this.bolsillo.Vinicial = true;
+      } else {
+        this.bolsillo.Vinicial = Boolean(this.bolsillo.Vinicial);
+        if (this.bolsillo.Vinicial && (this.bolsillo.valor == null || Number(this.bolsillo.valor) < 1)) {
+          this.presentAlert("Ingresa el saldo inicial");
+          return;
+        }
       }
+      this.bolsillo.subtotal=0;
+      this.bolsillo.ocultarBolsillo = false;
+      this.bolsillo.creado=new Date()
+      this.bolsillo.idItem=this.item.id!
+      this.bolsillo.posicion=this.item.bolsillos!.length+1
+      this.item.bolsillos!.push(this.bolsillo);
+      this.bolsilloService.Create(this.bolsillo).then((res)=>{
+        if(res.status===200){
+          this.modal.dismiss('confirm');
+          this.bolsillo= new Bolsillo();
+          this.ngOnInit()
+        }else{
+          this.presentAlert("Error, intenta nuevamente");
+        }
+      })
     }else{
       this.presentAlert("Error, verifica los datos e intenta nuevamente");
     }
@@ -1134,22 +1415,53 @@ confirm() {
     }
   }
 
-async Ordenar(ordenar:string){
+async Ordenar(ordenar: string) {
+  const list = this.item.bolsillos;
+  if (!list?.length) {
+    return;
+  }
+
+  if (ordenar === 'valor_inicial') {
+    ordenar = 'saldo_inicial';
+  }
+  if (ordenar === 'suma_depositos') {
+    ordenar = 'saldo_total';
+  }
 
   await Preferences.set({
     key: 'TarjetaOrden',
     value: ordenar,
   });
 
-  if(ordenar=="nombre"){
-    this.bolsillos.sort((a, b) => {
-      return a.nombre.localeCompare(b.nombre);
+  const byNombre = (a: Bolsillo, b: Bolsillo) =>
+    (a.nombre ?? '').localeCompare(b.nombre ?? '', undefined, { sensitivity: 'base' });
+
+  if (ordenar === 'nombre') {
+    list.sort((a, b) => byNombre(a, b));
+  } else if (ordenar === 'favorito') {
+    list.sort((a, b) => {
+      const inv = byNombre(b, a);
+      return inv !== 0 ? inv : byNombre(a, b);
     });
-  }else if(ordenar=="favorito"){
-    this.items.sort((a, b) => {
-      return a.favorito === b.favorito ? 0 : a.favorito ? -1 : 1;
+  } else if (ordenar === 'saldo_total') {
+    list.sort((a, b) => {
+      const d = this.saldoParaOrden(b) - this.saldoParaOrden(a);
+      return d !== 0 ? d : byNombre(a, b);
+    });
+  } else if (ordenar === 'saldo_inicial') {
+    list.sort((a, b) => {
+      const d = this.saldoInicialOrdenNum(b) - this.saldoInicialOrdenNum(a);
+      return d !== 0 ? d : byNombre(a, b);
     });
   }
+
+  list.forEach((b, i) => {
+    b.posicion = i + 1;
+  });
+  list.forEach(b => {
+    this.bolsilloService.Update(b);
+  });
+  this.cdr.detectChanges();
 }
 
 /*tomar capture*/

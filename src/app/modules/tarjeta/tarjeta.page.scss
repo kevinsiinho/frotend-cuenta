@@ -44,6 +44,37 @@ ion-header {
           --background: rgba(var(--ion-color-primary-rgb, 2, 122, 187), 0.1);
         }
       }
+
+      .menu-button-modern {
+        --background: transparent;
+        --background-hover: transparent;
+        --background-focused: transparent;
+        --background-activated: rgba(var(--ion-color-primary-rgb, 2, 122, 187), 0.18);
+        --box-shadow: none;
+        --ripple-color: rgba(var(--ion-color-primary-rgb, 2, 122, 187), 0.25);
+        --border-radius: 12px;
+        --padding-start: 8px;
+        --padding-end: 8px;
+        margin-inline: 4px;
+        transition: transform 0.12s ease;
+
+        &:hover {
+          --background: transparent;
+        }
+
+        ion-icon {
+          font-size: 22px;
+          color: var(--ion-color-primary, #027abb);
+        }
+
+        &:active {
+          transform: scale(0.96);
+        }
+
+        @media (prefers-color-scheme: dark) {
+          --background-activated: rgba(var(--ion-color-primary-rgb, 2, 122, 187), 0.28);
+        }
+      }
       
       .favorite-button {
         &.active {
@@ -175,6 +206,26 @@ ion-content {
   --inner-padding-end: 0;
   --padding-start: 0;
   margin-bottom: 16px;
+}
+
+.bolsillo-item-inactivo {
+  opacity: 0.92;
+}
+
+.bolsillo-card-inactivo {
+  opacity: 0.9;
+  filter: grayscale(0.12);
+}
+
+.bolsillo-badge-inactivo {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ion-color-medium, #92949c);
 }
 
 .bolsillo-card {
@@ -652,9 +703,25 @@ ion-content {
         --padding-end: 16px;
         font-weight: 600;
         min-height: 40px;
+
+        ion-label {
+          white-space: normal;
+        }
+
+        .popover-header-hint {
+          margin: 6px 0 0;
+          font-size: 12px;
+          font-weight: 400;
+          line-height: 1.35;
+          color: var(--ion-color-medium, #92949c);
+        }
       }
     }
   }
+}
+
+.nested-popover {
+  --width: min(300px, 92vw);
 }
 
 .bolsillo-popover {

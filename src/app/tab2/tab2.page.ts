@@ -133,6 +133,8 @@ scrollToTop() {
 }
 
 async total() {
+  const bolsilloCuenta = (b: Bolsillo) => b.ocultarBolsillo !== true;
+
   for (const item of this.items) {
     let positivos = 0;
     let negativos = 0;
@@ -141,10 +143,10 @@ async total() {
     const bolsillos = await this.bolsilloService.allbolsillo(item.id!);
     const depositos = await this.depositoServices.alldepositos(item.id!);
 
-    bolsillos.forEach((bolsillo:Bolsillo) => {
-      bolsillo.depositos = depositos.filter((dep:Bolsillo) => dep.idItem === bolsillo.id);
+    bolsillos.forEach((bolsillo: Bolsillo) => {
+      bolsillo.depositos = depositos.filter((dep: Depositos) => dep.idBolsillo === bolsillo.id);
 
-      if (item.id === bolsillo.idItem) {
+      if (item.id === bolsillo.idItem && bolsilloCuenta(bolsillo)) {
         if (bolsillo.Vinicial) {
           if (bolsillo.valor! > 0) {
             positivos += bolsillo.valor!;
@@ -155,13 +157,14 @@ async total() {
       }
     });
 
-    depositos.forEach((deposito:Depositos) => {
-      if (item.id === deposito.idItem) {
-        if (deposito.valor > 0) {
-          positivos += deposito.valor;
-        } else if (deposito.valor < 0) {
-          negativos += deposito.valor;
-        }
+    depositos.forEach((deposito: Depositos) => {
+      if (item.id !== deposito.idItem) return;
+      const bol = bolsillos.find((b: Bolsillo) => b.id === deposito.idBolsillo);
+      if (!bol || !bolsilloCuenta(bol)) return;
+      if (deposito.valor > 0) {
+        positivos += deposito.valor;
+      } else if (deposito.valor < 0) {
+        negativos += deposito.valor;
       }
     });
 
