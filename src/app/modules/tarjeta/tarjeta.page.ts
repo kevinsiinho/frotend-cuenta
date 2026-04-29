@@ -154,12 +154,23 @@ convertirNumeroAMes(numero: number): string {
     const anio = hoy.getFullYear();
 
     if (dia >= 15) {
-      const periodoAProcesar = 'primera';
+      const nombrePrimeraMesActual = `${this.convertirNumeroAMes(mes)}-primera`;
+      const primeraCerrada = this.periodoYaExisteEnHistorial(nombrePrimeraMesActual, anio);
+
+      if (!primeraCerrada) {
+        return {
+          nombreCompleto: nombrePrimeraMesActual,
+          anioAProcesar: anio,
+          mesAProcesar: mes,
+          periodoAProcesar: 'primera',
+        };
+      }
+
       return {
-        nombreCompleto: `${this.convertirNumeroAMes(mes)}-primera`,
+        nombreCompleto: `${this.convertirNumeroAMes(mes)}-segunda`,
         anioAProcesar: anio,
         mesAProcesar: mes,
-        periodoAProcesar,
+        periodoAProcesar: 'segunda',
       };
     }
 
